@@ -7,6 +7,7 @@
 
 import { createProgressBar } from './modules/progressBar.js';
 import { loadMobileNetWithRetry } from './modules/modelLoader.js';
+import { initCaptureUI } from './modules/captureUI.js';
 
 /**
  * 全域應用物件（命名空間）
@@ -107,7 +108,11 @@ async function initApp() {
   // 步驟 3：載入 TF.js MobileNet 模型（F-02，背景執行不阻塞 UI）
   loadModelInBackground();
 
-  // 步驟 4：掛載全域物件供其他模組使用
+  // 步驟 4：初始化拍照 UI（F-04）
+  const captureArea = document.getElementById('capture-area');
+  initCaptureUI(captureArea);
+
+  // 步驟 5：掛載全域物件供其他模組使用
   window.app = app;
 
   console.log('✅ Supermarket Tracker 初始化完成', {

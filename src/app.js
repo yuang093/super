@@ -14,6 +14,7 @@ const { createHelmetMiddleware } = require('./middleware/helmet');
 const { createRateLimitMiddleware } = require('./middleware/rateLimit');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const healthRouter = require('./routes/health');
+const captureRouter = require('./routes/capture');
 
 /**
  * 建立 Express 應用實例
@@ -56,7 +57,7 @@ function createApp(options = {}) {
     next();
   });
 
-  // === 安全中介層鏈 ===
+  // === 安全中介層鏈（注意：/api/capture 的 multipart 不能被 json/urlencoded 攔截）===
   app.use(createHelmetMiddleware(env));
   app.use(createCorsMiddleware(env));
   app.use(createRateLimitMiddleware(env));
@@ -73,6 +74,7 @@ function createApp(options = {}) {
 
   // === 路由掛載 ===
   app.use('/', healthRouter);
+  app.use('/api/capture', captureRouter);
 
   // === 404 處理（必須在 errorHandler 之前） ===
   app.use(notFoundHandler);

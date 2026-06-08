@@ -326,6 +326,158 @@ a { text-decoration: none; color: inherit; }
 .btn-lavender:active { transform: translateY(2px) translateX(2px) rotate(-0.5deg); }
 
 /* ==========================================================================
+   F-04 拍照 UI 樣式
+   ========================================================================== */
+.capture-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.capture-buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-capture-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 12px 20px;
+  background: var(--mint);
+  color: var(--black);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-sm);
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms var(--bounce);
+}
+.btn-capture-action:hover { transform: translateY(-2px); box-shadow: 6px 6px 0 var(--black); }
+.btn-capture-action:active { transform: translateY(2px) translateX(2px); box-shadow: 2px 2px 0 var(--black); }
+.btn-capture-action .btn-icon { font-size: 24px; }
+.btn-capture-alt { background: var(--lavender); }
+
+.btn-capture-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 14px 24px;
+  background: var(--coral);
+  color: var(--white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms var(--bounce);
+}
+.btn-capture-primary:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 8px 8px 0 var(--black); }
+.btn-capture-primary:active { transform: translateY(2px) translateX(2px) rotate(-1deg); box-shadow: 2px 2px 0 var(--black); }
+
+.capture-shoot-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.btn-shoot {
+  width: 88px; height: 88px;
+  background: var(--coral);
+  color: var(--white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 50%;
+  font-size: 36px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 200ms var(--bounce);
+}
+.btn-shoot:hover { transform: scale(1.1) rotate(5deg); box-shadow: 8px 8px 0 var(--black); }
+.btn-shoot:active { transform: scale(0.95); box-shadow: 2px 2px 0 var(--black); }
+.shoot-hint { font-size: 12px; color: var(--ink); font-weight: 700; }
+
+.capture-preview {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+.preview-img {
+  max-width: 100%;
+  max-height: 300px;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 12px;
+  object-fit: contain;
+  background: var(--gray-light);
+}
+.preview-info {
+  font-size: 12px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  opacity: 0.7;
+}
+.preview-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+.capture-progress {
+  width: 100%;
+  padding: 12px;
+  background: var(--yellow);
+  border: var(--border-thin);
+  border-radius: 12px;
+}
+.progress-text { font-size: 13px; font-weight: 700; margin-bottom: 8px; text-align: center; }
+.progress-bar-track {
+  height: 12px;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--coral);
+  transition: width 200ms ease-out;
+}
+
+.capture-result { width: 100%; }
+.result-card {
+  padding: 16px;
+  border: var(--border-thick);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+.result-success { background: var(--mint); }
+.result-error { background: var(--coral); color: var(--white); }
+.result-card h4 { font-size: 18px; margin-bottom: 12px; font-weight: 800; }
+.result-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.result-label { font-weight: 700; opacity: 0.7; }
+.result-value { font-weight: 600; }
+.result-action-hint { font-size: 13px; font-weight: 700; margin: 8px 0; }
+.result-error-code { font-size: 12px; opacity: 0.8; }
+
+/* ==========================================================================
    Sticky Bottom CTA（B 風格：粗黑邊框 + 硬陰影）
    ========================================================================== */
 .sticky-cta {
