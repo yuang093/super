@@ -8,6 +8,7 @@
 import { createProgressBar } from './modules/progressBar.js';
 import { loadMobileNetWithRetry } from './modules/modelLoader.js';
 import { initCaptureUI } from './modules/captureUI.js';
+import { initItemList } from './modules/itemList.js';
 
 /**
  * 全域應用物件（命名空間）
@@ -112,7 +113,11 @@ async function initApp() {
   const captureArea = document.getElementById('capture-area');
   initCaptureUI(captureArea);
 
-  // 步驟 5：掛載全域物件供其他模組使用
+  // 步驟 5：初始化購物車 UI（F-06）
+  const cartList = document.getElementById('cart-list');
+  initItemList(cartList);
+
+  // 步驟 6：掛載全域物件供其他模組使用
   window.app = app;
 
   console.log('✅ Supermarket Tracker 初始化完成', {

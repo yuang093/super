@@ -326,6 +326,124 @@ a { text-decoration: none; color: inherit; }
 .btn-lavender:active { transform: translateY(2px) translateX(2px) rotate(-0.5deg); }
 
 /* ==========================================================================
+   F-06 購物車 UI 樣式
+   ========================================================================== */
+.item-list-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.btn-cart-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--white);
+  color: var(--black);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms var(--bounce);
+}
+.btn-cart-action:hover { transform: translateY(-2px) rotate(-1deg); box-shadow: 4px 4px 0 var(--black); }
+.btn-cart-action:active { transform: translateY(1px) translateX(1px) rotate(-1deg); box-shadow: 1px 1px 0 var(--black); }
+.btn-cart-danger { background: var(--coral); color: var(--white); }
+
+.item-list { display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+.item-list-loading, .item-list-empty, .item-list-error {
+  text-align: center;
+  padding: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.7;
+}
+.item-list-error { color: var(--coral); opacity: 1; }
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--mint);
+  border: 3px solid var(--black);
+  border-radius: 12px;
+  min-height: 64px;
+  transition: transform 150ms var(--bounce);
+}
+.cart-item:nth-child(even) { background: var(--lavender); transform: rotate(-0.5deg); }
+.cart-item:nth-child(odd) { transform: rotate(0.5deg); }
+.cart-item:hover { transform: translateY(-2px) rotate(0deg); }
+
+.cart-item-emoji {
+  width: 48px; height: 48px;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cart-item-meta {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+.cart-item-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.cart-item-price {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+}
+.btn-item-delete {
+  width: 32px; height: 32px;
+  background: var(--coral);
+  color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+.btn-item-delete:hover { transform: rotate(90deg); }
+
+.cart-summary {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--yellow);
+  border: var(--border-thick);
+  border-radius: 12px;
+}
+.cart-summary h4 { font-size: 16px; margin-bottom: 8px; }
+.summary-rows { display: flex; flex-direction: column; gap: 4px; }
+.summary-row {
+  display: grid;
+  grid-template-columns: 1fr auto 80px;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.summary-amount { text-align: right; }
+
+/* ==========================================================================
    F-04 拍照 UI 樣式
    ========================================================================== */
 .capture-stage {

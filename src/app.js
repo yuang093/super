@@ -15,6 +15,7 @@ const { createRateLimitMiddleware } = require('./middleware/rateLimit');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const healthRouter = require('./routes/health');
 const captureRouter = require('./routes/capture');
+const itemsRouter = require('./routes/items');
 
 /**
  * 建立 Express 應用實例
@@ -75,6 +76,7 @@ function createApp(options = {}) {
   // === 路由掛載 ===
   app.use('/', healthRouter);
   app.use('/api/capture', captureRouter);
+  app.use('/api/items', itemsRouter);
 
   // === 404 處理（必須在 errorHandler 之前） ===
   app.use(notFoundHandler);
