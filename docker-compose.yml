@@ -41,7 +41,9 @@ services:
       UPLOAD_DIR: /uploads
       NODE_ENV: production
     ports:
-      - "3000:3000"
+      # 主機 port 改為 3001，避免與 VPS 上其他服務衝突
+      # 容器內部 port 仍為 3000（Cloudflare Tunnel 透過 docker 網路連接 app:3000，不受影響）
+      - "3001:3000"
     volumes:
       # 持久化 SQLite 與 WAL 檔案（重啟容器不丟失）
       - super-data:/data
