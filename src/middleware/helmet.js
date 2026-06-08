@@ -22,16 +22,20 @@ function createHelmetMiddleware(env) {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: isProduction
-          ? ["'self'"]  // 生產環境禁止 inline script
-          : ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // 開發環境允許（Vite HMR、TF.js）
-        styleSrc: ["'self'", "'unsafe-inline'"],
+          ? ["'self'", 'https://cdn.jsdelivr.net']  // 生產環境：允許 TF.js CDN
+          : ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'],
+        scriptSrcAttr: ["'none'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         connectSrc: [
           "'self'",
           'https://api.minimax.io',
           'https://api.exchangerate-api.com',
+          'https://cdn.jsdelivr.net',            // TF.js scripts
+          'https://tfhub.dev',                    // TF.js 模型 JSON
+          'https://storage.googleapis.com',        // TF.js 模型權重
         ],
-        fontSrc: ["'self'", 'data:'],
+        fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
         baseUri: ["'self'"],
