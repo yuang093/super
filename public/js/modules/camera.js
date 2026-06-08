@@ -81,16 +81,18 @@ export class Camera {
 
   /**
    * 從相簿選擇圖片
+   * 注意：不要設 input.capture 屬性，否則會強制開啟相機而非相簿
    * @returns {Promise<File>}
    */
   async selectFromGallery() {
     return new Promise((resolve, reject) => {
       const input = document.createElement('input');
       input.type = 'file';
+      // accept 包含 image/*（所有圖片）但不用 capture，讓使用者自由選
       input.accept = 'image/jpeg,image/png,image/webp,image/*';
-      input.capture = 'environment'; // 提示行動裝置開啟相機而非相簿
       input.style.position = 'fixed';
       input.style.left = '-9999px';
+      input.style.top = '0';
 
       input.onchange = (e) => {
         const file = e.target.files?.[0];
@@ -99,11 +101,20 @@ export class Camera {
         } else {
           reject(new Error('未選擇檔案'));
         }
-        input.remove();
+        // 延遲移除以確保 onchange 觸發
+        setTimeout(() => input.remove(), 100);
       };
 
+      // 監聽取消事件（部分瀏覽器支援）
+      input.addEventListener('cancel', () => {
+        reject(new Error('使用者取消選擇'));
+        setTimeout(() => input.remove(), 100);
+      });
+
       document.body.appendChild(input);
-      input.click();
+
+      // 延遲 click 確保 input 已加入 DOM
+      setTimeout(() => input.click(), 50);
     });
   }
 
