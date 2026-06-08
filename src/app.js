@@ -68,10 +68,24 @@ function createApp(options = {}) {
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
   // === 靜態檔案（前端） ===
-  app.use(express.static(path.join(__dirname, '..', 'public'), {
-    maxAge: env.NODE_ENV === 'production' ? '7d' : 0,
-    etag: true,
-  }));
+  // JS/CSS 設 no-store（避免 Cloudflare Edge 快取舊版本導致 403 持續）
+  // 其他靜態資源（字型、圖示）仍可長期快取
+  app.use(
+    express.static(path.join(__dirname, '..', 'public'), {
+      maxAge: 0,
+      etag: true,
+      setHeaders: (res, filePath) => {
+        if (/\.(js|mjs|html|css)$/i.test(filePath)) {
+          // JS/CSS/HTML 不快取，確保更新立即生效
+          res.setHeader('Cache-Control', 'no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+        } else {
+          // 圖片、字型等可快取 7 天
+          res.setHeader('Cache-Control', 'public, max-age=604800');
+        }
+      },
+    })
+  );
 
   // === 路由掛載 ===
   app.use('/', healthRouter);
