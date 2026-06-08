@@ -19,30 +19,37 @@ function createHelmetMiddleware(env) {
 
   return helmet({
     contentSecurityPolicy: {
+      // 使用 useDefaults: false 完全控制 CSP，避免 helmet 預設覆蓋
+      useDefaults: false,
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: isProduction
-          ? ["'self'", 'https://cdn.jsdelivr.net']  // 生產環境：允許 TF.js CDN
+          ? ["'self'", 'https://cdn.jsdelivr.net']
+          : ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'],
+        scriptSrcElem: isProduction
+          ? ["'self'", 'https://cdn.jsdelivr.net']
           : ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'],
         scriptSrcAttr: ["'none'"],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        styleSrcElem: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         connectSrc: [
           "'self'",
           'https://api.minimax.io',
           'https://api.exchangerate-api.com',
-          'https://cdn.jsdelivr.net',            // TF.js scripts
-          'https://tfhub.dev',                    // TF.js 模型 JSON
-          'https://storage.googleapis.com',        // TF.js 模型權重
+          'https://cdn.jsdelivr.net',
+          'https://tfhub.dev',
+          'https://storage.googleapis.com',
         ],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],
+        upgradeInsecureRequests: [],
       },
     },
-    crossOriginEmbedderPolicy: false, // 與 TF.js 共享記憶體相容
+    crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: 'cross-origin' },
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   });
