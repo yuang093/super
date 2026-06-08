@@ -19,7 +19,8 @@ WORKDIR /app
 
 # 僅複製 package.json 以充分利用 Docker layer cache
 COPY package*.json ./
-RUN npm ci --include=dev
+# npm ci 預設會安裝所有依賴（含 devDependencies，這些會在 builder 階段用於原生模組編譯）
+RUN npm ci
 
 # 複製源碼
 COPY . .
