@@ -5,28 +5,55 @@
 
 'use strict';
 
+console.log('[App] 開始載入 app.js...');
+
 import { createProgressBar } from './modules/progressBar.js';
 import { loadMobileNetWithRetry } from './modules/modelLoader.js';
 import { initCaptureUI } from './modules/captureUI.js';
 import { initItemList } from './modules/itemList.js';
 
+console.log('[App] ES Module imports 載入完成');
+
 /**
  * 全域應用物件（命名空間）
- * 後續模組（F-02 TF.js、F-06 購物車等）將掛載於此
  */
 const app = {
   config: {
-    apiBase: '',  // 同源 API（F-04 之後可改為絕對 URL）
-    healthcheckInterval: 30_000,  // 健康檢查週期 30 秒
+    apiBase: '',
+    healthcheckInterval: 30_000,
   },
   state: {
     isOnline: false,
     serverInfo: null,
     modelLoaded: false,
     modelInfo: null,
+    fingerprint: generateFingerprint(),
   },
-  modules: {},  // 後續批次將註冊各模組
+  modules: {},
 };
+
+console.log('[App] app 物件建立完成', {
+  isSecureContext: window.isSecureContext,
+  userAgent: navigator.userAgent.substring(0, 80),
+});
+
+/**
+ * 產生臨時 fingerprint（用於購物車資料綁定）
+ * 注意：實際生產環境應從 IP + IP_SALT 計算 SHA-256
+ * 這裡使用 localStorage 中的隨機 ID 作為簡化版
+ */
+function generateFingerprint() {
+  try {
+    let fp = localStorage.getItem('super_fingerprint');
+    if (!fp) {
+      fp = 'fp_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      localStorage.setItem('super_fingerprint', fp);
+    }
+    return fp;
+  } catch (e) {
+    return 'fp_anon_' + Math.random().toString(36).slice(2, 10);
+  }
+}
 
 /**
  * 呼叫後端健康檢查端點
@@ -164,12 +191,26 @@ async function loadModelInBackground() {
 }
 
 // === 啟動 ===
+console.log('[App] document.readyState:', document.readyState);
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[App] DOMContentLoaded 觸發，開始初始化');
+    initApp();
+  });
 } else {
-  // DOM 已經準備就緒（罕見，但保留相容性）
+  console.log('[App] DOM 已就緒，立即初始化');
   initApp();
 }
+
+// 錯誤捕獲：若 ES Module 載入失敗，全域錯誤處理
+window.addEventListener('error', (e) => {
+  console.error('[App] 全域錯誤', {
+    message: e.message,
+    filename: e.filename,
+    line: e.lineno,
+    col: e.colno,
+  });
+});
 
 // === 對外匯出（供其他模組 ES Module 引入）===
 export { app, checkHealth, updateStatusIndicator, loadModelInBackground };

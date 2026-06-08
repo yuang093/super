@@ -1,11 +1,13 @@
 // 🤖 public/js/modules/camera.js
-// 拍照模組：getUserMedia 相機呼叫 + 相簿選圖
+// 拍照模組：getUserMedia 相機呼叫 + 通用檔案選擇
 // 對應 [todo_progress.md F-04](../../todo_progress.md)
 
 'use strict';
 
 /**
- * 相機類別（支援拍照與相簿選圖）
+ * 相機類別
+ * 注意：拍照功能只適用於有相機的裝置（手機/筆電）
+ * 「上傳檔案」功能透過 file input 適用於所有裝置
  */
 export class Camera {
   /**
@@ -21,27 +23,34 @@ export class Camera {
 
   /**
    * 啟動相機（請求瀏覽器權限）
+   * 注意：必須是 HTTPS 或 localhost 才能用 getUserMedia
    * @returns {Promise<boolean>} 成功與否
    */
   async start() {
+    console.log('[Camera] 請求 getUserMedia 權限...');
     if (!navigator.mediaDevices?.getUserMedia) {
       console.error('[Camera] 瀏覽器不支援 getUserMedia');
-      return false;
+      return { success: false, reason: 'BROWSER_NOT_SUPPORTED' };
     }
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: { ideal: 'environment' }, // 後鏡頭優先
+          facingMode: { ideal: 'environment' },
           width: { ideal: 1280 },
           height: { ideal: 720 },
         },
         audio: false,
       });
       this.video.srcObject = this.stream;
-      return true;
+      console.log('[Camera] 啟動成功', {
+        tracks: this.stream.getTracks().length,
+        videoWidth: this.video.videoWidth,
+        videoHeight: this.video.videoHeight,
+      });
+      return { success: true };
     } catch (err) {
-      console.error('[Camera] 啟動失敗', err.message);
-      return false;
+      console.error('[Camera] 啟動失敗', err.name, err.message);
+      return { success: false, reason: err.name, message: err.message };
     }
   }
 
@@ -53,6 +62,7 @@ export class Camera {
       this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
       this.video.srcObject = null;
+      console.log('[Camera] 已停止');
     }
   }
 
@@ -80,49 +90,19 @@ export class Camera {
   }
 
   /**
-   * 從相簿選擇圖片
-   * 注意：不要設 input.capture 屬性，否則會強制開啟相機而非相簿
-   * @returns {Promise<File>}
-   */
-  async selectFromGallery() {
-    return new Promise((resolve, reject) => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      // accept 包含 image/*（所有圖片）但不用 capture，讓使用者自由選
-      input.accept = 'image/jpeg,image/png,image/webp,image/*';
-      input.style.position = 'fixed';
-      input.style.left = '-9999px';
-      input.style.top = '0';
-
-      input.onchange = (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-          resolve(file);
-        } else {
-          reject(new Error('未選擇檔案'));
-        }
-        // 延遲移除以確保 onchange 觸發
-        setTimeout(() => input.remove(), 100);
-      };
-
-      // 監聽取消事件（部分瀏覽器支援）
-      input.addEventListener('cancel', () => {
-        reject(new Error('使用者取消選擇'));
-        setTimeout(() => input.remove(), 100);
-      });
-
-      document.body.appendChild(input);
-
-      // 延遲 click 確保 input 已加入 DOM
-      setTimeout(() => input.click(), 50);
-    });
-  }
-
-  /**
    * 檢查相機是否支援
    * @returns {boolean}
    */
   static isSupported() {
-    return Boolean(navigator.mediaDevices?.getUserMedia);
+    return Boolean(
+      navigator.mediaDevices?.getUserMedia && window.isSecureContext
+    );
+  }
+
+  /**
+   * 檢查當前是否在 HTTPS 安全環境
+   */
+  static isSecureContext() {
+    return window.isSecureContext === true;
   }
 }
