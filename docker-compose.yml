@@ -1,0 +1,111 @@
+# 🤖 docker-compose.yml — Supermarket Tracker
+# 啟動 Express app + Cloudflare Tunnel（綁定 sm.yuang093.cc）
+# 完整部署手冊：[README-docker.md](./README-docker.md)
+# ⚠️ SAFETY NOTICE：刪除容器/Volume 前必先備份（見 [CLAUDE.md §2](./CLAUDE.md#2--絕對安全指令三鐵律)）
+
+# =============================================================================
+# ⚠️  安全公告 (SAFETY NOTICE)
+# -----------------------------------------------------------------------------
+# 絕對禁止直接執行 `docker compose down -v` 或 `docker volume rm`！
+# 這將永久刪除 SQLite 資料庫與使用者上傳的商品圖片。
+#
+# 備份 SOP（執行刪除前必做）：
+#   echo "BACKUP-VERIFIED $(date -Iseconds)"  # 確認字串
+#   docker run --rm -v super-data:/data -v $PWD:/backup alpine \
+#     tar czf /backup/super-data-$(date +%F).tgz -C /data .
+#
+# Graceful Shutdown：
+#   app 容器攔截 SIGTERM，停止接受新連線，等待 in-flight 請求完成（≤ 25s），
+#   關閉 SQLite handle。`stop_grace_period` 設定與此對齊。
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # ---------------------------------------------------------------------------
+  # 主應用服務（Express + TF.js + SQLite）
+  # ---------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: super-tracker:latest
+    container_name: super-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # 容器內路徑覆寫（與 .env 預設值 `./data/super.db` 不同）
+      # 容器內總是以 Volume 掛載點 `/data` 為根
+      DATABASE_PATH: /data/super.db
+      UPLOAD_DIR: /uploads
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    volumes:
+      # 持久化 SQLite 與 WAL 檔案（重啟容器不丟失）
+      - super-data:/data
+      # 持久化使用者上傳的圖片
+      - super-uploads:/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    # 給 Node 足夠時間完成 in-flight VLM/Webhook 與 SQLite flush
+    stop_grace_period: 30s
+    stop_signal: SIGTERM
+    networks:
+      - super-net
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # Cloudflare Tunnel（提供 sm.yuang093.cc HTTPS 對外）
+  # ---------------------------------------------------------------------------
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: super-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      # NOTE: cloudflared 官方慣例要求容器內環境變數命名為 TUNNEL_TOKEN。
+      # 為遵循 [CLAUDE.md §6 單一事實來源] 原則，外部 .env 統一使用
+      # CLOUDFLARE_TUNNEL_TOKEN，於此處做一次映射即可。切勿在程式碼中
+      # 直接引用 TUNNEL_TOKEN，請一律改讀 process.env.CLOUDFLARE_TUNNEL_TOKEN。
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      # 等 app 完全 healthy 後才啟動 tunnel，避免一啟動就看到 502
+      app:
+        condition: service_healthy
+    networks:
+      - super-net
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+# =============================================================================
+# 網路（容器間通訊用 super-net）
+# =============================================================================
+networks:
+  super-net:
+    driver: bridge
+    name: super-net
+
+# =============================================================================
+# Volume（持久化資料）
+# ⚠️ 刪除前必先備份（見上方安全公告）
+# =============================================================================
+volumes:
+  super-data:
+    name: super-data
+    # ⚠️  See safety notice at the top of this file. Back up before deleting.
+  super-uploads:
+    name: super-uploads
+    # ⚠️  Contains every product image users have ever uploaded.

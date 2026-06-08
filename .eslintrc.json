@@ -1,0 +1,50 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2022": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "globals": {
+    "AbortSignal": "readonly"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "prefer-const": "warn",
+    "no-var": "error",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "multi-line"],
+    "brace-style": ["error", "1tbs", { "allowSingleLine": true }]
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.js"],
+      "env": { "node": true, "browser": false },
+      "rules": {
+        "no-console": "warn"
+      }
+    },
+    {
+      "files": ["public/js/**/*.js"],
+      "env": { "node": false, "browser": true }
+    },
+    {
+      "files": ["tests/**/*.js"],
+      "env": { "node": true, "mocha": true, "jest": true }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    "data/",
+    "uploads/",
+    "logs/",
+    "coverage/",
+    "dist/"
+  ]
+}

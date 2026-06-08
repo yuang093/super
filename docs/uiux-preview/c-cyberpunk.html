@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0A0E1A">
+  <title>⚡ Cyberpunk Mobile — Supermarket Tracker UI Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --void: #0A0E1A;
+      --cyan: #00F5FF;
+      --pink: #FF006E;
+      --purple: #9D00FF;
+      --yellow: #FFE600;
+      --gray: #1F242E;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+    html, body {
+      font-family: "JetBrains Mono", "Noto Sans TC", monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--cyan);
+      background: var(--void);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body {
+      padding: calc(8px + var(--safe-top)) 12px calc(96px + var(--safe-bottom)) 12px;
+      position: relative;
+    }
+    body::before {
+      content: "01001001 01010100 01000101 01001101 01010011 01000101 01010100";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      color: rgba(0, 245, 255, 0.04);
+      font-size: 12px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+      letter-spacing: 0.2em;
+    }
+    .container { max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
+
+    /* Status bar */
+    .sys-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 10px; letter-spacing: 0.15em;
+      color: var(--cyan);
+      padding: 4px 4px 12px;
+    }
+    .sys-bar .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+    /* Panel base */
+    .panel {
+      border: 1px solid var(--cyan);
+      background: rgba(10, 14, 26, 0.9);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.3), inset 0 0 8px rgba(0, 245, 255, 0.05);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .panel.pink { border-color: var(--pink); box-shadow: 0 0 12px rgba(255, 0, 110, 0.3), inset 0 0 8px rgba(255, 0, 110, 0.05); color: var(--pink); }
+    .panel.yellow { border-color: var(--yellow); box-shadow: 0 0 12px rgba(255, 230, 0, 0.3), inset 0 0 8px rgba(255, 230, 0, 0.05); color: var(--yellow); }
+    .panel.purple { border-color: var(--purple); box-shadow: 0 0 12px rgba(157, 0, 255, 0.3), inset 0 0 8px rgba(157, 0, 255, 0.05); color: var(--purple); }
+
+    .panel-head {
+      display: flex; justify-content: space-between;
+      font-size: 10px; letter-spacing: 0.2em;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed currentColor;
+    }
+    .panel-title { font-weight: 700; }
+
+    /* Top section */
+    .top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0 16px;
+    }
+    .top .title {
+      font-family: "Orbitron", sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-shadow: 0 0 8px var(--cyan);
+    }
+    .top .status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 10px;
+    }
+    .top .dot {
+      width: 8px; height: 8px;
+      background: var(--pink);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--pink);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 50% { opacity: 0.4; } }
+
+    /* Total panel */
+    .total {
+      font-family: "Orbitron", sans-serif;
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .total-label { font-size: 10px; letter-spacing: 0.3em; color: var(--cyan); }
+    .total-amount {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--pink);
+      text-shadow: 0 0 16px var(--pink);
+      margin: 8px 0;
+      line-height: 1;
+    }
+    .total-sub { font-size: 11px; color: var(--cyan); opacity: 0.8; }
+
+    /* Capture FAB */
+    .capture-fab {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%;
+      background: var(--pink);
+      color: var(--void);
+      border: none;
+      padding: 16px 20px;
+      min-height: 64px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      box-shadow: 0 0 24px rgba(255, 0, 110, 0.5);
+      margin-bottom: 12px;
+      position: relative;
+      cursor: pointer;
+    }
+    .capture-fab .icon { font-size: 28px; }
+    .capture-fab .t1 { font-size: 14px; font-weight: 700; }
+    .capture-fab .t2 { font-size: 10px; font-weight: 500; opacity: 0.8; }
+    .capture-fab:active { box-shadow: 0 0 36px rgba(255, 0, 110, 0.8); }
+
+    /* Cart item */
+    .cart-item {
+      display: grid;
+      grid-template-columns: 32px 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px dashed rgba(0, 245, 255, 0.2);
+      min-height: 56px;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-no { font-size: 10px; color: var(--pink); font-weight: 700; }
+    .item-info { min-width: 0; }
+    .item-name {
+      font-size: 13px;
+      color: var(--cyan);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-qty { font-size: 10px; color: var(--yellow); margin-top: 2px; }
+    .item-price {
+      font-family: "Orbitron", sans-serif;
+      font-size: 13px;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+    .item-del {
+      width: 32px; height: 32px;
+      background: transparent;
+      border: 1px solid var(--pink);
+      color: var(--pink);
+      font-size: 14px;
+      padding: 0;
+    }
+
+    /* FX grid */
+    .fx-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .fx-cell {
+      background: rgba(157, 0, 255, 0.1);
+      border: 1px solid rgba(157, 0, 255, 0.3);
+      padding: 10px;
+    }
+    .fx-pair { font-size: 10px; color: var(--cyan); letter-spacing: 0.05em; }
+    .fx-rate {
+      font-family: "Orbitron", sans-serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--yellow);
+      margin-top: 4px;
+    }
+    .fx-delta { font-size: 10px; }
+    .fx-delta.up { color: var(--pink); }
+    .fx-delta.down { color: #4ECDC4; }
+
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: calc(72px + var(--safe-bottom));
+      left: 12px; right: 12px;
+      max-width: 456px;
+      margin: 0 auto;
+      z-index: 40;
+    }
+    .sticky-btn {
+      width: 100%;
+      min-height: 56px;
+      background: transparent;
+      color: var(--cyan);
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 16px rgba(0, 245, 255, 0.4), inset 0 0 8px rgba(0, 245, 255, 0.1);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+    }
+    .sticky-btn:active { background: var(--cyan); color: var(--void); }
+
+    /* Tab Bar (terminal style) */
+    .tab-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: calc(72px + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: var(--void);
+      border-top: 1px solid var(--cyan);
+      box-shadow: 0 -4px 16px rgba(0, 245, 255, 0.2);
+      display: flex;
+      z-index: 30;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px;
+      color: rgba(0, 245, 255, 0.6);
+      text-decoration: none;
+      min-height: 48px;
+      padding: 8px 4px;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+    }
+    .tab-item.active { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
+    .tab-icon { font-size: 22px; }
+    .tab-fab {
+      flex: 0 0 64px;
+      position: relative;
+    }
+    .tab-fab .tab-circle {
+      position: absolute;
+      top: -20px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 60px;
+      background: var(--pink);
+      color: var(--void);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Orbitron", sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow: 0 0 24px var(--pink), 0 0 0 3px var(--void);
+    }
+
+    /* ASCII frame decoration */
+    .ascii {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      line-height: 1.2;
+      white-space: pre;
+      color: var(--cyan);
+    }
+
+    @media (min-width: 768px) {
+      .container { max-width: 480px; border-left: 1px solid var(--cyan); border-right: 1px solid var(--cyan); padding: 0 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sys-bar">
+      <span>&gt; SYS_ONLINE <span class="blink">█</span></span>
+      <span>14:30 · 5G</span>
+    </div>
+
+    <div class="top">
+      <div class="title">SUPERMARKET</div>
+      <div class="status">
+        <span class="dot"></span>
+        <span>ONLINE</span>
+      </div>
+    </div>
+
+    <div class="panel pink total">
+      <div class="total-label">// TODAY_TOTAL</div>
+      <div class="total-amount">TWD 1,247</div>
+      <div class="total-sub">USD 39.69 · JPY 6,189</div>
+    </div>
+
+    <button class="capture-fab">
+      <span class="icon">◉</span>
+      <div style="text-align: left; flex: 1;">
+        <div class="t1">[ CAPTURE ]</div>
+        <div class="t2">tap to activate camera</div>
+      </div>
+    </button>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">▌ CART_MANIFEST</span>
+        <span>4 ITEMS</span>
+      </div>
+      <div class="cart-item">
+        <span class="item-no">01</span>
+        <div class="item-info">
+          <div class="item-name">Fuji Apple</div>
+          <div class="item-qty">x3 · JP</div>
+        </div>
+        <div class="item-price">189</div>
+        <button class="item-del">×</button>
+      </div>
+      <div class="cart-item">
+        <span class="item-no">02</span>
+        <div class="item-info">
+          <div class="item-name">Hokkaido Milk</div>
+          <div class="item-qty">x2 · 946ml</div>
+        </div>
+        <div class="item-price">196</div>
+        <button class="item-del">×</button>
+      </div>
+      <div class="cart-item">
+        <span class="item-no">03</span>
+        <div class="item-info">
+          <div class="item-name">Sourdough</div>
+          <div class="item-qty">x1 · Fresh</div>
+        </div>
+        <div class="item-price">145</div>
+        <button class="item-del">×</button>
+      </div>
+      <div class="cart-item">
+        <span class="item-no">04</span>
+        <div class="item-info">
+          <div class="item-name">Coffee Beans</div>
+          <div class="item-qty">x1 · ETH</div>
+        </div>
+        <div class="item-price">420</div>
+        <button class="item-del">×</button>
+      </div>
+    </div>
+
+    <div class="panel purple">
+      <div class="panel-head">
+        <span class="panel-title">▌ FX_FEED</span>
+        <span>ECB_LIVE</span>
+      </div>
+      <div class="fx-grid">
+        <div class="fx-cell">
+          <div class="fx-pair">USD/TWD</div>
+          <div class="fx-rate">31.42</div>
+          <div class="fx-delta down">▼ 0.12%</div>
+        </div>
+        <div class="fx-cell">
+          <div class="fx-pair">JPY/TWD</div>
+          <div class="fx-rate">0.20</div>
+          <div class="fx-delta up">▲ 0.04%</div>
+        </div>
+        <div class="fx-cell">
+          <div class="fx-pair">EUR/TWD</div>
+          <div class="fx-rate">34.18</div>
+          <div class="fx-delta down">▼ 0.31%</div>
+        </div>
+        <div class="fx-cell">
+          <div class="fx-pair">KRW/TWD</div>
+          <div class="fx-rate">0.024</div>
+          <div class="fx-delta up">▲ 0.18%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky-cta">
+      <button class="sticky-btn">&gt; CHECKOUT · TWD 1,247</button>
+    </div>
+  </div>
+
+  <nav class="tab-bar">
+    <a href="#" class="tab-item active">
+      <span class="tab-icon">▦</span>
+      <span>HOME</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon">▤</span>
+      <span>CART</span>
+    </a>
+    <a href="#" class="tab-item tab-fab">
+      <span class="tab-circle">◉</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon">⇋</span>
+      <span>FX</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon">◐</span>
+      <span>LOGS</span>
+    </a>
+  </nav>
+
+  <!-- 愛太妍 -->
+</body>
+</html>

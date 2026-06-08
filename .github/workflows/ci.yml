@@ -1,0 +1,112 @@
+# 🤖 .github/workflows/ci.yml
+# Supermarket Tracker CI Pipeline
+# 觸發：push 與 pull_request 至 main
+# 工作流：Lint → Test → Docker Build
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # 允許手動觸發
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ===========================================================================
+  # 工作 1：ESLint 靜態分析
+  # ===========================================================================
+  lint:
+    name: 📋 ESLint Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 安裝依賴
+        run: npm ci
+
+      - name: 執行 ESLint
+        run: npm run lint
+
+  # ===========================================================================
+  # 工作 2：單元測試（含未來 Round 1/2/3 測試）
+  # ===========================================================================
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+      fail-fast: false
+    env:
+      # CI 環境使用測試用 secrets（必須於 GitHub Repo Settings > Secrets 設定）
+      # 若未設定，會以下方 fallback 值通過 zod schema 驗證。
+      # ⚠️ 重要：fallback 值僅供 CI 啟動驗證，**絕不可用於生產部署**。
+      #    生產環境的真實 secrets 僅由部署者於 VPS 的 .env 注入。
+      VLM_API_KEY: ${{ secrets.VLM_API_KEY || 'ci-fake-key-for-zod-validation' }}
+      WEBHOOK_SIGNING_SECRET: ${{ secrets.WEBHOOK_SIGNING_SECRET || 'a3f8b2e1c9d4f7a5b8c2e1f9a4b7c3d8e2f5a9b1c4d7e8f3a6b9c2d5e8f1a4b7' }}
+      IP_SALT: ${{ secrets.IP_SALT || '8ff29c43b5dd7eb2f459d9bae8d02f8d06313b0d4f80bb839499bf97ebeff28e' }}
+      CLOUDFLARE_TUNNEL_TOKEN: ${{ secrets.CLOUDFLARE_TUNNEL_TOKEN || 'ci-fake-token-for-zod-validation' }}
+    steps:
+      - name: Checkout 程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 安裝依賴
+        run: npm ci
+
+      - name: 啟動服務煙霧測試（確認 Express 啟動成功）
+        run: |
+          node src/server.js &
+          SERVER_PID=$!
+          sleep 5
+          # 呼叫 /healthz 確認服務運作
+          if curl -sf http://localhost:3000/healthz > /tmp/health.json; then
+            echo "✅ 服務啟動成功"
+            cat /tmp/health.json
+          else
+            echo "❌ 服務啟動失敗"
+            exit 1
+          fi
+          # 清理
+          kill -TERM $SERVER_PID 2>/dev/null || true
+
+  # ===========================================================================
+  # 工作 3：Docker 映像檔建置驗證
+  # ===========================================================================
+  docker:
+    name: 🐳 Docker Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]  # 等 Lint 與 Test 通過才執行
+    steps:
+      - name: Checkout 程式碼
+        uses: actions/checkout@v4
+
+      - name: 建置 Docker 映像檔
+        run: docker build -t super-tracker:ci-test .
+
+      - name: 驗證映像檔大小（< 300MB）
+        run: |
+          SIZE_MB=$(docker images super-tracker:ci-test --format "{{.Size}}" | sed 's/MB//')
+          echo "映像檔大小: ${SIZE_MB}MB"
+          if (( $(echo "$SIZE_MB < 300" | bc -l) )); then
+            echo "✅ 映像檔大小符合 < 300MB DoD"
+          else
+            echo "❌ 映像檔過大（> 300MB）"
+            exit 1
+          fi

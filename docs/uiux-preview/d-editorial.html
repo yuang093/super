@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>📊 Editorial Mobile — Supermarket Tracker UI Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500;700&family=Noto+Serif+TC:wght@400;700;900&family=Source+Serif+Pro:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --paper: #FFFFFF;
+      --ink: #0A1929;
+      --ink-mid: #1E3A5F;
+      --gray: #6B7280;
+      --gray-light: #FAFAF7;
+      --up: #059669;
+      --down: #DC2626;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+    html, body {
+      font-family: "Source Serif Pro", "Noto Serif TC", serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--ink);
+      background: var(--paper);
+      min-height: 100vh;
+    }
+    body {
+      padding: calc(8px + var(--safe-top)) 16px calc(96px + var(--safe-bottom)) 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .container { max-width: 480px; margin: 0 auto; }
+
+    /* Masthead */
+    .masthead {
+      border-top: 3px double var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 8px 0;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .masthead-row1 {
+      display: flex; justify-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px; letter-spacing: 0.15em;
+      margin-bottom: 4px;
+    }
+    .masthead-title {
+      font-family: "Playfair Display", serif;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+    .masthead-row2 {
+      display: flex; justify-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px; letter-spacing: 0.2em;
+      padding-top: 4px;
+      border-top: 1px solid var(--ink);
+    }
+
+    /* Dateline */
+    .dateline {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      text-align: center;
+      font-size: 11px;
+      padding: 4px 0;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 16px;
+    }
+
+    /* Total section */
+    .total-block {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 3px double var(--ink);
+      margin-bottom: 16px;
+    }
+    .total-eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--gray);
+    }
+    .total-amount {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 8px 0 4px;
+    }
+    .total-currency { font-size: 14px; color: var(--ink-mid); }
+    .total-sub {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      color: var(--gray);
+      margin-top: 8px;
+    }
+
+    /* Section */
+    .section {
+      border-top: 1px solid var(--ink);
+      padding: 16px 0;
+    }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 12px;
+    }
+    .section-eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+    .section-title {
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .section-action {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      color: var(--ink);
+      text-decoration: underline;
+      padding: 8px 4px;
+    }
+
+    /* Capture */
+    .capture-btn {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      border: 2px solid var(--ink);
+      padding: 16px;
+      min-height: 64px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: "IBM Plex Mono", monospace;
+    }
+    .capture-btn .icon { font-size: 22px; }
+    .capture-btn:active { background: var(--ink-mid); }
+    .capture-note {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 11px;
+      color: var(--gray);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* Cart table */
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+    }
+    .cart-table th {
+      text-align: left;
+      padding: 6px 4px;
+      border-bottom: 2px solid var(--ink);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .cart-table th.num { text-align: right; }
+    .cart-table td {
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .cart-table tr:nth-child(even) td { background: var(--gray-light); }
+    .cart-table td.num { text-align: right; }
+    .cart-table .desc {
+      font-family: "Source Serif Pro", "Noto Serif TC", serif;
+      font-size: 13px;
+    }
+    .cart-table .del {
+      color: var(--down);
+      font-weight: 700;
+      padding: 4px 8px;
+      background: transparent;
+      border: 1px solid var(--down);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    .total-row {
+      border-top: 3px double var(--ink);
+      padding: 10px 0;
+      display: flex; justify-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .total-final {
+      border-top: 1px solid var(--ink);
+      border-bottom: 3px double var(--ink);
+      padding: 12px 0;
+      display: flex; justify-content: space-between;
+      align-items: baseline;
+    }
+    .total-final .amt {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    /* FX */
+    .fx-list {
+      display: flex; flex-direction: column;
+    }
+    .fx-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--ink);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+    }
+    .fx-row:last-child { border-bottom: none; }
+    .fx-pair { font-weight: 700; }
+    .fx-rate { font-size: 16px; }
+    .fx-delta { font-size: 10px; margin-left: 4px; }
+    .fx-delta.up { color: var(--up); }
+    .fx-delta.down { color: var(--down); }
+
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: calc(72px + var(--safe-bottom));
+      left: 16px; right: 16px;
+      max-width: 448px;
+      margin: 0 auto;
+      z-index: 40;
+    }
+    .sticky-btn {
+      width: 100%;
+      min-height: 56px;
+      background: var(--ink);
+      color: var(--paper);
+      border: 2px solid var(--ink);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .sticky-btn:active { background: var(--ink-mid); }
+
+    /* Tab Bar (serif typography) */
+    .tab-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: calc(72px + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: var(--paper);
+      border-top: 3px double var(--ink);
+      display: flex;
+      z-index: 30;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px;
+      color: var(--ink);
+      text-decoration: none;
+      min-height: 48px;
+      padding: 8px 4px;
+    }
+    .tab-item.active { background: var(--ink); color: var(--paper); }
+    .tab-icon { font-size: 18px; font-family: "Playfair Display", serif; font-style: italic; }
+    .tab-label { font-family: "IBM Plex Mono", monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; }
+    .tab-fab {
+      flex: 0 0 64px;
+      position: relative;
+    }
+    .tab-fab .tab-circle {
+      position: absolute;
+      top: -20px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 60px;
+      background: var(--ink);
+      color: var(--paper);
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    @media (min-width: 768px) {
+      .container { max-width: 480px; margin: 0 auto; border-left: 1px solid var(--ink); border-right: 1px solid var(--ink); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="masthead">
+      <div class="masthead-row1">
+        <span>EST. 2026</span>
+        <span>VOL. CXII</span>
+        <span>No. 158</span>
+      </div>
+      <h1 class="masthead-title">The Daily Ledger</h1>
+      <div class="masthead-row2">
+        <span>TAIPEI</span>
+        <span>JUN 7, 2026</span>
+        <span>SUNDAY</span>
+      </div>
+    </header>
+
+    <div class="dateline">— An editorial account of expenditure —</div>
+
+    <div class="total-block">
+      <div class="total-eyebrow">TODAY · TAIWAN EDITION</div>
+      <div class="total-amount">1,506</div>
+      <div class="total-currency">TWD</div>
+      <div class="total-sub">≈ USD 47.93 · JPY 7,478</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">SECTION I</div>
+          <div class="section-title">Capture Terminal</div>
+        </div>
+      </div>
+      <a href="#" class="capture-btn">
+        <span class="icon">▢</span>
+        <span>CAPTURE · 拍照辨識</span>
+      </a>
+      <p class="capture-note">— Model: MobileNet v3 · Status: READY —</p>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">SECTION II</div>
+          <div class="section-title">Cart Manifest</div>
+        </div>
+        <a href="#" class="section-action">CLEAR</a>
+      </div>
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th class="num">Qty</th>
+            <th class="num">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="desc">Fuji Apple, JP, 4ct</td>
+            <td class="num">1</td>
+            <td class="num">189</td>
+            <td class="num"><button class="del">DEL</button></td>
+          </tr>
+          <tr>
+            <td class="desc">Hokkaido Milk, 946ml</td>
+            <td class="num">2</td>
+            <td class="num">196</td>
+            <td class="num"><button class="del">DEL</button></td>
+          </tr>
+          <tr>
+            <td class="desc">Sourdough Loaf</td>
+            <td class="num">1</td>
+            <td class="num">145</td>
+            <td class="num"><button class="del">DEL</button></td>
+          </tr>
+          <tr>
+            <td class="desc">Coffee Beans, ETH 250g</td>
+            <td class="num">1</td>
+            <td class="num">420</td>
+            <td class="num"><button class="del">DEL</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="total-row">
+        <span>SUBTOTAL</span>
+        <span>950</span>
+      </div>
+      <div class="total-final">
+        <span style="font-family: 'IBM Plex Mono'; font-size: 12px; font-weight: 700; text-transform: uppercase;">Total · TWD</span>
+        <span class="amt">1,506</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-eyebrow">SECTION III</div>
+          <div class="section-title">FX Desk</div>
+        </div>
+        <a href="#" class="section-action">SWAP</a>
+      </div>
+      <div class="fx-list">
+        <div class="fx-row">
+          <span class="fx-pair">USD/TWD</span>
+          <span><span class="fx-rate">31.4250</span> <span class="fx-delta down">▼</span></span>
+        </div>
+        <div class="fx-row">
+          <span class="fx-pair">JPY/TWD</span>
+          <span><span class="fx-rate">0.2014</span> <span class="fx-delta up">▲</span></span>
+        </div>
+        <div class="fx-row">
+          <span class="fx-pair">EUR/TWD</span>
+          <span><span class="fx-rate">34.1820</span> <span class="fx-delta down">▼</span></span>
+        </div>
+        <div class="fx-row">
+          <span class="fx-pair">KRW/TWD</span>
+          <span><span class="fx-rate">0.0240</span> <span class="fx-delta up">▲</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky-cta">
+      <button class="sticky-btn">ARCHIVE · TWD 1,506</button>
+    </div>
+  </div>
+
+  <nav class="tab-bar">
+    <a href="#" class="tab-item active">
+      <span class="tab-icon">§</span>
+      <span class="tab-label">Daily</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon">¶</span>
+      <span class="tab-label">Cart</span>
+    </a>
+    <a href="#" class="tab-item tab-fab">
+      <span class="tab-circle">▢</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon">$</span>
+      <span class="tab-label">FX</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon">∫</span>
+      <span class="tab-label">More</span>
+    </a>
+  </nav>
+
+  <!-- 愛太妍 -->
+</body>
+</html>

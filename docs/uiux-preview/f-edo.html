@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#F4E8D0">
+  <title>📜 Edo Mobile — Supermarket Tracker UI Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Noto+Serif+TC:wght@400;700;900&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --paper: #F4E8D0;
+      --ink: #3D2817;
+      --vermillion: #8B4513;
+      --green: #2F4F4F;
+      --sienna: #A0522D;
+      --stamp: #C8102E;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+    html, body {
+      font-family: "Noto Serif TC", "Shippori Mincho", serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--paper);
+      min-height: 100vh;
+      filter: sepia(0.05);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.4 0 0 0 0 0.3 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    body {
+      padding: calc(8px + var(--safe-top)) 12px calc(96px + var(--safe-bottom)) 12px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .container { max-width: 480px; margin: 0 auto; }
+    .paper-frame {
+      border: 2px double var(--ink);
+      padding: 16px;
+      position: relative;
+      background: rgba(244, 232, 208, 0.4);
+      margin-bottom: 12px;
+    }
+    .corner {
+      position: absolute;
+      font-size: 14px;
+      color: var(--vermillion);
+      opacity: 0.5;
+    }
+    .corner.tl { top: 4px; left: 6px; }
+    .corner.tr { top: 4px; right: 6px; }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 16px 8px;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 16px;
+    }
+    .header-eyebrow {
+      font-family: "Klee One", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--sienna);
+      margin-bottom: 6px;
+    }
+    .header h1 {
+      font-family: "Noto Serif TC", serif;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+    }
+    .header-sub {
+      font-family: "Klee One", sans-serif;
+      font-size: 12px;
+      color: var(--sienna);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* Total */
+    .total-block {
+      text-align: center;
+      padding: 16px 0;
+      border-bottom: 3px double var(--ink);
+      margin-bottom: 16px;
+    }
+    .total-eyebrow {
+      font-family: "Klee One", sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--sienna);
+    }
+    .total-amount {
+      font-family: "Klee One", "Noto Serif TC", serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--vermillion);
+      line-height: 1;
+      margin: 6px 0;
+    }
+    .total-sub {
+      font-family: "Klee One", sans-serif;
+      font-size: 11px;
+      color: var(--sienna);
+    }
+
+    /* Section */
+    .section { margin: 16px 0; }
+    .section-head {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .section-eyebrow {
+      font-family: "Klee One", sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--sienna);
+    }
+    .section-title {
+      font-family: "Noto Serif TC", serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+    }
+
+    /* Capture */
+    .capture-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      min-height: 64px;
+      background: var(--ink);
+      color: var(--paper);
+      border: 1px solid var(--sienna);
+      font-family: "Noto Serif TC", serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+    }
+    .capture-btn:active { background: var(--vermillion); }
+
+    /* Postcard item */
+    .postcards {
+      display: flex; flex-direction: column;
+      gap: 12px;
+    }
+    .postcard {
+      background: #FAF6EC;
+      border: 4px solid #FFFFFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      padding: 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+    }
+    .postcard:nth-child(odd) { transform: rotate(-0.8deg); }
+    .postcard:nth-child(even) { transform: rotate(0.5deg); }
+    .postcard-emoji {
+      font-size: 32px;
+      width: 48px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .postcard-info { flex: 1; min-width: 0; }
+    .postcard-name {
+      font-family: "Noto Serif TC", serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .postcard-qty {
+      font-family: "Klee One", sans-serif;
+      font-size: 11px;
+      color: var(--sienna);
+    }
+    .postcard-stamp {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 28px; height: 28px;
+      background: var(--stamp);
+      color: var(--paper);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Noto Serif TC", serif;
+      font-size: 12px; font-weight: 900;
+      transform: rotate(15deg);
+    }
+    .postcard-right { display: flex; align-items: center; gap: 6px; }
+    .postcard-price {
+      font-family: "Klee One", "Noto Serif TC", serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--vermillion);
+    }
+    .postcard-del {
+      width: 32px; height: 32px;
+      background: transparent;
+      border: 1px solid var(--sienna);
+      color: var(--sienna);
+      font-size: 14px;
+      padding: 0;
+    }
+
+    /* Total sumi */
+    .total-sumi {
+      border-top: 3px double var(--ink);
+      border-bottom: 3px double var(--ink);
+      padding: 12px 0;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .total-sumi .label {
+      font-family: "Noto Serif TC", serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+    }
+    .total-sumi .amount {
+      font-family: "Klee One", "Noto Serif TC", serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--vermillion);
+    }
+
+    /* FX */
+    .fx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Klee One", "Noto Serif TC", serif;
+    }
+    .fx-table th, .fx-table td {
+      padding: 8px 4px;
+      border-bottom: 1px dashed var(--sienna);
+    }
+    .fx-table th {
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--sienna);
+      border-bottom: 1px solid var(--ink);
+    }
+    .fx-table td:last-child { text-align: right; font-weight: 700; font-size: 16px; }
+
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: calc(80px + var(--safe-bottom));
+      left: 12px; right: 12px;
+      max-width: 456px;
+      margin: 0 auto;
+      z-index: 40;
+    }
+    .sticky-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      min-height: 60px;
+      background: var(--ink);
+      color: var(--paper);
+      border: 2px solid var(--vermillion);
+      font-family: "Noto Serif TC", serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+    }
+    .sticky-btn:active { background: var(--vermillion); }
+
+    /* Tab Bar (印章風) */
+    .tab-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: calc(80px + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: var(--paper);
+      border-top: 2px solid var(--ink);
+      display: flex;
+      z-index: 30;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px;
+      color: var(--ink);
+      text-decoration: none;
+      min-height: 48px;
+      padding: 8px 4px;
+    }
+    .tab-item.active { color: var(--vermillion); }
+    .tab-seal {
+      width: 32px; height: 32px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Noto Serif TC", serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .tab-label { font-size: 10px; letter-spacing: 0.15em; }
+    .tab-fab {
+      flex: 0 0 64px;
+      position: relative;
+    }
+    .tab-fab .tab-circle {
+      position: absolute;
+      top: -20px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 60px;
+      background: var(--stamp);
+      color: var(--paper);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Noto Serif TC", serif;
+      font-size: 22px;
+      font-weight: 900;
+      border: 3px solid var(--ink);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (min-width: 768px) {
+      .container { max-width: 480px; margin: 0 auto; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="paper-frame">
+      <span class="corner tl">卍</span>
+      <span class="corner tr">卍</span>
+
+      <header class="header">
+        <div class="header-eyebrow">─ 江戶遊記 Supermarket Tracker ─</div>
+        <h1>朱 印 帳</h1>
+        <div class="header-sub">Shuin-chō Daily Ledger</div>
+      </header>
+
+      <div class="total-block">
+        <div class="total-eyebrow">本日結算 · TODAY</div>
+        <div class="total-amount">¥ 1,247</div>
+        <div class="total-sub">JUN 7, 2026 · 第 23 頁</div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-eyebrow">SECTION I</div>
+          <div class="section-title">拍 照 辨 識</div>
+        </div>
+        <a href="#" class="capture-btn">📷 拍 照 辨 識</a>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-eyebrow">SECTION II</div>
+          <div class="section-title">購 物 明 細</div>
+        </div>
+        <div class="postcards">
+          <div class="postcard">
+            <div class="postcard-stamp">壹</div>
+            <div class="postcard-emoji">🍎</div>
+            <div class="postcard-info">
+              <div class="postcard-name">富士蘋果</div>
+              <div class="postcard-qty">4 顆 · 日本</div>
+            </div>
+            <div class="postcard-right">
+              <span class="postcard-price">¥ 189</span>
+              <button class="postcard-del">×</button>
+            </div>
+          </div>
+          <div class="postcard">
+            <div class="postcard-stamp">貳</div>
+            <div class="postcard-emoji">🥛</div>
+            <div class="postcard-info">
+              <div class="postcard-name">北海道牛奶</div>
+              <div class="postcard-qty">2 瓶 · 946ml</div>
+            </div>
+            <div class="postcard-right">
+              <span class="postcard-price">¥ 196</span>
+              <button class="postcard-del">×</button>
+            </div>
+          </div>
+          <div class="postcard">
+            <div class="postcard-stamp">參</div>
+            <div class="postcard-emoji">🍞</div>
+            <div class="postcard-info">
+              <div class="postcard-name">酸種麵包</div>
+              <div class="postcard-qty">1 條</div>
+            </div>
+            <div class="postcard-right">
+              <span class="postcard-price">¥ 145</span>
+              <button class="postcard-del">×</button>
+            </div>
+          </div>
+          <div class="postcard">
+            <div class="postcard-stamp">肆</div>
+            <div class="postcard-emoji">☕</div>
+            <div class="postcard-info">
+              <div class="postcard-name">衣索比亞咖啡</div>
+              <div class="postcard-qty">250g</div>
+            </div>
+            <div class="postcard-right">
+              <span class="postcard-price">¥ 420</span>
+              <button class="postcard-del">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="total-sumi">
+          <span class="label">合 計</span>
+          <span class="amount">¥ 950</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-eyebrow">SECTION III</div>
+          <div class="section-title">匯 率 換 算</div>
+        </div>
+        <table class="fx-table">
+          <tbody>
+            <tr><td>JPY / TWD</td><td>ECB</td><td>0.2014</td></tr>
+            <tr><td>USD / TWD</td><td>ECB</td><td>31.4250</td></tr>
+            <tr><td>EUR / TWD</td><td>ECB</td><td>34.1820</td></tr>
+            <tr><td>KRW / TWD</td><td>ECB</td><td>0.0240</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sticky-cta">
+      <button class="sticky-btn">記 帳 完 成</button>
+    </div>
+  </div>
+
+  <nav class="tab-bar">
+    <a href="#" class="tab-item active">
+      <div class="tab-seal">記</div>
+      <span class="tab-label">首頁</span>
+    </a>
+    <a href="#" class="tab-item">
+      <div class="tab-seal">買</div>
+      <span class="tab-label">清單</span>
+    </a>
+    <a href="#" class="tab-item tab-fab">
+      <span class="tab-circle">辨</span>
+    </a>
+    <a href="#" class="tab-item">
+      <div class="tab-seal">匯</div>
+      <span class="tab-label">匯率</span>
+    </a>
+    <a href="#" class="tab-item">
+      <div class="tab-seal">設</div>
+      <span class="tab-label">設定</span>
+    </a>
+  </nav>
+
+  <!-- 愛太妍 -->
+</body>
+</html>

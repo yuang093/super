@@ -1,0 +1,107 @@
+# 🤖 .dockerignore
+# 排除不需要進入 Docker 映像檔的檔案，縮減映像大小、避免洩漏 secrets
+
+# === Git ===
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# === 環境變數（絕不進 image）===
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# === 依賴（由 builder 階段重建）===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === 測試與覆蓋率（生產不需要）===
+tests/
+test/
+__tests__/
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
+jest.config.*
+vitest.config.*
+
+# === 文件（生產 image 不需要）===
+# 若希望 image 內含 README.md 可移除下行註解
+# README.md
+CHANGELOG.md
+docs/
+
+# === 資料與上傳（Volume 掛載）===
+data/
+uploads/
+
+# === 日誌 ===
+logs/
+*.log
+npm-logs/
+pino-*.log
+
+# === Docker 自身（遞迴汙染防護）===
+Dockerfile
+Dockerfile.*
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+docker-compose.override.yml
+
+# === Lint / Format 設定（生產不需要）===
+.eslintrc.json
+.eslintrc.js
+.eslintignore
+.prettierrc
+.prettierrc.js
+.prettierignore
+
+# === CI/CD 設定 ===
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# === IDE / 編輯器 ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.DS_Store_*
+
+# === OS metadata ===
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# === 暫存與快取 ===
+tmp/
+temp/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+dist/
+build/
+out/
+
+# === AI / Agent tooling ===
+.claude/
+.assistant/
+.aider*
+
+# === 備份 ===
+backups/
+*.bak
+*.backup

@@ -1,0 +1,489 @@
+/* 🤖 public/css/main.css
+ * Supermarket Tracker — 方案 B：粗獷歡樂 Brutalist Joy
+ * 設計規範：[CLAUDE.md §3.3](../../CLAUDE.md) 程式碼風格
+ * Mobile-First + 響應式（375px ~ 1920px）
+ */
+
+/* ==========================================================================
+   CSS 變數（B 風格配色）
+   ========================================================================== */
+:root {
+  /* 核心配色 */
+  --yellow: #FFD93D;          /* 主品牌色：亮黃 */
+  --coral: #FF6B6B;           /* 強調色：珊瑚紅 */
+  --mint: #4ECDC4;            /* 次要：薄荷綠 */
+  --lavender: #A78BFA;        /* 第三：薰衣草 */
+  --black: #1A1A1A;           /* 邊框與文字 */
+  --white: #FFFFFF;           /* 卡片底 */
+
+  /* 字型 */
+  --font-display: "Fredoka", "Noto Sans TC", sans-serif;
+  --font-body: "Fredoka", "Noto Sans TC", sans-serif;
+
+  /* 粗黑邊框 */
+  --border-thick: 4px solid var(--black);
+  --border-thin: 3px solid var(--black);
+
+  /* 硬陰影（撞擊感）*/
+  --shadow-sm: 4px 4px 0 var(--black);
+  --shadow-md: 6px 6px 0 var(--black);
+  --shadow-lg: 8px 8px 0 var(--black);
+
+  /* 過渡 */
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-base: 200ms var(--bounce);
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+
+/* ==========================================================================
+   Reset & Base
+   ========================================================================== */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html {
+  font-size: 16px; /* 避免 iOS Safari 自動縮放 */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--black);
+  background-color: var(--yellow);
+  background-image:
+    radial-gradient(circle at 15% 10%, var(--coral) 0%, transparent 8%),
+    radial-gradient(circle at 85% 20%, var(--mint) 0%, transparent 10%),
+    radial-gradient(circle at 50% 80%, var(--lavender) 0%, transparent 12%),
+    radial-gradient(var(--black) 1.5px, transparent 1.5px);
+  background-size: auto, auto, auto, 24px 24px;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: calc(20px + var(--safe-top)) 16px calc(110px + var(--safe-bottom)) 16px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+p { line-height: 1.5; }
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ==========================================================================
+   無障礙 Focus 樣式（B 風格：粗黑邊框）
+   ========================================================================== */
+:focus-visible {
+  outline: 4px solid var(--coral);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   卡片（B 風格：粗黑邊框 + 硬陰影 + 隨機旋轉）
+   ========================================================================== */
+.card {
+  background: var(--white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-4px) rotate(0deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.card:nth-of-type(odd) { transform: rotate(-0.5deg); }
+.card:nth-of-type(even) { transform: rotate(0.5deg); }
+.card:nth-of-type(odd):hover { transform: translateY(-4px) rotate(-0.3deg); }
+.card:nth-of-type(even):hover { transform: translateY(-4px) rotate(0.3deg); }
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.card-description {
+  font-size: 14px;
+  color: rgba(26, 26, 26, 0.7);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Header（B 風格：粗黑邊框 + 硬陰影 + 隨機旋轉）
+   ========================================================================== */
+.app-header {
+  background: var(--white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-lg);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin: 0 auto 20px;
+  max-width: 1200px;
+  transform: rotate(-1deg);
+}
+
+.app-title {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.app-subtitle {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.75);
+  margin: 0 0 16px;
+}
+
+/* 狀態指示器（B 風格 badge）*/
+.app-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--mint);
+  border: var(--border-thin);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-status.offline { background: var(--coral); }
+
+.status-indicator {
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--black);
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.app-status.offline .status-indicator { background: var(--white); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ==========================================================================
+   Main 容器
+   ========================================================================== */
+.app-main { width: 100%; }
+.container { max-width: 1200px; margin: 0 auto; }
+
+/* ==========================================================================
+   進度條（F-02 模型載入 · B 風格）
+   ========================================================================== */
+.progress-container {
+  margin: 16px 0;
+  padding: 12px;
+  background: var(--yellow);
+  border: var(--border-thin);
+  border-radius: 12px;
+}
+
+.progress-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 16px;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--coral);
+  border-right: 2px solid var(--black);
+  transition: width 300ms ease-out;
+}
+
+.progress-fill--complete {
+  background: var(--mint);
+}
+
+.progress-fill--error {
+  background: var(--coral);
+  background-image: repeating-linear-gradient(
+    45deg, var(--black), var(--black) 4px, var(--coral) 4px, var(--coral) 8px
+  );
+}
+
+/* ==========================================================================
+   Placeholder 區（B 風格：彩色 emoji + 粗邊框）
+   ========================================================================== */
+.capture-placeholder,
+.cart-placeholder,
+.exchange-placeholder {
+  background: var(--yellow);
+  border: 3px dashed var(--black);
+  border-radius: 12px;
+  padding: 32px 16px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.cart-placeholder { background: var(--mint); }
+.exchange-placeholder { background: var(--lavender); }
+
+.placeholder-icon {
+  display: block;
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 8px;
+  filter: drop-shadow(2px 2px 0 var(--black));
+}
+
+.placeholder-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--black);
+  margin: 0;
+}
+
+/* ==========================================================================
+   拍照按鈕（B 風格大按鈕）
+   ========================================================================== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 16px 24px;
+  background: var(--coral);
+  color: var(--white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  transform: rotate(-1deg);
+  width: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+  transform: translateY(2px) translateX(2px) rotate(-1deg);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
+.btn-primary .btn-icon {
+  font-size: 28px;
+}
+
+.btn-mint { background: var(--mint); transform: rotate(0.5deg); }
+.btn-mint:hover { transform: translateY(-4px) rotate(0.5deg); }
+.btn-mint:active { transform: translateY(2px) translateX(2px) rotate(0.5deg); }
+
+.btn-lavender { background: var(--lavender); transform: rotate(-0.5deg); }
+.btn-lavender:hover { transform: translateY(-4px) rotate(-0.5deg); }
+.btn-lavender:active { transform: translateY(2px) translateX(2px) rotate(-0.5deg); }
+
+/* ==========================================================================
+   Sticky Bottom CTA（B 風格：粗黑邊框 + 硬陰影）
+   ========================================================================== */
+.sticky-cta {
+  position: fixed;
+  bottom: calc(88px + var(--safe-bottom));
+  left: 16px; right: 16px;
+  z-index: 40;
+  max-width: 448px;
+  margin: 0 auto;
+}
+
+.sticky-cta .btn-primary { font-size: 20px; }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.app-footer {
+  text-align: center;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.footer-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.7);
+  margin: 0;
+}
+
+.version-badge,
+.tech-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--black);
+  color: var(--yellow);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  margin: 0 2px;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   底部 Tab Bar（B 風格：粗黑邊框 + FAB 凸起）
+   ========================================================================== */
+.tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: calc(88px + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--white);
+  border-top: var(--border-thick);
+  display: flex;
+  z-index: 30;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--black);
+  text-decoration: none;
+  min-height: 48px;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background var(--transition-base);
+}
+
+.tab-item.active {
+  background: var(--yellow);
+}
+
+.tab-item.active .tab-icon { transform: scale(1.1); }
+
+.tab-icon {
+  font-size: 24px;
+  transition: transform var(--transition-base);
+}
+
+/* 中央 FAB Tab */
+.tab-fab {
+  flex: 0 0 72px;
+  position: relative;
+}
+
+.tab-fab .tab-circle {
+  position: absolute;
+  top: -24px; left: 50%;
+  transform: translateX(-50%);
+  width: 64px; height: 64px;
+  background: var(--coral);
+  color: var(--white);
+  border: var(--border-thick);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.tab-fab:active .tab-circle {
+  transform: translateX(-50%) translateY(2px) translateX(2px);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
+/* ==========================================================================
+   響應式：平板與桌面
+   ========================================================================== */
+@media (min-width: 768px) {
+  body {
+    padding: 40px 24px calc(120px + var(--safe-bottom)) 24px;
+  }
+
+  .app-title { font-size: 48px; }
+  .app-subtitle { font-size: 18px; }
+
+  .card { padding: 28px; }
+  .card-title { font-size: 28px; }
+
+  .placeholder-icon { font-size: 96px; }
+
+  /* 桌面版：多欄佈局 */
+  .app-main .container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+  }
+
+  .capture-section { grid-column: 1; }
+  .cart-section { grid-column: 1; }
+  .exchange-section { grid-column: 2; grid-row: 1 / 3; }
+
+  .tab-bar { max-width: 1200px; left: 50%; right: auto; transform: translateX(-50%); border-radius: 0; }
+}
+
+@media (min-width: 1024px) {
+  .app-title { font-size: 56px; }
+
+  .app-main .container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .capture-section { grid-column: 1; }
+  .cart-section { grid-column: 2; }
+  .exchange-section { grid-column: 3; grid-row: auto; }
+}
+
+/* ==========================================================================
+   使用者偏好：減少動畫
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .card, .btn-primary, .tab-circle, .tab-icon { transform: none !important; }
+}

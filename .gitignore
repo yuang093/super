@@ -1,0 +1,79 @@
+# Supermarket Tracker — Git ignore rules
+# Keep the repository lean; never commit secrets, build artefacts, or runtime data.
+
+# --- Node.js / npm / yarn -----------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json.bak
+
+# --- Environment & secrets ---------------------------------------------
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# --- User uploads (product images) -------------------------------------
+# Uploaded product photos are runtime data; never enter version control.
+uploads/
+public/uploads/
+!uploads/.gitkeep
+
+# --- SQLite databases & data folders -----------------------------------
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+data/
+!data/.gitkeep
+
+# --- IDE / editor state ------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.DS_Store_*
+
+# --- OS metadata --------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# --- Docker overrides ---------------------------------------------------
+# Local compose overrides diverge from the committed base; keep them private.
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# --- Logs ---------------------------------------------------------------
+logs/
+*.log
+npm-logs/
+pino-*.log
+
+# --- Temp / cache -------------------------------------------------------
+tmp/
+temp/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+dist/
+build/
+coverage/
+.nyc_output/
+
+# --- AI / agent tooling -------------------------------------------------
+# Local Claude Code / harness state must not leak into the repo.
+.claude/
+.assistant/
+.aider*

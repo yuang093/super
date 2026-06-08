@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Supermarket Tracker — AI 影像辨識購物記帳，邊逛超市邊拍照，自動辨識商品名稱與價格，統整外幣與新台幣總花費。">
+  <meta name="theme-color" content="#FFD93D">
+  <title>🛒 Supermarket Tracker — 粗獷歡樂版</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%92%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <!-- 🏷️ Header：粗獷歡樂風標題 -->
+  <header class="app-header" role="banner">
+    <h1 class="app-title">
+      <span aria-hidden="true">🛒</span>
+      SUPERMARKET TRACKER
+    </h1>
+    <p class="app-subtitle">拍照 · 記帳 · 換算，3 秒搞定！</p>
+    <div class="app-status" id="app-status" role="status" aria-live="polite">
+      <span class="status-indicator" id="status-dot" aria-hidden="true"></span>
+      <span class="status-text" id="status-text">連線中…</span>
+    </div>
+  </header>
+
+  <!-- 🎯 Main：主要功能區 -->
+  <main class="app-main" role="main">
+    <div class="container">
+      <!-- 📸 拍照辨識區 -->
+      <section class="card capture-section" aria-labelledby="capture-title">
+        <h2 id="capture-title" class="card-title">
+          <span aria-hidden="true">📸</span>
+          拍照辨識
+        </h2>
+        <p class="card-description">拍攝商品或價格標籤，AI 將自動辨識品名與金額。</p>
+
+        <!-- 模型載入進度條（F-02） -->
+        <div id="model-progress" class="progress-container" role="progressbar"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+             aria-label="MobileNet 模型載入進度" hidden>
+          <div class="progress-label" id="model-progress-label">準備中…</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="model-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="capture-placeholder" id="capture-area">
+          <span class="placeholder-icon" aria-hidden="true">📷</span>
+          <p class="placeholder-text">F-04 拍照功能將於後續批次實作</p>
+        </div>
+      </section>
+
+      <!-- 🛒 購物車區 -->
+      <section class="card cart-section" aria-labelledby="cart-title">
+        <h2 id="cart-title" class="card-title">
+          <span aria-hidden="true">🛒</span>
+          購物車
+        </h2>
+        <p class="card-description">新增的商品會列於此，並即時換算為新台幣總價。</p>
+        <div class="cart-placeholder" id="cart-list">
+          <span class="placeholder-icon" aria-hidden="true">🛍️</span>
+          <p class="placeholder-text">F-06 購物車功能將於後續批次實作</p>
+        </div>
+      </section>
+
+      <!-- 💱 匯率顯示區 -->
+      <section class="card exchange-section" aria-labelledby="exchange-title">
+        <h2 id="exchange-title" class="card-title">
+          <span aria-hidden="true">💱</span>
+          即時匯率
+        </h2>
+        <p class="card-description">B-08 將從外部 API 取得最新匯率並快取至 SQLite。</p>
+        <div class="exchange-placeholder" id="exchange-rates">
+          <span class="placeholder-icon" aria-hidden="true">📊</span>
+          <p class="placeholder-text">B-08 匯率功能將於後續批次實作</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 🦶 Footer -->
+  <footer class="app-footer" role="contentinfo">
+    <p class="footer-text">
+      Supermarket Tracker <span class="version-badge">v0.1.0</span> ·
+      Powered by <span class="tech-badge">TensorFlow.js</span> +
+      <span class="tech-badge">MiniMax VLM</span> +
+      <span class="tech-badge">Cloudflare Tunnel</span>
+    </p>
+  </footer>
+
+  <!-- 📌 Sticky Bottom CTA（B 風格結帳按鈕）-->
+  <div class="sticky-cta">
+    <button class="btn-primary" type="button" aria-label="結帳">
+      <span class="btn-icon" aria-hidden="true">💥</span>
+      結帳 · 開始記帳
+    </button>
+  </div>
+
+  <!-- 📱 底部 Tab Bar -->
+  <nav class="tab-bar" role="navigation" aria-label="主導航">
+    <a href="#" class="tab-item active" aria-current="page">
+      <span class="tab-icon" aria-hidden="true">🏠</span>
+      <span>首頁</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon" aria-hidden="true">🛒</span>
+      <span>購物車</span>
+    </a>
+    <a href="#" class="tab-item tab-fab" aria-label="拍照辨識">
+      <span class="tab-circle" aria-hidden="true">📸</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon" aria-hidden="true">💱</span>
+      <span>匯率</span>
+    </a>
+    <a href="#" class="tab-item">
+      <span class="tab-icon" aria-hidden="true">📊</span>
+      <span>統計</span>
+    </a>
+  </nav>
+
+  <script type="module" src="/js/app.js" defer></script>
+</body>
+</html>

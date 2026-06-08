@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛒 Supermarket Tracker — Mobile UI/UX 預覽</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: "Outfit", "Noto Sans TC", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 40px 16px 80px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 40px; }
+    h1 {
+      font-size: 36px; font-weight: 700;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .subtitle { font-size: 16px; color: #64748b; }
+    .device-toggle {
+      display: inline-flex;
+      background: white;
+      border-radius: 12px;
+      padding: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      margin-top: 16px;
+    }
+    .toggle-btn {
+      padding: 8px 20px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      background: #10b981;
+      color: white;
+    }
+    .intro {
+      max-width: 720px;
+      margin: 20px auto 0;
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      font-size: 14px;
+      line-height: 1.7;
+      color: #475569;
+    }
+    .intro strong { color: #10b981; }
+    .compare-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      margin-bottom: 32px;
+    }
+    .compare-section h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+    th { font-weight: 600; background: #f8fafc; font-size: 12px; }
+    .score { font-weight: 700; color: #10b981; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: all 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+    .card-frame {
+      height: 240px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-frame::before {
+      content: "";
+      position: absolute;
+      top: 20px; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 8px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+    .card-frame::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.08), transparent);
+    }
+    .card-frame.a { background: #F5F2EC; color: #2C2A26; }
+    .card-frame.b { background: #FFD93D; color: #1A1A1A; }
+    .card-frame.c { background: #0A0E1A; color: #00F5FF; }
+    .card-frame.d { background: #FFFFFF; color: #0A1929; border-bottom: 2px solid #0A1929; }
+    .card-frame.e { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); color: white; }
+    .card-frame.f { background: #F4E8D0; color: #3D2817; }
+    .card-frame .phone-mock {
+      width: 100px; height: 200px;
+      border: 3px solid currentColor;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      margin-top: 24px;
+    }
+    .card-content { padding: 16px; }
+    .card-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .card-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+    .card-desc { font-size: 13px; color: #64748b; line-height: 1.5; }
+    .card-meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 11px; margin-top: 8px; }
+    .meta-tag {
+      padding: 2px 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      color: #475569;
+    }
+    .open-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #475569;
+    }
+    .card:hover .open-link { background: #10b981; color: white; }
+    .ux-specs {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      margin-bottom: 32px;
+    }
+    .ux-specs h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+    .spec-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .spec-item {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 12px;
+      border-left: 3px solid #10b981;
+    }
+    .spec-item h4 { font-size: 13px; color: #10b981; margin-bottom: 4px; }
+    .spec-item p { font-size: 12px; color: #475569; line-height: 1.5; }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛒 Supermarket Tracker</h1>
+      <p class="subtitle">Mobile-First UI/UX 風格預覽 · 6 種設計方案</p>
+      <div class="device-toggle">
+        <button class="toggle-btn active">📱 Mobile（首選）</button>
+        <button class="toggle-btn" disabled>🖥️ Desktop（請用瀏覽器裝置模擬）</button>
+      </div>
+      <div class="intro">
+        <strong>所有預覽均為手機版（375-480px 寬度最佳）</strong>。<br>
+        桌面瀏覽器請按 <strong>F12</strong> → 切到「裝置模擬」模式 → 選擇 iPhone 14 Pro 或 375x667 尺寸。<br>
+        每個 HTML 都是 self-contained 單檔，無需後端，可直接用瀏覽器開啟（file://）。
+      </div>
+    </header>
+
+    <div class="ux-specs">
+      <h2>📐 手機版 UX 共通設計規範</h2>
+      <div class="spec-list">
+        <div class="spec-item">
+          <h4>觸控目標 ≥ 48x48px</h4>
+          <p>所有可點擊區域（按鈕、刪除鍵、Tab）最小 48x48px，避免誤觸</p>
+        </div>
+        <div class="spec-item">
+          <h4>基礎字體 16px</h4>
+          <p>避免 iOS Safari 自動縮放，內文至少 16px</p>
+        </div>
+        <div class="spec-item">
+          <h4>底部 Tab Bar（拇指可達區）</h4>
+          <p>4-5 個核心入口永遠固定於底部，單手操作友善</p>
+        </div>
+        <div class="spec-item">
+          <h4>拍照 FAB</h4>
+          <p>中央 Tab 升級為圓形拍照按鈕，凸顯核心動作</p>
+        </div>
+        <div class="spec-item">
+          <h4>Sticky Bottom CTA</h4>
+          <p>「結帳」「加入購物車」等重要動作永遠浮動在底部</p>
+        </div>
+        <div class="spec-item">
+          <h4>Safe Area 適配</h4>
+          <p>支援 iPhone X+ 瀏海（env(safe-area-inset-top/bottom)）</p>
+        </div>
+        <div class="spec-item">
+          <h4>滑動手勢友善</h4>
+          <p>FX 列表顯示「左右滑動切換貨幣」提示</p>
+        </div>
+        <div class="spec-item">
+          <h4>單手操作優先</h4>
+          <p>主要互動集中在螢幕底部 1/3，拇指範圍內</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <a href="a-muji.html" class="card">
+        <div class="card-frame a"><div class="phone-mock">🌾</div></div>
+        <div class="card-content">
+          <span class="card-tag">方案 A · 21/30 分</span>
+          <h3 class="card-title">侘寂無印風</h3>
+          <p class="card-desc">Wabi-Sabi 印章 Tab，米白底，極簡留白</p>
+          <div class="card-meta">
+            <span class="meta-tag">最安全牌</span>
+            <span class="meta-tag">家庭友善</span>
+          </div>
+          <div class="open-link">開啟預覽 →</div>
+        </div>
+      </a>
+
+      <a href="b-brilliant.html" class="card">
+        <div class="card-frame b"><div class="phone-mock">🎨</div></div>
+        <div class="card-content">
+          <span class="card-tag">方案 B · 22/30 分</span>
+          <h3 class="card-title">粗獷歡樂風</h3>
+          <p class="card-desc">Brutalist 大按鈕，硬陰影，爆炸貼紙價格</p>
+          <div class="card-meta">
+            <span class="meta-tag">年輕導向</span>
+            <span class="meta-tag">IG 友善</span>
+          </div>
+          <div class="open-link">開啟預覽 →</div>
+        </div>
+      </a>
+
+      <a href="c-cyberpunk.html" class="card">
+        <div class="card-frame c"><div class="phone-mock">⚡</div></div>
+        <div class="card-content">
+          <span class="card-tag">方案 C · 21/30 分</span>
+          <h3 class="card-title">深色賽博龐克</h3>
+          <p class="card-desc">終端機風格 Tab，霓虹 FAB，矩陣雨背景</p>
+          <div class="card-meta">
+            <span class="meta-tag">科技宅最愛</span>
+            <span class="meta-tag">最具 AI 感</span>
+          </div>
+          <div class="open-link">開啟預覽 →</div>
+        </div>
+      </a>
+
+      <a href="d-editorial.html" class="card">
+        <div class="card-frame d"><div class="phone-mock">📊</div></div>
+        <div class="card-content">
+          <span class="card-tag">方案 D · 18/30 分</span>
+          <h3 class="card-title">商務編輯風</h3>
+          <p class="card-desc">華爾街日報風，襯線字，斑馬紋表格</p>
+          <div class="card-meta">
+            <span class="meta-tag">專業導向</span>
+            <span class="meta-tag">無障礙最佳</span>
+          </div>
+          <div class="open-link">開啟預覽 →</div>
+        </div>
+      </a>
+
+      <a href="e-glassmorphism.html" class="card">
+        <div class="card-frame e"><div class="phone-mock">💎</div></div>
+        <div class="card-content">
+          <span class="card-tag">方案 E · 23/30 分 · 最高分</span>
+          <h3 class="card-title">極光玻璃風</h3>
+          <p class="card-desc">玻璃 Tab Bar，極光漸層，跨幣別儀式感</p>
+          <div class="card-meta">
+            <span class="meta-tag">視覺天花板</span>
+            <span class="meta-tag">都會白領</span>
+          </div>
+          <div class="open-link">開啟預覽 →</div>
+        </div>
+      </a>
+
+      <a href="f-edo.html" class="card">
+        <div class="card-frame f"><div class="phone-mock">📜</div></div>
+        <div class="card-content">
+          <span class="card-tag">方案 F · 22/30 分</span>
+          <h3 class="card-title">江戶朱印帳風</h3>
+          <p class="card-desc">朱印印章 Tab，明信片商品卡，毛筆字總計</p>
+          <div class="card-meta">
+            <span class="meta-tag">文化情感</span>
+            <span class="meta-tag">手帳控</span>
+          </div>
+          <div class="open-link">開啟預覽 →</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="compare-section">
+      <h2>📊 六維度評分對照</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>方案</th>
+            <th>視覺衝擊</th>
+            <th>使用者友善</th>
+            <th>開發複雜度</th>
+            <th>行動適配</th>
+            <th>品牌辨識</th>
+            <th>無障礙</th>
+            <th>總分</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>🌾 A 無印</td><td>3</td><td>4</td><td>2</td><td>5</td><td>4</td><td>3</td><td class="score">21</td></tr>
+          <tr><td>🎨 B 繽紛</td><td>5</td><td>3</td><td>4</td><td>3</td><td>5</td><td>2</td><td class="score">22</td></tr>
+          <tr><td>⚡ C 賽博</td><td>5</td><td>2</td><td>3</td><td>4</td><td>5</td><td>2</td><td class="score">21</td></tr>
+          <tr><td>📊 D 商務</td><td>2</td><td>3</td><td>2</td><td>2</td><td>4</td><td>5</td><td class="score">18</td></tr>
+          <tr><td>💎 E 玻璃</td><td>5</td><td>4</td><td>5</td><td>3</td><td>4</td><td>2</td><td class="score">23</td></tr>
+          <tr><td>📜 F 復古</td><td>4</td><td>3</td><td>3</td><td>4</td><td>5</td><td>3</td><td class="score">22</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <p>Supermarket Tracker UI/UX Mobile Edition v0.1.0 · 2026.06.08</p>
+    </div>
+  </div>
+
+  <!-- 愛太妍 -->
+</body>
+</html>

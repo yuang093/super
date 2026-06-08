@@ -1,0 +1,46 @@
+{
+  "name": "supermarket-tracker",
+  "version": "0.1.0",
+  "description": "AI 影像辨識購物記帳 + 多幣別匯率即時換算 Web App",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --watch src --ext js,json src/server.js",
+    "db:migrate": "node -e \"const {createDatabase, closeDatabase} = require('./src/db/database'); createDatabase(); closeDatabase();\"",
+    "db:reset": "node -e \"const fs = require('fs'); const path = require('path'); const dbPath = process.env.DATABASE_PATH || './data/super.db'; if (fs.existsSync(dbPath)) fs.unlinkSync(dbPath); const walPath = dbPath + '-wal'; const shmPath = dbPath + '-shm'; if (fs.existsSync(walPath)) fs.unlinkSync(walPath); if (fs.existsSync(shmPath)) fs.unlinkSync(shmPath); console.log('✅ 資料庫已重置');\"",
+    "lint": "eslint src/ public/js/ --ext .js",
+    "lint:fix": "eslint src/ public/js/ --ext .js --fix",
+    "format": "prettier --write \"src/**/*.js\" \"public/**/*.{js,css,html}\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"public/**/*.{js,css,html}\""
+  },
+  "keywords": [
+    "supermarket",
+    "expense-tracker",
+    "ai",
+    "vlm",
+    "currency",
+    "exchange-rate",
+    "image-recognition"
+  ],
+  "author": "yuang093",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3"
+  }
+}
