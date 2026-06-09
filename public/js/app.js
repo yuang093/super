@@ -261,7 +261,8 @@ async function handleAddToCart() {
       showToast(`✅ ${data.item.name} 已加入購物車`, 'success')
 
       // 超過 ¥5000 日幣，顯示退稅提示
-      if (data.item.currency === 'JPY' && data.item.price > 5000) {
+      console.log('[App] 退稅檢查', { currency: data.item.currency, price: data.item.price, type: typeof data.item.price })
+      if (data.item.currency === 'JPY' && Number(data.item.price) > 5000) {
         setTimeout(() => {
           showToast('💡 消費超過 ¥5,000，可能符合免稅資格（請保留發票）', 'info')
         }, 100)
