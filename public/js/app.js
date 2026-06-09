@@ -45,8 +45,39 @@ function generateFingerprint() {
 // ============================================================================
 const $ = (id) => document.getElementById(id)
 
+/**
+ * 鎖住所有操作按鈕（防止重複點擊）
+ */
+function lockAllButtons() {
+  const trigger = $('btn-camera-trigger')
+  const gallery = $('input-gallery')
+  const upload = $('input-upload')
+  if (trigger) trigger.disabled = true
+  if (gallery) gallery.disabled = true
+  if (upload) upload.disabled = true
+  document.querySelectorAll('.btn-capture-action').forEach((btn) => {
+    btn.classList.add('btn-disabled')
+  })
+}
+
+/**
+ * 解鎖所有操作按鈕
+ */
+function unlockAllButtons() {
+  const trigger = $('btn-camera-trigger')
+  const gallery = $('input-gallery')
+  const upload = $('input-upload')
+  if (trigger) trigger.disabled = false
+  if (gallery) gallery.disabled = false
+  if (upload) upload.disabled = false
+  document.querySelectorAll('.btn-capture-action').forEach((btn) => {
+    btn.classList.remove('btn-disabled')
+  })
+}
+
 let cart = null
 let currentImageData = null // 目前預覽中的圖片資料
+let isProcessing = false // 是否正在處理中（防止重複點擊）
 
 // ============================================================================
 // 狀態指示器更新
@@ -99,6 +130,12 @@ async function checkHealth() {
 // ============================================================================
 async function handleGallerySelect(file) {
   if (!file) return
+  if (isProcessing) {
+    console.warn('[App] 正在處理中，忽略此次點擊')
+    return
+  }
+  isProcessing = true
+  lockAllButtons()
 
   console.log('[App] handleGallerySelect 收到檔案:', {
     name: file.name,
@@ -134,6 +171,9 @@ async function handleGallerySelect(file) {
     console.error('[App] handleGallerySelect 錯誤:', err)
     hideProgress()
     showToast(err.message || '圖片處理失敗', 'error')
+  } finally {
+    isProcessing = false
+    unlockAllButtons()
   }
 }
 
@@ -142,6 +182,16 @@ async function handleGallerySelect(file) {
 // ============================================================================
 async function handleAddToCart() {
   if (!currentImageData) {
+    console.warn('[App] currentImageData 是空的，無法加入購物車')
+    showToast('請先選擇或拍攝圖片', 'error')
+    return
+  }
+  if (isProcessing) {
+    console.warn('[App] 正在處理中，忽略此次點擊')
+    return
+  }
+  isProcessing = true
+  lockAllButtons()
     console.warn('[App] currentImageData 是空的，無法加入購物車')
     showToast('請先選擇或拍攝圖片', 'error')
     return
@@ -221,6 +271,8 @@ async function handleAddToCart() {
     })
   } finally {
     hideProgress()
+    isProcessing = false
+    unlockAllButtons()
   }
 }
 
@@ -452,6 +504,35 @@ function renderCart() {
     })
   })
 
+  // 價格點擊編輯（contenteditable）
+  listEl.querySelectorAll('.cart-item-price').forEach((priceEl) => {
+    priceEl.setAttribute('contenteditable', 'true')
+    priceEl.setAttribute('title', '點擊編輯價格')
+    priceEl.addEventListener('blur', () => {
+      const itemEl = priceEl.closest('.cart-item')
+      const id = itemEl?.dataset?.id
+      if (!id) return
+      const rawText = priceEl.textContent.replace(/[^0-9.]/g, '')
+      const newPrice = parseFloat(rawText)
+      if (isNaN(newPrice) || newPrice < 0) {
+        // 恢復原本價格
+        const item = cart.getItems().find((i) => i.id === id)
+        if (item) priceEl.textContent = formatPrice(item.price, item.currency)
+        showToast('價格格式不正確', 'error')
+        return
+      }
+      cart.updateItemPrice(id, newPrice)
+      console.log('[App] 價格已更新', { id, newPrice })
+      renderCart()
+    })
+    priceEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        priceEl.blur()
+      }
+    })
+  })
+
   // 渲染總計
   if (summaryEl && summaryRowsEl) {
     if (summary.currencySummaries.length > 0) {
@@ -541,6 +622,7 @@ async function initApp() {
 
   // 訂閱購物車事件（自動更新 UI）
   onCartEvent('cart:item-added', renderCart)
+  onCartEvent('cart:item-updated', renderCart)
   onCartEvent('cart:item-removed', renderCart)
   onCartEvent('cart:cleared', renderCart)
   onCartEvent('cart:loaded', renderCart)

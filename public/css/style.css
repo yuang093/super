@@ -291,6 +291,15 @@ img {
   background: var(--lavender);
 }
 
+/* 按鈕鎖定防誤按（disabled 狀態） */
+.btn-disabled,
+.file-input-hidden:disabled + label {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  user-select: none;
+}
+
 /* 隱藏的 file input（以 label 作為點擊目標）
  * 注意：不可設 pointer-events: none，否則 label 的 for 關聯會失效 */
 .file-input-hidden {
@@ -528,6 +537,20 @@ img {
 .cart-item-price {
   font-weight: 700;
   font-size: 16px;
+  cursor: text;
+  border-bottom: 1px dashed #aaa;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 150ms;
+}
+
+.cart-item-price:hover {
+  background: #fffde7;
+}
+
+.cart-item-price:focus {
+  outline: 3px solid var(--lavender);
+  background: #fffde7;
 }
 
 .btn-item-delete {

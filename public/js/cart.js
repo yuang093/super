@@ -10,6 +10,7 @@
  */
 const CART_EVENTS = {
   ITEM_ADDED: 'cart:item-added',
+  ITEM_UPDATED: 'cart:item-updated',
   ITEM_REMOVED: 'cart:item-removed',
   CART_CLEARED: 'cart:cleared',
   CART_LOADED: 'cart:loaded',
@@ -174,6 +175,25 @@ export class Cart {
   }
 
   /**
+   * 更新單筆商品價格
+   * @param {string} id - 商品 ID
+   * @param {number} newPrice - 新價格
+   * @returns {boolean} - 是否更新成功
+   */
+  updateItemPrice(id, newPrice) {
+    const item = this._items.find((i) => i.id === id)
+    if (!item) {
+      console.warn('[Cart] 找不到要更新的商品', id)
+      return false
+    }
+    item.price = newPrice
+    this._save()
+    emitCartEvent(CART_EVENTS.ITEM_UPDATED, item)
+    console.log('[Cart] 商品價格已更新', { id, newPrice })
+    return true
+  }
+
+  /**
    * 刪除單筆商品
    * @param {string} id - 商品 ID
    * @returns {boolean} - 是否刪除成功
@@ -256,10 +276,21 @@ export class Cart {
    * @returns {number}
    */
   sumTWD() {
-    return this._items.reduce((total, item) => {
+    const result = this._items.reduce((total, item) => {
       const rate = this._rates[item.currency] || 1
-      return total + item.price * rate
+      const converted = item.price * rate
+      console.log('[Cart] sumTWD 計算', {
+        item: item.name,
+        price: item.price,
+        currency: item.currency,
+        rate,
+        converted,
+        runningTotal: total + converted,
+      })
+      return total + converted
     }, 0)
+    console.log('[Cart] sumTWD 最終結果:', result)
+    return result
   }
 
   /**

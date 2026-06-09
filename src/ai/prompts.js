@@ -29,11 +29,13 @@ Analyze the image and return ONLY a valid JSON object (no markdown, no explanati
 }
 
 TRANSLATION RULES:
-- If product name is in Japanese (e.g., リキュレEX+), return: "リキュレEX+ (日本商品翻譯名稱)"
-- If product name is in English (e.g., Vicks VapoRub), return: "Vicks VapoRub (美國薄荷膏)"
-- If product name is in Korean, return: "韓文名 (中文翻譯)"
-- If product name is already in Chinese, keep as-is
-- ALWAYS include Chinese translation in parentheses after the original name
+- 日文 → 繁體中文：草莓→草莓、牛乳→牛乳、面包→麵包
+- 英文 → 繁體中文：Milk→牛奶、Bread→麵包、Coffee→咖啡
+- 韓文 → 繁體中文：우유→牛奶、빵→麵包、커피→咖啡
+- 價格標籤上的數字比品名更準確，請以數字為主
+- 品牌名（SONY、NISSAN、Coca-Cola）不翻譯，只翻譯品名
+- 若原名已含中文翻譯或本身就是中文，保持原樣
+- 外語名稱需附上中文翻譯：「原名 (中文品名)」
 
 RULES:
 1. Return ONLY the JSON object, nothing else

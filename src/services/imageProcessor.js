@@ -71,11 +71,11 @@ async function compressImage(inputBuffer) {
   }
 
   // === 步驟 4：壓縮（resize + JPEG 轉換） ===
+  // 注意：不使用 .rotate()，因為前端 image-pipeline.js 已處理 EXIF 方向修正
+  // 後端若再旋轉會造成重複旋轉或方向錯誤（尤其是 iPhone 直拍圖）
   let compressed
   try {
     compressed = await sharp(inputBuffer)
-      // .rotate() 自動套用 EXIF Orientation（B-03 範圍；F-05 之後做精細方向控制）
-      .rotate()
       .resize({
         width: TARGET_MAX_DIMENSION,
         height: TARGET_MAX_DIMENSION,
