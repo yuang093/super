@@ -66,7 +66,7 @@
             </div>
           </div>
 
-          <!-- 拍照舞台（由 camera.js 動態渲染） -->
+          <!-- 拍照舞台 -->
           <div class="capture-stage" id="capture-stage">
             <!-- 三個操作按鈕 -->
             <div class="capture-buttons" id="capture-buttons">
@@ -75,7 +75,14 @@
                 <span class="btn-icon" aria-hidden="true">📷</span>
                 <span>拍照</span>
               </label>
-              <input type="button" id="btn-camera-trigger" class="file-input-hidden" aria-label="開啟相機" />
+              <input
+                type="file"
+                id="btn-camera-trigger"
+                class="file-input-hidden"
+                accept="image/*"
+                capture="environment"
+                aria-label="開啟相機"
+              />
 
               <!-- 🖼️ 從相簿選取按鈕 -->
               <label class="btn-capture-action btn-capture-alt" for="input-gallery" title="從相簿選擇照片">
@@ -103,9 +110,6 @@
                 aria-label="上傳圖片檔案"
               />
             </div>
-
-            <!-- 隱藏的 file input（由 camera.js 控制，不用 capture 屬性） -->
-            <input type="file" id="file-input-hidden" class="file-input-hidden" accept="image/*" aria-hidden="true" />
 
             <!-- 預覽區塊（F-04 截圖結果） -->
             <div class="capture-preview" id="capture-preview" style="display: none">

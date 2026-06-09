@@ -1,12 +1,12 @@
 // 🤖 public/js/app.js
 // Supermarket Tracker 前端入口（ES Module）
 // 對應 [todo_progress.md F-01 + F-04 + F-05 + F-06]
-// 串接 camera.js、image-pipeline.js、cart.js
+// 串接 image-pipeline.js、cart.js
 
 'use strict'
 
-import { Camera, withCameraErrorHandling } from './camera.js'
-import { Cart, onCartEvent, formatPrice, formatRelativeTime, getDefaultRates } from './cart.js'
+import { Cart, onCartEvent, formatPrice, formatRelativeTime } from './cart.js'
+import { processImageBlob } from './image-pipeline.js'
 
 // ============================================================================
 // 全域應用物件
@@ -19,7 +19,6 @@ const app = {
   state: {
     isOnline: false,
     serverInfo: null,
-    camera: null,
     cart: null,
     fingerprint: generateFingerprint(),
   },
@@ -46,7 +45,6 @@ function generateFingerprint() {
 // ============================================================================
 const $ = (id) => document.getElementById(id)
 
-let camera = null
 let cart = null
 let currentImageData = null // 目前預覽中的圖片資料
 
@@ -96,96 +94,34 @@ async function checkHealth() {
 }
 
 // ============================================================================
-// 拍照按鈕：開啟相機
-// ============================================================================
-async function handleCameraClick() {
-  await withCameraErrorHandling(
-    async () => {
-      showProgress('📷開啟相機中…', 0)
-
-      if (!camera) {
-        camera = new Camera()
-      }
-
-      await camera.start()
-
-      // 隱藏按鈕，顯示提示
-      showProgress('📷 相機已開啟，請按下「拍照」按鈕拍攝商品', 100)
-      setTimeout(() => {
-        hideProgress()
-        // 提示使用者截圖
-        showToast('請拍攝商品或價格標籤')
-      }, 1500)
-    },
-    {
-      onError: (err, msg) => {
-        hideProgress()
-        showToast(msg || '無法開啟相機')
-      },
-    }
-  )
-}
-
-// ============================================================================
 // 相簿選取：從相簿載入圖片
 // ============================================================================
 async function handleGallerySelect(file) {
   if (!file) return
 
-  await withCameraErrorHandling(
-    async () => {
-      showProgress('🖼️ 處理圖片中…', 30)
+  try {
+    showProgress('🖼️ 處理圖片中…', 30)
 
-      if (!camera) {
-        camera = new Camera()
-      }
-
-      const result = await camera.loadFromFile(file)
-      currentImageData = result
-
-      showProgress('🖼️ 圖片已載入', 100)
-      showPreview(result)
-    },
-    {
-      onError: (err, msg) => {
-        hideProgress()
-        showToast(msg || '圖片處理失敗')
-      },
+    const result = await processImageBlob(file)
+    currentImageData = {
+      blob: file,
+      base64: result.base64,
+      width: result.width,
+      height: result.height,
+      bytes: result.bytes,
     }
-  )
+
+    showProgress('🖼️ 圖片已載入', 100)
+    showPreview(currentImageData)
+  } catch (err) {
+    hideProgress()
+    showToast(err.message || '圖片處理失敗')
+  }
 }
 
 // ============================================================================
 // 拍照截圖
 // ============================================================================
-async function handleCapture() {
-  if (!camera || !camera.isActive()) {
-    showToast('請先開啟相機')
-    return
-  }
-
-  await withCameraErrorHandling(
-    async () => {
-      showProgress('📸 拍攝中…', 50)
-
-      const result = await camera.capture()
-      currentImageData = result
-
-      showProgress('📸 拍攝完成', 100)
-      showPreview(result)
-
-      // 停止相機
-      camera.stop()
-    },
-    {
-      onError: (err, msg) => {
-        hideProgress()
-        showToast(msg || '拍攝失敗')
-      },
-    }
-  )
-}
-
 // ============================================================================
 // 加入購物車
 // ============================================================================
@@ -333,7 +269,7 @@ function hideProgress() {
 /**
  * 顯示辨識結果
  */
-function showResult({ success, item, error, vlm }) {
+function showResult({ success, item, error }) {
   const result = $('capture-result')
   if (!result) return
 
@@ -567,9 +503,6 @@ async function initApp() {
     }
   }, app.config.healthcheckInterval)
 
-  // 初始化相機實例
-  camera = new Camera()
-
   // 渲染初始 UI
   renderCart()
 
@@ -580,10 +513,13 @@ async function initApp() {
   //事件綁定
   // ============================================================================
 
-  // 📷拍照按鈕：開啟相機
+  // 📷拍照按鈕：HTML5 原生相機（change 事件觸發）
   const btnCameraTrigger = $('btn-camera-trigger')
   if (btnCameraTrigger) {
-    btnCameraTrigger.addEventListener('click', handleCameraClick)
+    btnCameraTrigger.addEventListener('change', (e) => {
+      const file = e.target.files?.[0]
+      if (file) handleGallerySelect(file)
+    })
   }
 
   // 🖼️ 相簿選取
@@ -608,9 +544,6 @@ async function initApp() {
   const btnRetake = $('btn-retake')
   if (btnRetake) {
     btnRetake.addEventListener('click', () => {
-      if (camera && camera.isActive()) {
-        camera.stop()
-      }
       resetPreview()
       hideProgress()
     })

@@ -4,7 +4,6 @@
 
 'use strict'
 
-import { Camera } from './camera.js'
 import { uploadImage } from './uploadService.js'
 
 /**
