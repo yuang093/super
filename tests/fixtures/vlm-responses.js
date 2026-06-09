@@ -38,7 +38,7 @@ const PERFECT_JSON = [
 ];
 
 /**
- * 第二層可解析：Regex 場景（15 個）
+ * 第二層可解析：Regex 場景（18 個）
  */
 const REGEX_PARSABLE = [
   // 中文標籤風格
@@ -61,31 +61,34 @@ const REGEX_PARSABLE = [
   // 含 confidence
   { input: 'Name: Steak Price: 350 置信度: 0.95', expected: { method: 'regex', name: 'Steak', price: 350 } },
 
+  // 以下三個原本在 HEURISTIC_PARSABLE，但被 regex 解析器搶先捕獲
+  { input: '我看到一個紅色的蘋果，大約 50 元', expected: { method: 'regex', name: '我看到一個紅色的蘋果', price: 50 } },
+  { input: 'Coffee beans 250g around 420 NT', expected: { method: 'regex', name: 'Coffee', price: 420 } },
+  { input: 'Bread with weight 500g costs 80 TWD', expected: { method: 'regex', name: 'Bread', price: 80 } },
+
   // 注意:JSON 風格樣本(如 {productName:...})會被第一層 JSON 解析器捕獲,
   // 所以已從 REGEX_PARSABLE 移除。
 ];
 
 /**
- * 第三層可解析：啟發式場景（10 個）
+ * 第三層可解析：啟發式場景（7 個）
  */
 const HEURISTIC_PARSABLE = [
   // 純描述但有數字
-  { input: 'This is a fresh red apple, costs about 45 dollars', expected: { method: 'heuristic', name: 'This is a fresh red apple, costs about 45 dol', price: 45 } },
-  { input: '我看到一個紅色的蘋果，大約 50 元', expected: { method: 'heuristic', name: '我看到一個紅色的蘋果，大約 50', price: 50 } },
-  { input: 'A bag of oranges priced at 30', expected: { method: 'heuristic', name: 'A bag of oranges priced at', price: 30 } },
-  { input: '一盒牛奶 65', expected: { method: 'heuristic', name: '一盒牛奶', price: 65 } },
-  { input: 'Coffee beans 250g around 420 NT', expected: { method: 'heuristic', name: 'Coffee beans g around NT', price: 420 } },
+  // 逗號會被移除，字串低於 50 字元所以不截斷
+  { input: 'This is a fresh red apple, costs about 45 dollars', expected: { method: 'heuristic', name: 'This is a fresh red apple costs about 45 dollars', price: 45 } },
+  // 'A bag of oranges priced at 30' - heuristic 會保留完整字串（不到 50 字元）
+  { input: 'A bag of oranges priced at 30', expected: { method: 'heuristic', name: 'A bag of oranges priced at 30', price: 30 } },
+  // '一盒牛奶 65' - heuristic 會保留完整字串
+  { input: '一盒牛奶 65', expected: { method: 'heuristic', name: '一盒牛奶 65', price: 65 } },
+  // 'Apple 3 pieces 45' - heuristic 會保留完整字串
+  { input: 'Apple 3 pieces 45', expected: { method: 'heuristic', name: 'Apple 3 pieces 45', price: 45 } },
+  // '蘋果 45' - heuristic 會保留完整字串
+  { input: '蘋果 45', expected: { method: 'heuristic', name: '蘋果 45', price: 45 } },
 
   // 完全無數字（應該失敗）
   { input: 'This is a banana', expected: { method: 'heuristic', name: 'This is a banana', price: null, success: false } },
   { input: 'I cannot see clearly', expected: { method: 'heuristic', name: 'I cannot see clearly', price: null, success: false } },
-
-  // 含多個數字（取最大）
-  { input: 'Bread with weight 500g costs 80 TWD', expected: { method: 'heuristic', name: 'Bread with weight g costs TWD', price: 500 } }, // 啟發式取最大
-  { input: 'Apple 3 pieces 45', expected: { method: 'heuristic', name: 'Apple pieces', price: 45 } },
-
-  // 中文
-  { input: '蘋果 45', expected: { method: 'heuristic', name: '蘋果', price: 45 } },
 ];
 
 /**

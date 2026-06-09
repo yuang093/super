@@ -17,8 +17,10 @@ function createCorsMiddleware(env) {
   // 預設僅允許 localhost 三種埠號（開發友善）
   const defaultOrigins = [
     'http://localhost:3000',
+    'http://localhost:3001',
     'http://localhost:5173',
     'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
   ];
 
   const allowedOrigins = env.CORS_ORIGINS

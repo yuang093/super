@@ -18,39 +18,31 @@ function createHelmetMiddleware(env) {
   logger.debug('🛡️ Helmet 安全標頭設定', { isProduction });
 
   return helmet({
-    contentSecurityPolicy: {
-      // 使用 useDefaults: false 完全控制 CSP，避免 helmet 預設覆蓋
-      useDefaults: false,
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: isProduction
-          ? ["'self'", 'https://cdn.jsdelivr.net']
-          : ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'],
-        scriptSrcElem: isProduction
-          ? ["'self'", 'https://cdn.jsdelivr.net']
-          : ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://cdn.jsdelivr.net'],
-        scriptSrcAttr: ["'none'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        styleSrcElem: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-        connectSrc: [
-          "'self'",
-          'https://api.minimax.io',
-          'https://api.exchangerate-api.com',
-          'https://cdn.jsdelivr.net',
-          'https://tfhub.dev',
-          'https://storage.googleapis.com',
-        ],
-        fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
-        objectSrc: ["'none'"],
-        frameAncestors: ["'none'"],
-        baseUri: ["'self'"],
-        formAction: ["'self'"],
-        upgradeInsecureRequests: [],
-      },
-    },
+    // 在 development 模式下禁用 CSP（方便除錯），production 使用嚴格 CSP
+    contentSecurityPolicy: isProduction
+      ? {
+          useDefaults: false,
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+            scriptSrcElem: ["'self'", 'https://cdn.jsdelivr.net'],
+            scriptSrcAttr: ["'none'"],
+            styleSrc: ["'self'", 'https://fonts.googleapis.com'],
+            styleSrcElem: ["'self'", 'https://fonts.googleapis.com'],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+            connectSrc: ["'self'", 'https://api.minimax.io', 'https://api.exchangerate-api.com', 'https://cdn.jsdelivr.net', 'https://tfhub.dev', 'https://storage.googleapis.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            objectSrc: ["'none'"],
+            frameAncestors: ["'none'"],
+            baseUri: ["'self'"],
+            formAction: ["'self'"],
+            upgradeInsecureRequests: [],
+          },
+        }
+      : false, // development: 禁用 CSP
     crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: isProduction ? { policy: 'same-origin' } : false,
+    crossOriginResourcePolicy: false, // 禁用 CORP，讓瀏覽器自行決定
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   });
 }

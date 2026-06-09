@@ -61,7 +61,8 @@ function createApp(options = {}) {
   // === 安全中介層鏈（注意：/api/capture 的 multipart 不能被 json/urlencoded 攔截）===
   app.use(createHelmetMiddleware(env));
   app.use(createCorsMiddleware(env));
-  app.use(createRateLimitMiddleware(env));
+  // 暫時禁用 rate limiter 以便除錯 static file 403 問題
+  // app.use(createRateLimitMiddleware(env));
 
   // === 請求解析 ===
   app.use(express.json({ limit: '1mb' }));

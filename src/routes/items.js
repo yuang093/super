@@ -8,7 +8,7 @@
 
 const express = require('express');
 
-const { ItemRepository } = require('../db/repositories/itemRepository');
+const ItemRepository = require('../db/repositories/itemRepository');
 const { getDatabase } = require('../db/database');
 const logger = require('../utils/logger');
 const { AppError } = require('../middleware/errorHandler');

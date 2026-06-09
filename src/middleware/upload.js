@@ -32,9 +32,9 @@ function createUploadMiddleware(options = {}) {
 
   const storage = multer.memoryStorage();
 
-  return multer({
+  const uploader = multer({
     storage,
-    limits: { fileSize: maxSize, files: 1 },
+    limits: { fileSize: maxSize },
     fileFilter: (req, file, cb) => {
       if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
         logger.warn('⚠️ 不支援的 MIME 類型', { mimetype: file.mimetype, allowed: ALLOWED_MIME_TYPES });
@@ -46,7 +46,10 @@ function createUploadMiddleware(options = {}) {
       }
       cb(null, true);
     },
-  })[fieldName];
+  });
+
+  // 回傳單一檔案中介層（.single() 返回函式）
+  return uploader.single(fieldName);
 }
 
 module.exports = {
