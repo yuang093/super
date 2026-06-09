@@ -53,6 +53,9 @@ const envSchema = z.object({
   // Cloudflare Tunnel
   CLOUDFLARE_TUNNEL_TOKEN: z.string().min(1, 'CLOUDFLARE_TUNNEL_TOKEN 不可為空'),
   TUNNEL_HOSTNAME: z.string().default('sm.yuang093.cc'),
+
+  // CORS
+  CORS_ORIGINS: z.string().default(''),
 })
 
 /**

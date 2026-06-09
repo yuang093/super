@@ -1,53 +1,105 @@
-root@localhost:/opt/super# docker compose logs --tail=50 app
+root@localhost:/opt/super# docker compose logs --tail=30 app
 WARN[0000] /opt/super/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
-super-app  | {"timestamp":"2026-06-09T12:00:19.363Z","level":"info","message":"📥 HTTP 請求","requestId":"torab8pa","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:00:49.487Z","level":"info","message":"📥 HTTP 請求","requestId":"znzxkz46","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:01:19.545Z","level":"info","message":"📥 HTTP 請求","requestId":"n0mu5cli","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:01:49.607Z","level":"info","message":"📥 HTTP 請求","requestId":"5opv4vg1","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:02:19.657Z","level":"info","message":"📥 HTTP 請求","requestId":"4z5iszuj","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:02:49.722Z","level":"info","message":"📥 HTTP 請求","requestId":"g7d2t924","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:03:19.770Z","level":"info","message":"📥 HTTP 請求","requestId":"6ofncl04","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:03:49.839Z","level":"info","message":"📥 HTTP 請求","requestId":"3ebm20d2","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:04:19.896Z","level":"info","message":"📥 HTTP 請求","requestId":"v75hq6i6","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:04:49.962Z","level":"info","message":"📥 HTTP 請求","requestId":"dgcc3j1t","method":"HEAD","path":"/healthz","status":200,"durationMs":0}
-super-app  | {"timestamp":"2026-06-09T12:05:20.013Z","level":"info","message":"📥 HTTP 請求","requestId":"lrra262i","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:05:50.081Z","level":"info","message":"📥 HTTP 請求","requestId":"s089rcsy","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:06:20.131Z","level":"info","message":"📥 HTTP 請求","requestId":"3r8xya0d","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:06:50.179Z","level":"info","message":"📥 HTTP 請求","requestId":"rmj0jt9v","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:07:20.259Z","level":"info","message":"📥 HTTP 請求","requestId":"n5qz7l8d","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:07:50.309Z","level":"info","message":"📥 HTTP 請求","requestId":"4rz3fj8p","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:08:20.361Z","level":"info","message":"📥 HTTP 請求","requestId":"0vl5y1mq","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:08:50.417Z","level":"info","message":"📥 HTTP 請求","requestId":"pfrtmvtv","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:09:20.480Z","level":"info","message":"📥 HTTP 請求","requestId":"o3ecpys9","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:09:50.543Z","level":"info","message":"📥 HTTP 請求","requestId":"tkapvhr0","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:10:20.595Z","level":"info","message":"📥 HTTP 請求","requestId":"79uiepcb","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:10:50.645Z","level":"info","message":"📥 HTTP 請求","requestId":"sp43yuf6","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:11:20.708Z","level":"info","message":"📥 HTTP 請求","requestId":"uzxyfmab","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:11:50.774Z","level":"info","message":"📥 HTTP 請求","requestId":"cw79so82","method":"HEAD","path":"/healthz","status":200,"durationMs":0}
-super-app  | {"timestamp":"2026-06-09T12:12:20.841Z","level":"info","message":"📥 HTTP 請求","requestId":"9c226fug","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:12:50.917Z","level":"info","message":"📥 HTTP 請求","requestId":"69v773s1","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:13:20.986Z","level":"info","message":"📥 HTTP 請求","requestId":"jyjjhpfd","method":"HEAD","path":"/healthz","status":200,"durationMs":0}
-super-app  | {"timestamp":"2026-06-09T12:13:51.041Z","level":"info","message":"📥 HTTP 請求","requestId":"qv6qsekd","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:14:21.114Z","level":"info","message":"📥 HTTP 請求","requestId":"yejwkze8","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:14:51.169Z","level":"info","message":"📥 HTTP 請求","requestId":"8nldcvf6","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:15:21.240Z","level":"info","message":"📥 HTTP 請求","requestId":"lz0eb5gi","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:15:51.290Z","level":"info","message":"📥 HTTP 請求","requestId":"cuthb7qc","method":"HEAD","path":"/healthz","status":200,"durationMs":0}
-super-app  | {"timestamp":"2026-06-09T12:16:21.341Z","level":"info","message":"📥 HTTP 請求","requestId":"nt2f32rm","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:16:51.391Z","level":"info","message":"📥 HTTP 請求","requestId":"6hnqintn","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:17:21.463Z","level":"info","message":"📥 HTTP 請求","requestId":"y3szlygz","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:17:51.531Z","level":"info","message":"📥 HTTP 請求","requestId":"x01bfg1x","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:18:21.599Z","level":"info","message":"📥 HTTP 請求","requestId":"nfwlb4ua","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:18:51.669Z","level":"info","message":"📥 HTTP 請求","requestId":"711sse5r","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:19:21.726Z","level":"info","message":"📥 HTTP 請求","requestId":"hhuwv6e0","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:19:51.773Z","level":"info","message":"📥 HTTP 請求","requestId":"jzey54m7","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:20:21.826Z","level":"info","message":"📥 HTTP 請求","requestId":"t70tyihr","method":"HEAD","path":"/healthz","status":200,"durationMs":0}
-super-app  | {"timestamp":"2026-06-09T12:20:51.890Z","level":"info","message":"📥 HTTP 請求","requestId":"ge3l08q7","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:21:21.942Z","level":"info","message":"📥 HTTP 請求","requestId":"jwjvuidr","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:21:52.120Z","level":"info","message":"📥 HTTP 請求","requestId":"1v40w1ln","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:22:22.191Z","level":"info","message":"📥 HTTP 請求","requestId":"gmpocjyn","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:22:52.241Z","level":"info","message":"📥 HTTP 請求","requestId":"jeqkr4yg","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:23:22.312Z","level":"info","message":"📥 HTTP 請求","requestId":"jibhw5h2","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:23:52.382Z","level":"info","message":"📥 HTTP 請求","requestId":"nfkvewyd","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T12:24:22.453Z","level":"info","message":"📥 HTTP 請求","requestId":"ykrkohbv","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T12:24:52.522Z","level":"info","message":"📥 HTTP 請求","requestId":"q5v74vjl","method":"HEAD","path":"/healthz","status":200,"durationMs":0}
+super-app  | {"timestamp":"2026-06-09T14:28:31.791Z","level":"info","message":"📥 HTTP 請求","requestId":"xxb3nc0t","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:32.951Z","level":"info","message":"📥 HTTP 請求","requestId":"2q8wmplr","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:35.206Z","level":"info","message":"📡 收到 SIGTERM 信號，準備關閉伺服器","signal":"SIGTERM"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.210Z","level":"info","message":"🗄️ SQLite 連線已關閉"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.210Z","level":"info","message":"✅ 伺服器與資料庫已關閉"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.787Z","level":"info","message":"🚀 Supermarket Tracker 啟動中","env":"production","port":3000,"nodeVersion":"v20.20.2"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.791Z","level":"info","message":"🗄️ SQLite 連線建立","path":"/data/super.db","mode":"WAL","busyTimeoutMs":5000}
+super-app  | {"timestamp":"2026-06-09T14:28:35.792Z","level":"info","message":"🗄️ 所有 migrations 已套用，無需更新","total":2}
+super-app  | {"timestamp":"2026-06-09T14:28:35.798Z","level":"info","message":"✅ HTTP 伺服器已啟動","url":"http://localhost:3000","healthcheck":"http://localhost:3000/healthz"}
+super-app  | {"timestamp":"2026-06-09T14:28:38.326Z","level":"info","message":"📥 HTTP 請求","requestId":"ujgyplq9","method":"GET","path":"/","status":200,"durationMs":8}
+super-app  | {"timestamp":"2026-06-09T14:28:38.540Z","level":"info","message":"📥 HTTP 請求","requestId":"hc0e48p7","method":"GET","path":"/css/style.css","status":200,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T14:28:38.553Z","level":"info","message":"📥 HTTP 請求","requestId":"ci30w9n3","method":"GET","path":"/js/app.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:38.780Z","level":"info","message":"📥 HTTP 請求","requestId":"fdqfgxqp","method":"GET","path":"/js/cart.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:38.783Z","level":"info","message":"📥 HTTP 請求","requestId":"vqcws7rk","method":"GET","path":"/js/image-pipeline.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:39.400Z","level":"info","message":"💱 匯率已從 API 更新","baseCurrency":"USD","rates":["USD","AED","AFN","ALL","AMD","ANG","AOA","ARS","AUD","AWG","AZN","BAM","BBD","BDT","BGN","BHD","BIF","BMD","BND","BOB","BRL","BSD","BTN","BWP","BYN","BZD","CAD","CDF","CHF","CLF","CLP","CNH","CNY","COP","CRC","CUP","CVE","CZK","DJF","DKK","DOP","DZD","EGP","ERN","ETB","EUR","FJD","FKP","FOK","GBP","GEL","GGP","GHS","GIP","GMD","GNF","GTQ","GYD","HKD","HNL","HRK","HTG","HUF","IDR","ILS","IMP","INR","IQD","IRR","ISK","JEP","JMD","JOD","JPY","KES","KGS","KHR","KID","KMF","KRW","KWD","KYD","KZT","LAK","LBP","LKR","LRD","LSL","LYD","MAD","MDL","MGA","MKD","MMK","MNT","MOP","MRU","MUR","MVR","MWK","MXN","MYR","MZN","NAD","NGN","NIO","NOK","NPR","NZD","OMR","PAB","PEN","PGK","PHP","PKR","PLN","PYG","QAR","RON","RSD","RUB","RWF","SAR","SBD","SCR","SDG","SEK","SGD","SHP","SLE","SLL","SOS","SRD","SSP","STN","SYP","SZL","THB","TJS","TMT","TND","TOP","TRY","TTD","TVD","TWD","TZS","UAH","UGX","UYU","UZS","VES","VND","VUV","WST","XAF","XCD","XCG","XDR","XOF","XPF","YER","ZAR","ZMW","ZWG","ZWL"]}
+super-app  | {"timestamp":"2026-06-09T14:28:39.405Z","level":"info","message":"📥 HTTP 請求","requestId":"ln7k7k4x","method":"GET","path":"/rates","status":200,"durationMs":429}
+super-app  | {"timestamp":"2026-06-09T14:28:39.814Z","level":"info","message":"📥 HTTP 請求","requestId":"04mrnyox","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:40.549Z","level":"info","message":"📥 HTTP 請求","requestId":"tz7grmsg","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:40.624Z","level":"info","message":"📥 HTTP 請求","requestId":"nfgc6uz9","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:28:41.138Z","level":"warn","message":"🚫 CORS 拒絕來源","origin":"https://sm.yuang093.cc"}
+super-app  | {"timestamp":"2026-06-09T14:28:41.139Z","level":"error","message":"💥 未預期錯誤","requestId":"g64tx8c8","method":"POST","path":"/api/capture","status":403,"code":"CORS_BLOCKED","error":"CORS 政策不允許來源：https://sm.yuang093.cc","stack":"Error: CORS 政策不允許來源：https://sm.yuang093.cc\n    at origin (/app/src/middleware/cors.js:45:18)\n    at /app/node_modules/cors/lib/index.js:219:13\n    at optionsCallback (/app/node_modules/cors/lib/index.js:199:9)\n    at corsMiddleware (/app/node_modules/cors/lib/index.js:204:7)\n    at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/app/node_modules/express/lib/router/index.js:328:13)\n    at /app/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/app/node_modules/express/lib/router/index.js:346:12)\n    at next (/app/node_modules/express/lib/router/index.js:280:10)\n    at internalNext (/app/node_modules/helmet/index.cjs:537:6)"}
+super-app  | {"timestamp":"2026-06-09T14:28:41.140Z","level":"info","message":"📥 HTTP 請求","requestId":"g64tx8c8","method":"POST","path":"/api/capture","status":403,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T14:28:49.148Z","level":"info","message":"📥 HTTP 請求","requestId":"r5qbsld1","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:56.216Z","level":"info","message":"📥 HTTP 請求","requestId":"3xoimp6z","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:00.486Z","level":"info","message":"📥 HTTP 請求","requestId":"kdx793t5","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:04.282Z","level":"info","message":"📥 HTTP 請求","requestId":"ejc2rbm2","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:09.667Z","level":"info","message":"📥 HTTP 請求","requestId":"e516drrg","method":"GET","path":"/healthz","status":200,"durationMs":4}
+super-app  | {"timestamp":"2026-06-09T14:29:09.912Z","level":"info","message":"📥 HTTP 請求","requestId":"7rnr87pd","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:10.675Z","level":"info","message":"📥 HTTP 請求","requestId":"5kyimynu","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:10.922Z","level":"info","message":"📥 HTTP 請求","requestId":"1aakhlcz","method":"GET","path":"/healthz","status":200,"durationMs":2}
+root@localhost:/opt/super# 
+
+oot@localhost:/opt/super# docker exec super-app env | grep CORS
+CORS_ORIGINS=https://sm.yuang093.cc
+root@localhost:/opt/super# docker compose logs app
+WARN[0000] /opt/super/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+super-app  | {"timestamp":"2026-06-09T14:27:27.986Z","level":"info","message":"🚀 Supermarket Tracker 啟動中","env":"production","port":3000,"nodeVersion":"v20.20.2"}
+super-app  | {"timestamp":"2026-06-09T14:27:27.990Z","level":"info","message":"🗄️ SQLite 連線建立","path":"/data/super.db","mode":"WAL","busyTimeoutMs":5000}
+super-app  | {"timestamp":"2026-06-09T14:27:27.991Z","level":"info","message":"🗄️ 所有 migrations 已套用，無需更新","total":2}
+super-app  | {"timestamp":"2026-06-09T14:27:27.996Z","level":"info","message":"✅ HTTP 伺服器已啟動","url":"http://localhost:3000","healthcheck":"http://localhost:3000/healthz"}
+super-app  | {"timestamp":"2026-06-09T14:27:32.841Z","level":"info","message":"📥 HTTP 請求","requestId":"9geru4ns","method":"HEAD","path":"/healthz","status":200,"durationMs":16}
+super-app  | {"timestamp":"2026-06-09T14:27:37.289Z","level":"info","message":"📥 HTTP 請求","requestId":"wa8kt62l","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:27:40.263Z","level":"info","message":"📥 HTTP 請求","requestId":"tzo39uoo","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:27:46.540Z","level":"info","message":"📥 HTTP 請求","requestId":"9ny1w5t1","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:27:53.199Z","level":"info","message":"📥 HTTP 請求","requestId":"cxnk7ut5","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:27:59.261Z","level":"info","message":"📥 HTTP 請求","requestId":"msbpfuw6","method":"GET","path":"/","status":200,"durationMs":4}
+super-app  | {"timestamp":"2026-06-09T14:27:59.280Z","level":"info","message":"📥 HTTP 請求","requestId":"n6evk3jm","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:27:59.612Z","level":"info","message":"📥 HTTP 請求","requestId":"03ug85d6","method":"GET","path":"/css/style.css","status":200,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T14:27:59.640Z","level":"info","message":"📥 HTTP 請求","requestId":"mh9kknes","method":"GET","path":"/js/app.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:27:59.991Z","level":"info","message":"📥 HTTP 請求","requestId":"ccjvrryh","method":"GET","path":"/js/cart.js","status":200,"durationMs":4}
+super-app  | {"timestamp":"2026-06-09T14:27:59.993Z","level":"info","message":"📥 HTTP 請求","requestId":"liofmsnp","method":"GET","path":"/js/image-pipeline.js","status":200,"durationMs":4}
+super-app  | {"timestamp":"2026-06-09T14:28:00.625Z","level":"info","message":"💱 匯率已從 API 更新","baseCurrency":"USD","rates":["USD","AED","AFN","ALL","AMD","ANG","AOA","ARS","AUD","AWG","AZN","BAM","BBD","BDT","BGN","BHD","BIF","BMD","BND","BOB","BRL","BSD","BTN","BWP","BYN","BZD","CAD","CDF","CHF","CLF","CLP","CNH","CNY","COP","CRC","CUP","CVE","CZK","DJF","DKK","DOP","DZD","EGP","ERN","ETB","EUR","FJD","FKP","FOK","GBP","GEL","GGP","GHS","GIP","GMD","GNF","GTQ","GYD","HKD","HNL","HRK","HTG","HUF","IDR","ILS","IMP","INR","IQD","IRR","ISK","JEP","JMD","JOD","JPY","KES","KGS","KHR","KID","KMF","KRW","KWD","KYD","KZT","LAK","LBP","LKR","LRD","LSL","LYD","MAD","MDL","MGA","MKD","MMK","MNT","MOP","MRU","MUR","MVR","MWK","MXN","MYR","MZN","NAD","NGN","NIO","NOK","NPR","NZD","OMR","PAB","PEN","PGK","PHP","PKR","PLN","PYG","QAR","RON","RSD","RUB","RWF","SAR","SBD","SCR","SDG","SEK","SGD","SHP","SLE","SLL","SOS","SRD","SSP","STN","SYP","SZL","THB","TJS","TMT","TND","TOP","TRY","TTD","TVD","TWD","TZS","UAH","UGX","UYU","UZS","VES","VND","VUV","WST","XAF","XCD","XCG","XDR","XOF","XPF","YER","ZAR","ZMW","ZWG","ZWL"]}
+super-app  | {"timestamp":"2026-06-09T14:28:00.628Z","level":"info","message":"📥 HTTP 請求","requestId":"kgemp8bq","method":"GET","path":"/rates","status":200,"durationMs":425}
+super-app  | {"timestamp":"2026-06-09T14:28:02.368Z","level":"warn","message":"🚫 CORS 拒絕來源","origin":"https://sm.yuang093.cc"}
+super-app  | {"timestamp":"2026-06-09T14:28:02.369Z","level":"error","message":"💥 未預期錯誤","requestId":"qvmwrj6q","method":"POST","path":"/api/capture","status":403,"code":"CORS_BLOCKED","error":"CORS 政策不允許來源：https://sm.yuang093.cc","stack":"Error: CORS 政策不允許來源：https://sm.yuang093.cc\n    at origin (/app/src/middleware/cors.js:45:18)\n    at /app/node_modules/cors/lib/index.js:219:13\n    at optionsCallback (/app/node_modules/cors/lib/index.js:199:9)\n    at corsMiddleware (/app/node_modules/cors/lib/index.js:204:7)\n    at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/app/node_modules/express/lib/router/index.js:328:13)\n    at /app/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/app/node_modules/express/lib/router/index.js:346:12)\n    at next (/app/node_modules/express/lib/router/index.js:280:10)\n    at internalNext (/app/node_modules/helmet/index.cjs:537:6)"}
+super-app  | {"timestamp":"2026-06-09T14:28:02.370Z","level":"info","message":"📥 HTTP 請求","requestId":"qvmwrj6q","method":"POST","path":"/api/capture","status":403,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:02.894Z","level":"info","message":"📥 HTTP 請求","requestId":"hh9a2g8s","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:28:07.322Z","level":"info","message":"📥 HTTP 請求","requestId":"ucjq0vjr","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:10.398Z","level":"info","message":"📥 HTTP 請求","requestId":"igk81gom","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:28:19.010Z","level":"info","message":"📥 HTTP 請求","requestId":"nb0d6yot","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:23.736Z","level":"info","message":"📥 HTTP 請求","requestId":"5pmbz05i","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:28:30.453Z","level":"info","message":"📥 HTTP 請求","requestId":"zbx8p5me","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:28:31.791Z","level":"info","message":"📥 HTTP 請求","requestId":"xxb3nc0t","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:32.951Z","level":"info","message":"📥 HTTP 請求","requestId":"2q8wmplr","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:35.206Z","level":"info","message":"📡 收到 SIGTERM 信號，準備關閉伺服器","signal":"SIGTERM"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.210Z","level":"info","message":"🗄️ SQLite 連線已關閉"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.210Z","level":"info","message":"✅ 伺服器與資料庫已關閉"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.787Z","level":"info","message":"🚀 Supermarket Tracker 啟動中","env":"production","port":3000,"nodeVersion":"v20.20.2"}
+super-app  | {"timestamp":"2026-06-09T14:28:35.791Z","level":"info","message":"🗄️ SQLite 連線建立","path":"/data/super.db","mode":"WAL","busyTimeoutMs":5000}
+super-app  | {"timestamp":"2026-06-09T14:28:35.792Z","level":"info","message":"🗄️ 所有 migrations 已套用，無需更新","total":2}
+super-app  | {"timestamp":"2026-06-09T14:28:35.798Z","level":"info","message":"✅ HTTP 伺服器已啟動","url":"http://localhost:3000","healthcheck":"http://localhost:3000/healthz"}
+super-app  | {"timestamp":"2026-06-09T14:28:38.326Z","level":"info","message":"📥 HTTP 請求","requestId":"ujgyplq9","method":"GET","path":"/","status":200,"durationMs":8}
+super-app  | {"timestamp":"2026-06-09T14:28:38.540Z","level":"info","message":"📥 HTTP 請求","requestId":"hc0e48p7","method":"GET","path":"/css/style.css","status":200,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T14:28:38.553Z","level":"info","message":"📥 HTTP 請求","requestId":"ci30w9n3","method":"GET","path":"/js/app.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:38.780Z","level":"info","message":"📥 HTTP 請求","requestId":"fdqfgxqp","method":"GET","path":"/js/cart.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:38.783Z","level":"info","message":"📥 HTTP 請求","requestId":"vqcws7rk","method":"GET","path":"/js/image-pipeline.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:39.400Z","level":"info","message":"💱 匯率已從 API 更新","baseCurrency":"USD","rates":["USD","AED","AFN","ALL","AMD","ANG","AOA","ARS","AUD","AWG","AZN","BAM","BBD","BDT","BGN","BHD","BIF","BMD","BND","BOB","BRL","BSD","BTN","BWP","BYN","BZD","CAD","CDF","CHF","CLF","CLP","CNH","CNY","COP","CRC","CUP","CVE","CZK","DJF","DKK","DOP","DZD","EGP","ERN","ETB","EUR","FJD","FKP","FOK","GBP","GEL","GGP","GHS","GIP","GMD","GNF","GTQ","GYD","HKD","HNL","HRK","HTG","HUF","IDR","ILS","IMP","INR","IQD","IRR","ISK","JEP","JMD","JOD","JPY","KES","KGS","KHR","KID","KMF","KRW","KWD","KYD","KZT","LAK","LBP","LKR","LRD","LSL","LYD","MAD","MDL","MGA","MKD","MMK","MNT","MOP","MRU","MUR","MVR","MWK","MXN","MYR","MZN","NAD","NGN","NIO","NOK","NPR","NZD","OMR","PAB","PEN","PGK","PHP","PKR","PLN","PYG","QAR","RON","RSD","RUB","RWF","SAR","SBD","SCR","SDG","SEK","SGD","SHP","SLE","SLL","SOS","SRD","SSP","STN","SYP","SZL","THB","TJS","TMT","TND","TOP","TRY","TTD","TVD","TWD","TZS","UAH","UGX","UYU","UZS","VES","VND","VUV","WST","XAF","XCD","XCG","XDR","XOF","XPF","YER","ZAR","ZMW","ZWG","ZWL"]}
+super-app  | {"timestamp":"2026-06-09T14:28:39.405Z","level":"info","message":"📥 HTTP 請求","requestId":"ln7k7k4x","method":"GET","path":"/rates","status":200,"durationMs":429}
+super-app  | {"timestamp":"2026-06-09T14:28:39.814Z","level":"info","message":"📥 HTTP 請求","requestId":"04mrnyox","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:40.549Z","level":"info","message":"📥 HTTP 請求","requestId":"tz7grmsg","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:40.624Z","level":"info","message":"📥 HTTP 請求","requestId":"nfgc6uz9","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:28:41.138Z","level":"warn","message":"🚫 CORS 拒絕來源","origin":"https://sm.yuang093.cc"}
+super-app  | {"timestamp":"2026-06-09T14:28:41.139Z","level":"error","message":"💥 未預期錯誤","requestId":"g64tx8c8","method":"POST","path":"/api/capture","status":403,"code":"CORS_BLOCKED","error":"CORS 政策不允許來源：https://sm.yuang093.cc","stack":"Error: CORS 政策不允許來源：https://sm.yuang093.cc\n    at origin (/app/src/middleware/cors.js:45:18)\n    at /app/node_modules/cors/lib/index.js:219:13\n    at optionsCallback (/app/node_modules/cors/lib/index.js:199:9)\n    at corsMiddleware (/app/node_modules/cors/lib/index.js:204:7)\n    at Layer.handle [as handle_request] (/app/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/app/node_modules/express/lib/router/index.js:328:13)\n    at /app/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/app/node_modules/express/lib/router/index.js:346:12)\n    at next (/app/node_modules/express/lib/router/index.js:280:10)\n    at internalNext (/app/node_modules/helmet/index.cjs:537:6)"}
+super-app  | {"timestamp":"2026-06-09T14:28:41.140Z","level":"info","message":"📥 HTTP 請求","requestId":"g64tx8c8","method":"POST","path":"/api/capture","status":403,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T14:28:49.148Z","level":"info","message":"📥 HTTP 請求","requestId":"r5qbsld1","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:28:56.216Z","level":"info","message":"📥 HTTP 請求","requestId":"3xoimp6z","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:00.486Z","level":"info","message":"📥 HTTP 請求","requestId":"kdx793t5","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:04.282Z","level":"info","message":"📥 HTTP 請求","requestId":"ejc2rbm2","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:09.667Z","level":"info","message":"📥 HTTP 請求","requestId":"e516drrg","method":"GET","path":"/healthz","status":200,"durationMs":4}
+super-app  | {"timestamp":"2026-06-09T14:29:09.912Z","level":"info","message":"📥 HTTP 請求","requestId":"7rnr87pd","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:10.675Z","level":"info","message":"📥 HTTP 請求","requestId":"5kyimynu","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:10.922Z","level":"info","message":"📥 HTTP 請求","requestId":"1aakhlcz","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:21.609Z","level":"info","message":"📥 HTTP 請求","requestId":"fnxy6l9x","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:28.664Z","level":"info","message":"📥 HTTP 請求","requestId":"jfsjahut","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:32.962Z","level":"info","message":"📥 HTTP 請求","requestId":"r1q9r9jg","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:36.737Z","level":"info","message":"📥 HTTP 請求","requestId":"yxip39qp","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:40.726Z","level":"info","message":"📥 HTTP 請求","requestId":"a6nhmtuv","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:42.157Z","level":"info","message":"📥 HTTP 請求","requestId":"ioflct9a","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T14:29:42.400Z","level":"info","message":"📥 HTTP 請求","requestId":"sorxfs14","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:43.438Z","level":"info","message":"📥 HTTP 請求","requestId":"dio57n7o","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:29:54.090Z","level":"info","message":"📥 HTTP 請求","requestId":"g6472j9r","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T14:30:01.132Z","level":"info","message":"📥 HTTP 請求","requestId":"r8ujp6ag","method":"GET","path":"/healthz","status":200,"durationMs":2}
 root@localhost:/opt/super# 
