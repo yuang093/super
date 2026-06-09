@@ -2,12 +2,12 @@
 // 整合 Sharp 壓縮 + VLM 辨識 + 三層 Fallback 解析
 // 對應 [todo_progress.md B-04 + B-05](../../todo_progress.md)
 
-'use strict';
+'use strict'
 
-const fs = require('node:fs');
-const { compressImage } = require('./imageProcessor');
-const { parseVLMResponse } = require('../ai/fallbackParser');
-const logger = require('../utils/logger');
+const fs = require('node:fs')
+const { compressImage } = require('./imageProcessor')
+const { parseVLMResponse } = require('../ai/fallbackParser')
+const logger = require('../utils/logger')
 
 /**
  * 拍照處理服務
@@ -20,9 +20,9 @@ class CaptureService {
    */
   constructor({ vlmClient }) {
     if (!vlmClient) {
-      throw new Error('CaptureService 需要 vlmClient');
+      throw new Error('CaptureService 需要 vlmClient')
     }
-    this.vlmClient = vlmClient;
+    this.vlmClient = vlmClient
   }
 
   /**
@@ -39,15 +39,15 @@ class CaptureService {
    * }>}
    */
   async processCapture({ fileBuffer, mimetype, prompt }) {
-    const startTime = Date.now();
+    const startTime = Date.now()
 
     // === 步驟 1：Sharp 壓縮 ===
-    logger.info('🖼️ 開始壓縮圖片', { originalSize: fileBuffer.length, mimetype });
-    let compressed;
+    logger.info('🖼️ 開始壓縮圖片', { originalSize: fileBuffer.length, mimetype })
+    let compressed
     try {
-      compressed = await compressImage(fileBuffer);
+      compressed = await compressImage(fileBuffer)
     } catch (err) {
-      logger.error('❌ 圖片壓縮失敗', { error: err.message });
+      logger.error('❌ 圖片壓縮失敗', { error: err.message })
       return {
         success: false,
         image: null,
@@ -55,29 +55,29 @@ class CaptureService {
         parse: null,
         errorCode: 'COMPRESSION_FAILED',
         errorMessage: err.message,
-      };
+      }
     }
     logger.info('✅ 圖片壓縮完成', {
       originalSize: fileBuffer.length,
       compressedSize: compressed.size,
       reduction: `${((1 - compressed.size / fileBuffer.length) * 100).toFixed(1)}%`,
-    });
+    })
 
     // === 步驟 2：VLM 辨識 ===
-    logger.info('🤖 開始 VLM 辨識', { model: this.vlmClient.model });
+    logger.info('🤖 開始 VLM 辨識', { model: this.vlmClient.model })
     // 從磁碟讀取壓縮後的檔案
-    const compressedBuffer = fs.readFileSync(compressed.path);
+    const compressedBuffer = fs.readFileSync(compressed.path)
     const vlmResult = await this.vlmClient.recognize(compressedBuffer, {
       mimeType: 'image/jpeg',
       prompt,
-    });
+    })
 
     if (!vlmResult.success) {
       logger.warn('⚠️ VLM 辨識失敗', {
         errorCode: vlmResult.errorCode,
         errorMessage: vlmResult.errorMessage,
         attempts: vlmResult.attempts,
-      });
+      })
       return {
         success: false,
         image: {
@@ -91,25 +91,25 @@ class CaptureService {
         errorCode: vlmResult.errorCode,
         errorMessage: vlmResult.errorMessage,
         totalLatencyMs: Date.now() - startTime,
-      };
+      }
     }
 
     logger.info('✅ VLM 辨識成功', {
       attempts: vlmResult.attempts,
       latencyMs: vlmResult.latencyMs,
       contentLength: vlmResult.content.length,
-    });
+    })
 
     // === 步驟 3：三層 Fallback 解析 ===
-    logger.debug('🔍 開始 Fallback 解析');
-    const parseResult = parseVLMResponse(vlmResult.content);
+    logger.debug('🔍 開始 Fallback 解析')
+    const parseResult = parseVLMResponse(vlmResult.content)
     logger.info('✅ 商品解析完成', {
       method: parseResult.parseMethod,
       success: parseResult.success,
       name: parseResult.name,
       price: parseResult.price,
       currency: parseResult.currency,
-    });
+    })
 
     return {
       success: parseResult.success,
@@ -126,8 +126,8 @@ class CaptureService {
       },
       parse: parseResult,
       totalLatencyMs: Date.now() - startTime,
-    };
+    }
   }
 }
 
-module.exports = { CaptureService };
+module.exports = { CaptureService }

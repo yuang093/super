@@ -4,7 +4,7 @@
 // F-04：三段式壓縮 quality=0.8→0.5，目標 < 500KB
 // F-05：EXIF 0x0112 方向解析（支援 8 種方向）
 
-'use strict';
+'use strict'
 
 /**
  * EXIF Orientation 對應的旋轉矩陣參數
@@ -19,14 +19,14 @@
  */
 const ORIENTATION_MATRIX = {
   1: { rotate: 0, flipX: false, flipY: false },
-  2: { rotate: 0, flipX: true,  flipY: false },
+  2: { rotate: 0, flipX: true, flipY: false },
   3: { rotate: 180, flipX: false, flipY: false },
   4: { rotate: 0, flipX: false, flipY: true },
-  5: { rotate: 90,  flipX: true,  flipY: false },
-  6: { rotate: 90,  flipX: false, flipY: false }, // iPhone 直立
-  7: { rotate: 270, flipX: true,  flipY: false },
+  5: { rotate: 90, flipX: true, flipY: false },
+  6: { rotate: 90, flipX: false, flipY: false }, // iPhone 直立
+  7: { rotate: 270, flipX: true, flipY: false },
   8: { rotate: 270, flipX: false, flipY: false },
-};
+}
 
 /**
  * 從 JPEG ArrayBuffer擷取 EXIF Orientation 值（0x0112）
@@ -35,25 +35,25 @@ const ORIENTATION_MATRIX = {
  */
 function getExifOrientation(buffer) {
   try {
-    const view = new DataView(buffer);
+    const view = new DataView(buffer)
     //確認 JPEG SOI marker：0xFF0xD8
     if (view.getUint16(0) !== 0xffd8) {
-      return 1;
+      return 1
     }
-    const length = view.byteLength;
-    let offset = 2;
+    const length = view.byteLength
+    let offset = 2
 
     while (offset < length) {
       // 讀取 marker
       if (view.getUint8(offset) !== 0xff) {
-        offset++;
-        continue;
+        offset++
+        continue
       }
-      const marker = view.getUint8(offset + 1);
+      const marker = view.getUint8(offset + 1)
 
       // APP1 (EXIF) marker：0xE1
       if (marker === 0xe1) {
-        const segmentLength = view.getUint16(offset + 2);
+        const segmentLength = view.getUint16(offset + 2)
         // 確認 "Exif\0\0" 字串
         const exifHeader = String.fromCharCode(
           view.getUint8(offset + 4),
@@ -62,53 +62,53 @@ function getExifOrientation(buffer) {
           view.getUint8(offset + 7),
           view.getUint8(offset + 8),
           view.getUint8(offset + 9)
-        );
+        )
         if (exifHeader !== 'Exif\x00\x00') {
-          return 1;
+          return 1
         }
         // TIFF header起始位置（offset + 10 是 "Exif\0\0" 後的第一個 byte）
-        const tiffStart = offset + 10;
+        const tiffStart = offset + 10
         // Byte order：II = little-endian，MM = big-endian
-        const byteOrder = view.getUint16(tiffStart);
-        const littleEndian = byteOrder === 0x4949; // 'II'
+        const byteOrder = view.getUint16(tiffStart)
+        const littleEndian = byteOrder === 0x4949 // 'II'
 
         // IFD0偏移量
-        const ifd0Offset = view.getUint32(tiffStart + 4, littleEndian);
-        const ifd0Start = tiffStart + ifd0Offset;
+        const ifd0Offset = view.getUint32(tiffStart + 4, littleEndian)
+        const ifd0Start = tiffStart + ifd0Offset
 
         //讀取 IFD0項目數量
-        const entryCount = view.getUint16(ifd0Start, littleEndian);
+        const entryCount = view.getUint16(ifd0Start, littleEndian)
 
         // 搜尋 Orientation tag (0x0112 = 274)
         for (let i = 0; i < entryCount; i++) {
-          const entryOffset = ifd0Start + 2 + i * 12;
-          const tag = view.getUint16(entryOffset, littleEndian);
+          const entryOffset = ifd0Start + 2 + i * 12
+          const tag = view.getUint16(entryOffset, littleEndian)
           if (tag === 0x0112) {
             // Orientation 是 SHORT 型別（3）
-            const type = view.getUint16(entryOffset + 2, littleEndian);
+            const type = view.getUint16(entryOffset + 2, littleEndian)
             if (type === 3) {
-              const orientation = view.getUint16(entryOffset + 8, littleEndian);
-              return orientation >= 1 && orientation <= 8 ? orientation : 1;
+              const orientation = view.getUint16(entryOffset + 8, littleEndian)
+              return orientation >= 1 && orientation <= 8 ? orientation : 1
             }
-            return 1;
+            return 1
           }
         }
-        return 1;
+        return 1
       }
 
       // 跳過其他 segments
       if (marker === 0xd9 || marker === 0xda) {
         // SOS (Start of Scan) 或 EOI (End of Image)：掃描結束
-        break;
+        break
       }
-      const segmentLength = view.getUint16(offset + 2);
-      offset += 2 + segmentLength;
+      const segmentLength = view.getUint16(offset + 2)
+      offset += 2 + segmentLength
     }
-    return 1;
+    return 1
   } catch (err) {
     // EXIF 讀取失敗，預設為正常方向
-    console.warn('[ImagePipeline] EXIF 讀取失敗，使用預設方向', err.message);
-    return 1;
+    console.warn('[ImagePipeline] EXIF 讀取失敗，使用預設方向', err.message)
+    return 1
   }
 }
 
@@ -121,31 +121,31 @@ function getExifOrientation(buffer) {
  * @param {number} canvasHeight - 目標 Canvas 高度
  */
 function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
-  const matrix = ORIENTATION_MATRIX[orientation] || ORIENTATION_MATRIX[1];
+  const matrix = ORIENTATION_MATRIX[orientation] || ORIENTATION_MATRIX[1]
 
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  ctx.save();
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+  ctx.save()
 
   // 將原圖中心移動到 Canvas中心
-  ctx.translate(canvasWidth / 2, canvasHeight / 2);
+  ctx.translate(canvasWidth / 2, canvasHeight / 2)
 
   // 套用翻轉
   if (matrix.flipX) {
-    ctx.scale(-1, 1);
+    ctx.scale(-1, 1)
   }
   if (matrix.flipY) {
-    ctx.scale(1, -1);
+    ctx.scale(1, -1)
   }
 
   // 套用旋轉（弧度）
   if (matrix.rotate !== 0) {
-    ctx.rotate((matrix.rotate * Math.PI) / 180);
+    ctx.rotate((matrix.rotate * Math.PI) / 180)
   }
 
   // 繪製圖片（圖片中心對齊 Canvas中心）
-  ctx.drawImage(img, -img.width / 2, -img.height / 2);
+  ctx.drawImage(img, -img.width / 2, -img.height / 2)
 
-  ctx.restore();
+  ctx.restore()
 }
 
 /**
@@ -156,9 +156,9 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
  */
 function estimateJpegSize(canvas, quality) {
   //粗估：每像素0.5~1.5 位元組（視品質而定）
-  const pixelCount = canvas.width * canvas.height;
-  const bytesPerPixel = quality > 0.7 ? 1.2 : quality > 0.4 ? 0.8 : 0.5;
-  return Math.round(pixelCount * bytesPerPixel);
+  const pixelCount = canvas.width * canvas.height
+  const bytesPerPixel = quality > 0.7 ? 1.2 : quality > 0.4 ? 0.8 : 0.5
+  return Math.round(pixelCount * bytesPerPixel)
 }
 
 /**
@@ -176,62 +176,57 @@ function estimateJpegSize(canvas, quality) {
  * @returns {Promise<{base64: string, width: number, height: number, bytes: number}>}
  */
 export async function compressImage(img, orientation, options = {}) {
-  const {
-    maxWidth = 1600,
-    quality1 = 0.8,
-    quality2 = 0.5,
-    targetBytes = 500 * 1024,
-  } = options;
+  const { maxWidth = 1600, quality1 = 0.8, quality2 = 0.5, targetBytes = 500 * 1024 } = options
 
   // 計算縮放後尺寸（保持比例，不超過 maxWidth）
-  let drawWidth = img.width;
-  let drawHeight = img.height;
+  let drawWidth = img.width
+  let drawHeight = img.height
   if (drawWidth > maxWidth) {
-    const ratio = maxWidth / drawWidth;
-    drawWidth = maxWidth;
-    drawHeight = Math.round(drawHeight * ratio);
+    const ratio = maxWidth / drawWidth
+    drawWidth = maxWidth
+    drawHeight = Math.round(drawHeight * ratio)
   }
 
   // 判斷是否需要旋轉（90° 或 270° 需要寬高交換）
-  const needsSwap = [5, 6, 7, 8].includes(orientation);
-  const canvasWidth = needsSwap ? drawHeight : drawWidth;
-  const canvasHeight = needsSwap ? drawWidth : drawHeight;
+  const needsSwap = [5, 6, 7, 8].includes(orientation)
+  const canvasWidth = needsSwap ? drawHeight : drawWidth
+  const canvasHeight = needsSwap ? drawWidth : drawHeight
 
   // 建立 Stage 1 Canvas
-  const canvas1 = document.createElement('canvas');
-  canvas1.width = canvasWidth;
-  canvas1.height = canvasHeight;
-  const ctx1 = canvas1.getContext('2d');
+  const canvas1 = document.createElement('canvas')
+  canvas1.width = canvasWidth
+  canvas1.height = canvasHeight
+  const ctx1 = canvas1.getContext('2d')
 
-  applyOrientation(ctx1, img, orientation, canvasWidth, canvasHeight);
+  applyOrientation(ctx1, img, orientation, canvasWidth, canvasHeight)
 
   // Stage 1：quality=0.8
-  let base64 = canvas1.toDataURL('image/jpeg', quality1);
-  let currentBytes = Math.round((base64.length - 1) * 0.75); // base64 → bytes估算
+  let base64 = canvas1.toDataURL('image/jpeg', quality1)
+  let currentBytes = Math.round((base64.length - 1) * 0.75) // base64 → bytes估算
 
   // Stage 2：quality=0.5（如果超過目標大小）
   if (currentBytes > targetBytes) {
-    const canvas2 = document.createElement('canvas');
-    canvas2.width = canvasWidth;
-    canvas2.height = canvasHeight;
-    const ctx2 = canvas2.getContext('2d');
-    applyOrientation(ctx2, img, orientation, canvasWidth, canvasHeight);
-    base64 = canvas2.toDataURL('image/jpeg', quality2);
-    currentBytes = Math.round((base64.length - 1) * 0.75);
+    const canvas2 = document.createElement('canvas')
+    canvas2.width = canvasWidth
+    canvas2.height = canvasHeight
+    const ctx2 = canvas2.getContext('2d')
+    applyOrientation(ctx2, img, orientation, canvasWidth, canvasHeight)
+    base64 = canvas2.toDataURL('image/jpeg', quality2)
+    currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
   // Stage 3：額外降低品質（如果仍然超過目標）
   // 逐步遞減 quality 直到低於 targetBytes
-  let quality = quality2;
+  let quality = quality2
   while (currentBytes > targetBytes && quality > 0.1) {
-    quality -= 0.1;
-    const canvas3 = document.createElement('canvas');
-    canvas3.width = canvasWidth;
-    canvas3.height = canvasHeight;
-    const ctx3 = canvas3.getContext('2d');
-    applyOrientation(ctx3, img, orientation, canvasWidth, canvasHeight);
-    base64 = canvas3.toDataURL('image/jpeg', quality);
-    currentBytes = Math.round((base64.length - 1) * 0.75);
+    quality -= 0.1
+    const canvas3 = document.createElement('canvas')
+    canvas3.width = canvasWidth
+    canvas3.height = canvasHeight
+    const ctx3 = canvas3.getContext('2d')
+    applyOrientation(ctx3, img, orientation, canvasWidth, canvasHeight)
+    base64 = canvas3.toDataURL('image/jpeg', quality)
+    currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
   console.log('[ImagePipeline] 壓縮完成', {
@@ -240,14 +235,14 @@ export async function compressImage(img, orientation, options = {}) {
     orientation,
     finalBytes: currentBytes,
     quality,
-  });
+  })
 
   return {
     base64,
     width: canvasWidth,
     height: canvasHeight,
     bytes: currentBytes,
-  };
+  }
 }
 
 /**
@@ -259,25 +254,25 @@ export async function compressImage(img, orientation, options = {}) {
 export async function processImageBlob(blob, options = {}) {
   // 建立 Image元素
   const img = await new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(blob);
+    const img = new Image()
+    const url = URL.createObjectURL(blob)
     img.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(img);
-    };
+      URL.revokeObjectURL(url)
+      resolve(img)
+    }
     img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('圖片載入失敗'));
-    };
-    img.src = url;
-  });
+      URL.revokeObjectURL(url)
+      reject(new Error('圖片載入失敗'))
+    }
+    img.src = url
+  })
 
   // 讀取 ArrayBuffer 以取出 EXIF Orientation
-  const arrayBuffer = await blob.arrayBuffer();
-  const orientation = getExifOrientation(arrayBuffer);
+  const arrayBuffer = await blob.arrayBuffer()
+  const orientation = getExifOrientation(arrayBuffer)
 
   // 執行壓縮
-  return compressImage(img, orientation, options);
+  return compressImage(img, orientation, options)
 }
 
 /**
@@ -288,13 +283,11 @@ export async function processImageBlob(blob, options = {}) {
  */
 export async function recompressFromBase64(base64, options = {}) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const img = new Image()
     img.onload = () => {
-      compressImage(img, 1, options)
-        .then(resolve)
-        .catch(reject);
-    };
-    img.onerror = () => reject(new Error('Base64 圖片重建失敗'));
-    img.src = base64;
-  });
+      compressImage(img, 1, options).then(resolve).catch(reject)
+    }
+    img.onerror = () => reject(new Error('Base64 圖片重建失敗'))
+    img.src = base64
+  })
 }

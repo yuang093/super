@@ -2,15 +2,15 @@
 // multer 設定：檔案大小限制、MIME 驗證
 // 對應 [todo_progress.md B-04](../../todo_progress.md)
 
-'use strict';
+'use strict'
 
-const multer = require('multer');
-const { getEnv } = require('../config/env');
-const { AppError } = require('./errorHandler');
-const logger = require('../utils/logger');
+const multer = require('multer')
+const { getEnv } = require('../config/env')
+const { AppError } = require('./errorHandler')
+const logger = require('../utils/logger')
 
 /** 允許的 MIME 類型（對應 Sharp 支援的格式）*/
-const ALLOWED_MIME_TYPES = Object.freeze(['image/jpeg', 'image/png', 'image/webp']);
+const ALLOWED_MIME_TYPES = Object.freeze(['image/jpeg', 'image/png', 'image/webp'])
 
 /**
  * 建立 multer 上傳中介層（單檔）
@@ -20,39 +20,44 @@ const ALLOWED_MIME_TYPES = Object.freeze(['image/jpeg', 'image/png', 'image/webp
  * @returns {Function} multer middleware
  */
 function createUploadMiddleware(options = {}) {
-  const env = options.env || (() => {
-    try {
-      return getEnv();
-    } catch (_) {
-      return {};
-    }
-  })();
-  const maxSize = (options.maxSizeMB || env.MAX_UPLOAD_SIZE_MB || 10) * 1024 * 1024;
-  const fieldName = options.fieldName || 'image';
+  const env =
+    options.env ||
+    (() => {
+      try {
+        return getEnv()
+      } catch (_) {
+        return {}
+      }
+    })()
+  const maxSize = (options.maxSizeMB || env.MAX_UPLOAD_SIZE_MB || 10) * 1024 * 1024
+  const fieldName = options.fieldName || 'image'
 
-  const storage = multer.memoryStorage();
+  const storage = multer.memoryStorage()
 
   const uploader = multer({
     storage,
     limits: { fileSize: maxSize },
     fileFilter: (req, file, cb) => {
       if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-        logger.warn('⚠️ 不支援的 MIME 類型', { mimetype: file.mimetype, allowed: ALLOWED_MIME_TYPES });
+        logger.warn('⚠️ 不支援的 MIME 類型', {
+          mimetype: file.mimetype,
+          allowed: ALLOWED_MIME_TYPES,
+        })
         const err = new AppError(
           `不支援的檔案類型：${file.mimetype}（僅支援 ${ALLOWED_MIME_TYPES.join(', ')}）`,
           { code: 'UNSUPPORTED_MIME', status: 415 }
-        );
-        return cb(err);
+        )
+        return cb(err)
       }
-      cb(null, true);
+      cb(null, true)
     },
-  });
+  })
 
   // 回傳單一檔案中介層（.single() 返回函式）
-  return uploader.single(fieldName);
+  return uploader.single(fieldName)
 }
 
 module.exports = {
   createUploadMiddleware,
   ALLOWED_MIME_TYPES,
-};
+}

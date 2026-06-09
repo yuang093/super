@@ -4,7 +4,7 @@
 // 資料來源：Canvas紋理 + UserAgent + 螢幕解析度 + 時區 +語言
 // 輸出：穩定的 SHA-256 雜湊（不作法：不同人之間指紋衝突率低）
 
-'use strict';
+'use strict'
 
 /**
  * 計算 SHA-256 雜湊
@@ -12,11 +12,11 @@
  * @returns {Promise<string>}
  */
 async function sha256(input) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  const encoder = new TextEncoder()
+  const data = encoder.encode(input)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
 /**
@@ -26,35 +26,35 @@ async function sha256(input) {
  */
 function getCanvasFingerprint() {
   try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 280;
-    canvas.height = 60;
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement('canvas')
+    canvas.width = 280
+    canvas.height = 60
+    const ctx = canvas.getContext('2d')
 
     // 漸層背景
-    const gradient = ctx.createLinearGradient(0, 0, 280, 0);
-    gradient.addColorStop(0, '#f0f0f0');
-    gradient.addColorStop(1, '#e8e8e8');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 280, 60);
+    const gradient = ctx.createLinearGradient(0, 0, 280, 0)
+    gradient.addColorStop(0, '#f0f0f0')
+    gradient.addColorStop(1, '#e8e8e8')
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, 280, 60)
 
     // 測試文字（用以偵測字型）
-    ctx.fillStyle = '#333';
-    ctx.font = '14px Arial, Helvetica, sans-serif';
-    ctx.fillText('Supermarket Tracker', 10, 30);
+    ctx.fillStyle = '#333'
+    ctx.font = '14px Arial, Helvetica, sans-serif'
+    ctx.fillText('Supermarket Tracker', 10, 30)
 
     // 圓形（圓形邊緣平滑度因 GPU 而異）
-    ctx.beginPath();
-    ctx.arc(240, 30, 20, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 107, 107, 0.7)';
-    ctx.fill();
+    ctx.beginPath()
+    ctx.arc(240, 30, 20, 0, Math.PI * 2)
+    ctx.fillStyle = 'rgba(255, 107, 107, 0.7)'
+    ctx.fill()
 
     //取得資料 URL（內含微小渲染差異）
-    const dataUrl = canvas.toDataURL();
-    return dataUrl;
+    const dataUrl = canvas.toDataURL()
+    return dataUrl
   } catch (err) {
     // 無法取得 Canvas 指紋時，回傳空字串
-    return '';
+    return ''
   }
 }
 
@@ -64,7 +64,7 @@ function getCanvasFingerprint() {
  */
 function getScreenFingerprint() {
   const parts = [
-    window.screen?.width ||0,
+    window.screen?.width || 0,
     window.screen?.height || 0,
     window.screen?.colorDepth || 0,
     window.screen?.pixelDepth || 0,
@@ -73,8 +73,8 @@ function getScreenFingerprint() {
     window.innerHeight || 0,
     window.outerWidth || 0,
     window.outerHeight || 0,
-  ];
-  return parts.join('x');
+  ]
+  return parts.join('x')
 }
 
 /**
@@ -82,19 +82,13 @@ function getScreenFingerprint() {
  * @returns {string}
  */
 function getBrowserFingerprint() {
-  const ua = navigator.userAgent;
-  const lang = navigator.language || navigator.userLanguage || '';
-  const platform = navigator.platform || '';
-  const hardwareConcurrency = navigator.hardwareConcurrency || 0;
-  const deviceMemory = navigator.deviceMemory || 0;
+  const ua = navigator.userAgent
+  const lang = navigator.language || navigator.userLanguage || ''
+  const platform = navigator.platform || ''
+  const hardwareConcurrency = navigator.hardwareConcurrency || 0
+  const deviceMemory = navigator.deviceMemory || 0
 
-  return [
-    ua,
-    lang,
-    platform,
-    hardwareConcurrency,
-    deviceMemory,
-  ].join('|');
+  return [ua, lang, platform, hardwareConcurrency, deviceMemory].join('|')
 }
 
 /**
@@ -107,7 +101,7 @@ function getLocaleFingerprint() {
     Intl.DateTimeFormat().resolvedOptions().language || '',
     Intl.DateTimeFormat().resolvedOptions().calendar || '',
     Intl.DateTimeFormat().resolvedOptions().numberingSystem || '',
-  ].join('|');
+  ].join('|')
 }
 
 /**
@@ -115,19 +109,14 @@ function getLocaleFingerprint() {
  * @returns {Promise<string>} - 64 字元 SHA-256 十六進位字串
  */
 async function generateFingerprint() {
-  const canvasFP = getCanvasFingerprint();
-  const screenFP = getScreenFingerprint();
-  const browserFP = getBrowserFingerprint();
-  const localeFP = getLocaleFingerprint();
+  const canvasFP = getCanvasFingerprint()
+  const screenFP = getScreenFingerprint()
+  const browserFP = getBrowserFingerprint()
+  const localeFP = getLocaleFingerprint()
 
-  const combined = [
-    canvasFP,
-    screenFP,
-    browserFP,
-    localeFP,
-  ].join('|||');
+  const combined = [canvasFP, screenFP, browserFP, localeFP].join('|||')
 
-  return sha256(combined);
+  return sha256(combined)
 }
 
 /**
@@ -136,15 +125,15 @@ async function generateFingerprint() {
  */
 async function getFingerprint() {
   try {
-    let fp = localStorage.getItem('super_fp_v2');
+    let fp = localStorage.getItem('super_fp_v2')
     if (!fp) {
-      fp = await generateFingerprint();
-      localStorage.setItem('super_fp_v2', fp);
+      fp = await generateFingerprint()
+      localStorage.setItem('super_fp_v2', fp)
     }
-    return fp;
+    return fp
   } catch (err) {
     // localStorage 不可用時，每次重新計算
-    return generateFingerprint();
+    return generateFingerprint()
   }
 }
 
@@ -153,7 +142,7 @@ async function getFingerprint() {
  */
 function clearCache() {
   try {
-    localStorage.removeItem('super_fp_v2');
+    localStorage.removeItem('super_fp_v2')
   } catch (_) {
     // 忽略
   }
@@ -167,4 +156,4 @@ export {
   getScreenFingerprint,
   getBrowserFingerprint,
   getLocaleFingerprint,
-};
+}

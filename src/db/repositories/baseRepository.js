@@ -2,7 +2,7 @@
 // 共用 CRUD 介面，所有 Repository 繼承此類別
 // 對應 [CLAUDE.md §1.1 模組邊界](../../CLAUDE.md)：Repository 隔離 SQL
 
-'use strict';
+'use strict'
 
 /**
  * 基礎 Repository
@@ -15,10 +15,10 @@ class BaseRepository {
    * @param {string} tableName
    */
   constructor(db, tableName) {
-    if (!db) throw new Error('BaseRepository 需要 db 實例');
-    if (!tableName) throw new Error('BaseRepository 需要 tableName');
-    this.db = db;
-    this.table = tableName;
+    if (!db) throw new Error('BaseRepository 需要 db 實例')
+    if (!tableName) throw new Error('BaseRepository 需要 tableName')
+    this.db = db
+    this.table = tableName
   }
 
   /**
@@ -27,7 +27,7 @@ class BaseRepository {
    * @returns {Object|undefined}
    */
   findById(id) {
-    return this.db.prepare(`SELECT * FROM ${this.table} WHERE id = ?`).get(id);
+    return this.db.prepare(`SELECT * FROM ${this.table} WHERE id = ?`).get(id)
   }
 
   /**
@@ -39,7 +39,7 @@ class BaseRepository {
   findAll(limit = 100, offset = 0) {
     return this.db
       .prepare(`SELECT * FROM ${this.table} ORDER BY id DESC LIMIT ? OFFSET ?`)
-      .all(limit, offset);
+      .all(limit, offset)
   }
 
   /**
@@ -48,7 +48,7 @@ class BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   deleteById(id) {
-    return this.db.prepare(`DELETE FROM ${this.table} WHERE id = ?`).run(id);
+    return this.db.prepare(`DELETE FROM ${this.table} WHERE id = ?`).run(id)
   }
 
   /**
@@ -56,7 +56,7 @@ class BaseRepository {
    * @returns {number}
    */
   count() {
-    return this.db.prepare(`SELECT COUNT(*) AS n FROM ${this.table}`).get().n;
+    return this.db.prepare(`SELECT COUNT(*) AS n FROM ${this.table}`).get().n
   }
 
   /**
@@ -65,8 +65,8 @@ class BaseRepository {
    * @returns {*}
    */
   transaction(fn) {
-    return this.db.transaction(fn)();
+    return this.db.transaction(fn)()
   }
 }
 
-module.exports = BaseRepository;
+module.exports = BaseRepository

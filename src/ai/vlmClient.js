@@ -2,11 +2,11 @@
 // MiniMax VLM（視覺語言模型）API 串接
 // 對應 [todo_progress.md B-04](../../todo_progress.md) 與 [TESTING_PLAN.md §3.1](../../TESTING_PLAN.md)
 
-'use strict';
+'use strict'
 
-const { getEnv } = require('../config/env');
-const logger = require('../utils/logger');
-const { PRODUCT_RECOGNITION_PROMPT } = require('./prompts');
+const { getEnv } = require('../config/env')
+const logger = require('../utils/logger')
+const { PRODUCT_RECOGNITION_PROMPT } = require('./prompts')
 
 /**
  * VLM 錯誤碼常數
@@ -19,7 +19,7 @@ const ERROR_CODES = Object.freeze({
   VLM_SERVER_ERROR: 'VLM_SERVER_ERROR',
   VLM_NETWORK_ERROR: 'VLM_NETWORK_ERROR',
   VLM_BAD_REQUEST: 'VLM_BAD_REQUEST',
-});
+})
 
 /**
  * VLM 結果的統一格式
@@ -50,22 +50,22 @@ class VLMClient {
    * @param {Function} [options.sleep] - 自訂 sleep 函式（測試用）
    */
   constructor(options = {}) {
-    let env;
+    let env
     try {
-      env = getEnv();
+      env = getEnv()
     } catch (_) {
       // 允許在測試或特殊情況下不初始化 env
-      env = {};
+      env = {}
     }
 
-    this.apiKey = options.apiKey || env.VLM_API_KEY;
-    this.endpoint = options.endpoint || env.VLM_API_ENDPOINT;
-    this.model = options.model || env.VLM_MODEL;
-    this.timeoutMs = options.timeoutMs ?? (env.VLM_TIMEOUT_MS || 30000);
-    this.maxRetries = options.maxRetries ?? (env.VLM_MAX_RETRIES ?? 2);
-    this.retryBaseMs = options.retryBaseMs ?? 1000;
-    this._fetch = options.fetch || ((...args) => fetch(...args));
-    this._sleep = options.sleep || ((ms) => new Promise((r) => setTimeout(r, ms)));
+    this.apiKey = options.apiKey || env.VLM_API_KEY
+    this.endpoint = options.endpoint || env.VLM_API_ENDPOINT
+    this.model = options.model || env.VLM_MODEL
+    this.timeoutMs = options.timeoutMs ?? (env.VLM_TIMEOUT_MS || 30000)
+    this.maxRetries = options.maxRetries ?? env.VLM_MAX_RETRIES ?? 2
+    this.retryBaseMs = options.retryBaseMs ?? 1000
+    this._fetch = options.fetch || ((...args) => fetch(...args))
+    this._sleep = options.sleep || ((ms) => new Promise((r) => setTimeout(r, ms)))
   }
 
   /**
@@ -86,13 +86,13 @@ class VLMClient {
         errorMessage: 'imageBuffer 必須是 Buffer',
         attempts: 0,
         latencyMs: 0,
-      };
+      }
     }
 
-    const startTime = Date.now();
-    const prompt = options.prompt || PRODUCT_RECOGNITION_PROMPT;
-    const mimeType = options.mimeType || 'image/jpeg';
-    const dataUrl = `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
+    const startTime = Date.now()
+    const prompt = options.prompt || PRODUCT_RECOGNITION_PROMPT
+    const mimeType = options.mimeType || 'image/jpeg'
+    const dataUrl = `data:${mimeType};base64,${imageBuffer.toString('base64')}`
 
     const requestBody = {
       model: this.model,
@@ -105,14 +105,14 @@ class VLMClient {
           ],
         },
       ],
-    };
+    }
 
-    let lastError = null;
-    const totalAttempts = this.maxRetries + 1;
+    let lastError = null
+    const totalAttempts = this.maxRetries + 1
 
     for (let attempt = 1; attempt <= totalAttempts; attempt++) {
       try {
-        const response = await this.callVLMOnce(requestBody);
+        const response = await this.callVLMOnce(requestBody)
 
         // 成功：2xx + content 存在
         if (response.ok && typeof response.content === 'string' && response.content.length > 0) {
@@ -120,7 +120,7 @@ class VLMClient {
             attempt,
             latencyMs: Date.now() - startTime,
             contentLength: response.content.length,
-          });
+          })
           return {
             success: true,
             content: response.content,
@@ -129,12 +129,12 @@ class VLMClient {
             errorMessage: null,
             attempts: attempt,
             latencyMs: Date.now() - startTime,
-          };
+          }
         }
 
         // 失敗：記錄錯誤碼
-        const errorCode = this.statusToErrorCode(response.status);
-        lastError = { errorCode, status: response.status, message: response.statusText };
+        const errorCode = this.statusToErrorCode(response.status)
+        lastError = { errorCode, status: response.status, message: response.statusText }
 
         // 4xx 客戶端錯誤：不重試
         if (response.status >= 400 && response.status < 500 && response.status !== 429) {
@@ -142,7 +142,7 @@ class VLMClient {
             attempt,
             status: response.status,
             statusText: response.statusText,
-          });
+          })
           return {
             success: false,
             content: null,
@@ -151,18 +151,18 @@ class VLMClient {
             errorMessage: response.statusText || `HTTP ${response.status}`,
             attempts: attempt,
             latencyMs: Date.now() - startTime,
-          };
+          }
         }
 
         // 429 Rate Limit 或 5xx 伺服器錯誤：可重試
         if (attempt < totalAttempts) {
-          const backoff = this.backoffMs(attempt);
+          const backoff = this.backoffMs(attempt)
           logger.warn(`🔄 VLM 錯誤重試 ${attempt}/${this.maxRetries}`, {
             status: response.status,
             backoffMs: backoff,
-          });
-          await this._sleep(backoff);
-          continue;
+          })
+          await this._sleep(backoff)
+          continue
         }
 
         // 達到最大重試次數
@@ -170,7 +170,7 @@ class VLMClient {
           attempts: attempt,
           status: response.status,
           statusText: response.statusText,
-        });
+        })
         return {
           success: false,
           content: null,
@@ -179,9 +179,9 @@ class VLMClient {
           errorMessage: response.statusText || `HTTP ${response.status}`,
           attempts: attempt,
           latencyMs: Date.now() - startTime,
-        };
+        }
       } catch (err) {
-        lastError = { errorCode: this.exceptionToErrorCode(err), message: err.message };
+        lastError = { errorCode: this.exceptionToErrorCode(err), message: err.message }
 
         // 逾時（AbortError）或網路錯誤：可重試
         const isRetryable =
@@ -190,16 +190,16 @@ class VLMClient {
           err.code === 'ECONNREFUSED' ||
           err.code === 'ENOTFOUND' ||
           err.code === 'ECONNRESET' ||
-          err.type === 'system';
+          err.type === 'system'
 
         if (isRetryable && attempt < totalAttempts) {
-          const backoff = this.backoffMs(attempt);
+          const backoff = this.backoffMs(attempt)
           logger.warn(`🔄 VLM ${err.name || err.code} 重試 ${attempt}/${this.maxRetries}`, {
             backoffMs: backoff,
             error: err.message,
-          });
-          await this._sleep(backoff);
-          continue;
+          })
+          await this._sleep(backoff)
+          continue
         }
 
         // 不可重試或達最大次數
@@ -208,7 +208,7 @@ class VLMClient {
           error: err.message,
           name: err.name,
           code: err.code,
-        });
+        })
         return {
           success: false,
           content: null,
@@ -217,7 +217,7 @@ class VLMClient {
           errorMessage: err.message,
           attempts: attempt,
           latencyMs: Date.now() - startTime,
-        };
+        }
       }
     }
 
@@ -230,7 +230,7 @@ class VLMClient {
       errorMessage: lastError?.message || '未知錯誤',
       attempts: totalAttempts,
       latencyMs: Date.now() - startTime,
-    };
+    }
   }
 
   /**
@@ -239,8 +239,8 @@ class VLMClient {
    * @returns {Promise<{ok: boolean, status: number, statusText: string, content: string|null, raw: object|null}>}
    */
   async callVLMOnce(requestBody) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs)
 
     try {
       const response = await this._fetch(this.endpoint, {
@@ -251,19 +251,19 @@ class VLMClient {
         },
         body: JSON.stringify(requestBody),
         signal: controller.signal,
-      });
+      })
 
       // 嘗試解析 JSON（即使失敗也不拋出，因為某些 5xx 回應可能不是 JSON）
-      let raw = null;
+      let raw = null
       try {
-        raw = await response.json();
+        raw = await response.json()
       } catch (_) {
-        raw = null;
+        raw = null
       }
 
       // 提取 content
-      const content = raw?.choices?.[0]?.message?.content;
-      const contentStr = typeof content === 'string' ? content : null;
+      const content = raw?.choices?.[0]?.message?.content
+      const contentStr = typeof content === 'string' ? content : null
 
       return {
         ok: response.ok,
@@ -271,9 +271,9 @@ class VLMClient {
         statusText: response.statusText,
         content: contentStr,
         raw,
-      };
+      }
     } finally {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
     }
   }
 
@@ -282,7 +282,7 @@ class VLMClient {
    * @private
    */
   backoffMs(attempt) {
-    return this.retryBaseMs * Math.pow(2, attempt - 1);
+    return this.retryBaseMs * Math.pow(2, attempt - 1)
   }
 
   /**
@@ -290,12 +290,12 @@ class VLMClient {
    * @private
    */
   statusToErrorCode(status) {
-    if (status === 401 || status === 403) return ERROR_CODES.VLM_AUTH_ERROR;
-    if (status === 408) return ERROR_CODES.VLM_TIMEOUT;
-    if (status === 429) return ERROR_CODES.VLM_RATE_LIMIT;
-    if (status >= 400 && status < 500) return ERROR_CODES.VLM_INVALID_RESPONSE;
-    if (status >= 500) return ERROR_CODES.VLM_SERVER_ERROR;
-    return ERROR_CODES.VLM_INVALID_RESPONSE;
+    if (status === 401 || status === 403) return ERROR_CODES.VLM_AUTH_ERROR
+    if (status === 408) return ERROR_CODES.VLM_TIMEOUT
+    if (status === 429) return ERROR_CODES.VLM_RATE_LIMIT
+    if (status >= 400 && status < 500) return ERROR_CODES.VLM_INVALID_RESPONSE
+    if (status >= 500) return ERROR_CODES.VLM_SERVER_ERROR
+    return ERROR_CODES.VLM_INVALID_RESPONSE
   }
 
   /**
@@ -303,16 +303,16 @@ class VLMClient {
    * @private
    */
   exceptionToErrorCode(err) {
-    if (err.name === 'AbortError') return ERROR_CODES.VLM_TIMEOUT;
-    if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') return ERROR_CODES.VLM_TIMEOUT;
+    if (err.name === 'AbortError') return ERROR_CODES.VLM_TIMEOUT
+    if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') return ERROR_CODES.VLM_TIMEOUT
     if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ECONNRESET') {
-      return ERROR_CODES.VLM_NETWORK_ERROR;
+      return ERROR_CODES.VLM_NETWORK_ERROR
     }
-    return ERROR_CODES.VLM_NETWORK_ERROR;
+    return ERROR_CODES.VLM_NETWORK_ERROR
   }
 }
 
 module.exports = {
   VLMClient,
   ERROR_CODES,
-};
+}

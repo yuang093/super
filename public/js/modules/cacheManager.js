@@ -2,11 +2,11 @@
 // IndexedDB 模型快取管理（搭配 TF.js 內建快取機制）
 // 對應 [todo_progress.md F-02](../../todo_progress.md)
 
-'use strict';
+'use strict'
 
-const DB_NAME = 'super-tracker-models';
-const STORE_NAME = 'models';
-const DB_VERSION = 1;
+const DB_NAME = 'super-tracker-models'
+const STORE_NAME = 'models'
+const DB_VERSION = 1
 
 /**
  * 開啟 IndexedDB 連線
@@ -14,16 +14,16 @@ const DB_VERSION = 1;
  */
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
+    const request = indexedDB.open(DB_NAME, DB_VERSION)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => resolve(request.result)
     request.onupgradeneeded = (event) => {
-      const db = event.target.result;
+      const db = event.target.result
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME);
+        db.createObjectStore(STORE_NAME)
       }
-    };
-  });
+    }
+  })
 }
 
 /**
@@ -33,17 +33,17 @@ function openDB() {
  */
 async function getModelMeta(key) {
   try {
-    const db = await openDB();
+    const db = await openDB()
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readonly');
-      const store = tx.objectStore(STORE_NAME);
-      const request = store.get(key);
-      request.onsuccess = () => resolve(request.result || null);
-      request.onerror = () => reject(request.error);
-    });
+      const tx = db.transaction(STORE_NAME, 'readonly')
+      const store = tx.objectStore(STORE_NAME)
+      const request = store.get(key)
+      request.onsuccess = () => resolve(request.result || null)
+      request.onerror = () => reject(request.error)
+    })
   } catch (err) {
-    console.warn('[CacheManager] 讀取失敗', err);
-    return null;
+    console.warn('[CacheManager] 讀取失敗', err)
+    return null
   }
 }
 
@@ -55,17 +55,17 @@ async function getModelMeta(key) {
  */
 async function saveModelMeta(key, meta) {
   try {
-    const db = await openDB();
+    const db = await openDB()
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
-      const request = store.put({ ...meta, cachedAt: Date.now() }, key);
-      request.onsuccess = () => resolve(true);
-      request.onerror = () => reject(request.error);
-    });
+      const tx = db.transaction(STORE_NAME, 'readwrite')
+      const store = tx.objectStore(STORE_NAME)
+      const request = store.put({ ...meta, cachedAt: Date.now() }, key)
+      request.onsuccess = () => resolve(true)
+      request.onerror = () => reject(request.error)
+    })
   } catch (err) {
-    console.warn('[CacheManager] 寫入失敗', err);
-    return false;
+    console.warn('[CacheManager] 寫入失敗', err)
+    return false
   }
 }
 
@@ -75,21 +75,21 @@ async function saveModelMeta(key, meta) {
  */
 async function clearAll() {
   try {
-    const db = await openDB();
+    const db = await openDB()
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
-      const request = store.clear();
+      const tx = db.transaction(STORE_NAME, 'readwrite')
+      const store = tx.objectStore(STORE_NAME)
+      const request = store.clear()
       request.onsuccess = () => {
-        console.log('[CacheManager] 快取已清除');
-        resolve(true);
-      };
-      request.onerror = () => reject(request.error);
-    });
+        console.log('[CacheManager] 快取已清除')
+        resolve(true)
+      }
+      request.onerror = () => reject(request.error)
+    })
   } catch (err) {
-    console.error('[CacheManager] 清除失敗', err);
-    return false;
+    console.error('[CacheManager] 清除失敗', err)
+    return false
   }
 }
 
-export { getModelMeta, saveModelMeta, clearAll, DB_NAME, STORE_NAME };
+export { getModelMeta, saveModelMeta, clearAll, DB_NAME, STORE_NAME }

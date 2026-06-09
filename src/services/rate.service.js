@@ -2,12 +2,12 @@
 // 匯率服務：從外部 API 抓取匯率，失敗時降級讀取 SQLite 快取
 // 對應 [todo_progress.md B-08](../../todo_progress.md)
 
-'use strict';
+'use strict'
 
-const { getEnv } = require('../config/env');
-const { getDatabase } = require('../db/database');
-const ExchangeRateRepository = require('../db/repositories/exchangeRateRepository');
-const logger = require('../utils/logger');
+const { getEnv } = require('../config/env')
+const { getDatabase } = require('../db/database')
+const ExchangeRateRepository = require('../db/repositories/exchangeRateRepository')
+const logger = require('../utils/logger')
 
 /**
  * 匯率服務工廠
@@ -15,23 +15,23 @@ const logger = require('../utils/logger');
  */
 class RateService {
   constructor() {
-    const env = getEnv();
-    this.apiEndpoint = env.EXCHANGE_API_ENDPOINT;
-    this.fallbackTtlHours = env.EXCHANGE_FALLBACK_TTL_HOURS;
-    this._db = null;
+    const env = getEnv()
+    this.apiEndpoint = env.EXCHANGE_API_ENDPOINT
+    this.fallbackTtlHours = env.EXCHANGE_FALLBACK_TTL_HOURS
+    this._db = null
   }
 
   /** 取得資料庫連線（延遲初始化） */
   get db() {
     if (!this._db) {
-      this._db = getDatabase();
+      this._db = getDatabase()
     }
-    return this._db;
+    return this._db
   }
 
   /** 取得 ExchangeRateRepository 實例 */
   get repo() {
-    return new ExchangeRateRepository(this.db);
+    return new ExchangeRateRepository(this.db)
   }
 
   /**
@@ -41,29 +41,29 @@ class RateService {
    */
   async getRates(baseCurrency = 'USD') {
     // 嘗試從 API 抓取
-    const apiResult = await this._fetchFromApi(baseCurrency);
+    const apiResult = await this._fetchFromApi(baseCurrency)
 
     if (apiResult.success) {
       // API成功：更新 SQLite 快取
-      await this._updateCache(apiResult.rates, apiResult.source);
-      logger.info('💱 匯率已從 API 更新', { baseCurrency, rates: Object.keys(apiResult.rates) });
-      return apiResult.rates;
+      await this._updateCache(apiResult.rates, apiResult.source)
+      logger.info('💱 匯率已從 API 更新', { baseCurrency, rates: Object.keys(apiResult.rates) })
+      return apiResult.rates
     }
 
     // API 失敗：降級讀取 SQLite
     logger.warn('⚠️ 匯率 API 失敗，降級讀取 SQLite 快取', {
       error: apiResult.errorMessage,
-    });
-    const cachedRates = this._getCachedRates(baseCurrency);
+    })
+    const cachedRates = this._getCachedRates(baseCurrency)
 
     if (cachedRates) {
-      logger.info('✅匯率已從 SQLite 快取取得', { baseCurrency, ageHours: apiResult.ageHours });
-      return cachedRates;
+      logger.info('✅匯率已從 SQLite 快取取得', { baseCurrency, ageHours: apiResult.ageHours })
+      return cachedRates
     }
 
     // SQLite 也沒有：回傳預設值（保底）
-    logger.error('❌ 無可用匯率，回傳預設值');
-    return this._getDefaultRates();
+    logger.error('❌ 無可用匯率，回傳預設值')
+    return this._getDefaultRates()
   }
 
   /**
@@ -73,10 +73,10 @@ class RateService {
    * @returns {Promise<number|null>} - 匯率值，查不到回傳 null
    */
   async getRate(baseCurrency, targetCurrency) {
-    if (baseCurrency === targetCurrency) return 1;
+    if (baseCurrency === targetCurrency) return 1
 
-    const allRates = await this.getRates(baseCurrency);
-    return allRates[targetCurrency] ?? null;
+    const allRates = await this.getRates(baseCurrency)
+    return allRates[targetCurrency] ?? null
   }
 
   /**
@@ -86,26 +86,26 @@ class RateService {
    */
   async _fetchFromApi(baseCurrency) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
 
-      const url = this.apiEndpoint.replace('/USD', `/${baseCurrency}`);
+      const url = this.apiEndpoint.replace('/USD', `/${baseCurrency}`)
       const response = await fetch(url, {
         method: 'GET',
         headers: { Accept: 'application/json' },
         signal: controller.signal,
-      });
+      })
 
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         return {
           success: false,
           errorMessage: `HTTP ${response.status}: ${response.statusText}`,
-        };
+        }
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       // 解析 exchangerate-api.com v4 回應格式
       // 回應格式：{ base: "USD", rates: { TWD: 31.5, JPY: 150.2, ... } }
@@ -114,29 +114,29 @@ class RateService {
           success: true,
           rates: { ...data.rates, [baseCurrency]: 1 },
           source: 'exchangerate-api.com',
-        };
+        }
       }
 
       // 解析其他常見格式（如 openexchangerates.org）
       if (data.base || data.base_code) {
-        const base = data.base || data.base_code;
-        const rates = data.rates || data.conversion_rates || {};
+        const base = data.base || data.base_code
+        const rates = data.rates || data.conversion_rates || {}
         return {
           success: true,
           rates: { ...rates, [base]: 1 },
           source: 'exchange-api',
-        };
+        }
       }
 
       return {
         success: false,
         errorMessage: 'API 回應格式不符預期',
-      };
+      }
     } catch (err) {
       return {
         success: false,
         errorMessage: err.message,
-      };
+      }
     }
   }
 
@@ -148,8 +148,8 @@ class RateService {
    */
   async _updateCache(rates, source) {
     try {
-      const repo = this.repo;
-      const entries = Object.entries(rates);
+      const repo = this.repo
+      const entries = Object.entries(rates)
 
       for (const [currency, rate] of entries) {
         if (typeof rate === 'number' && rate > 0) {
@@ -159,14 +159,14 @@ class RateService {
               targetCurrency: currency,
               rate,
               source,
-            });
+            })
           } catch (err) {
-            logger.warn('⚠️ 寫入匯率快取失敗', { currency, error: err.message });
+            logger.warn('⚠️ 寫入匯率快取失敗', { currency, error: err.message })
           }
         }
       }
     } catch (err) {
-      logger.error('❌ 更新匯率快取失敗', { error: err.message });
+      logger.error('❌ 更新匯率快取失敗', { error: err.message })
     }
   }
 
@@ -178,14 +178,14 @@ class RateService {
    */
   _getCachedRates(baseCurrency) {
     try {
-      const repo = this.repo;
+      const repo = this.repo
       // 檢查是否過期
       if (repo.isStale(baseCurrency, 'TWD', this.fallbackTtlHours)) {
-        return null;
+        return null
       }
 
       // 讀取所有以 baseCurrency 為基準的匯率
-      const db = this.db;
+      const db = this.db
       const rows = db
         .prepare(
           `SELECT target_currency, rate, fetched_at
@@ -193,24 +193,24 @@ class RateService {
            WHERE base_currency = ?
            ORDER BY fetched_at DESC`
         )
-        .all(baseCurrency);
+        .all(baseCurrency)
 
-      if (rows.length === 0) return null;
+      if (rows.length === 0) return null
 
       // 只取每個幣別的最新一筆
-      const seen = new Set();
-      const rates = { [baseCurrency]: 1 };
+      const seen = new Set()
+      const rates = { [baseCurrency]: 1 }
       for (const row of rows) {
         if (!seen.has(row.target_currency)) {
-          seen.add(row.target_currency);
-          rates[row.target_currency] = row.rate;
+          seen.add(row.target_currency)
+          rates[row.target_currency] = row.rate
         }
       }
 
-      return rates;
+      return rates
     } catch (err) {
-      logger.error('❌ 讀取匯率快取失敗', { error: err.message });
-      return null;
+      logger.error('❌ 讀取匯率快取失敗', { error: err.message })
+      return null
     }
   }
 
@@ -231,18 +231,18 @@ class RateService {
       AUD: 0.65,
       CAD: 0.74,
       CHF: 0.88,
-    };
+    }
   }
 }
 
 //單例
-let instance = null;
+let instance = null
 
 function getRateService() {
   if (!instance) {
-    instance = new RateService();
+    instance = new RateService()
   }
-  return instance;
+  return instance
 }
 
-module.exports = { RateService, getRateService };
+module.exports = { RateService, getRateService }

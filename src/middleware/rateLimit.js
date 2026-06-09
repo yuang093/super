@@ -3,10 +3,10 @@
 // 依 IP 限制請求頻率，防止暴力攻擊與 API 濫用
 // B-06 將實作「雙層 Rate Limit」（IP 層 + 使用者指紋層）
 
-'use strict';
+'use strict'
 
-const rateLimit = require('express-rate-limit');
-const logger = require('../utils/logger');
+const rateLimit = require('express-rate-limit')
+const logger = require('../utils/logger')
 
 /**
  * 建立 Rate Limit 中介層
@@ -14,10 +14,10 @@ const logger = require('../utils/logger');
  * @returns {express.RequestHandler}
  */
 function createRateLimitMiddleware(env) {
-  const windowMs = 60 * 1000; // 1 分鐘
-  const max = env.RATE_LIMIT_PER_MIN;
+  const windowMs = 60 * 1000 // 1 分鐘
+  const max = env.RATE_LIMIT_PER_MIN
 
-  logger.debug('⏱️ Rate Limit 設定', { max, windowMs });
+  logger.debug('⏱️ Rate Limit 設定', { max, windowMs })
 
   return rateLimit({
     windowMs,
@@ -26,7 +26,7 @@ function createRateLimitMiddleware(env) {
     legacyHeaders: false,
     // 取得客戶端 IP（相容反向代理）
     keyGenerator: (req) => {
-      return req.ip || req.socket.remoteAddress || 'unknown';
+      return req.ip || req.socket.remoteAddress || 'unknown'
     },
     // 觸發上限時的回應
     handler: (req, res) => {
@@ -34,7 +34,7 @@ function createRateLimitMiddleware(env) {
         requestId: req.requestId,
         ip: req.ip,
         path: req.path,
-      });
+      })
       res.status(429).json({
         error: {
           code: 'RATE_LIMIT_EXCEEDED',
@@ -42,11 +42,11 @@ function createRateLimitMiddleware(env) {
           requestId: req.requestId,
           retryAfter: Math.ceil(windowMs / 1000),
         },
-      });
+      })
     },
     // 跳過健康檢查（避免監控被擋）
     skip: (req) => req.path === '/healthz',
-  });
+  })
 }
 
-module.exports = { createRateLimitMiddleware };
+module.exports = { createRateLimitMiddleware }

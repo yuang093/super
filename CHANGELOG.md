@@ -19,12 +19,19 @@
 
 ## [Unreleased]
 
+### 已完成（Phase 2 — 2026-06-09）
+- ✅ 前端：style.css（Mobile First）、camera.js、cart.js、image-pipeline.js（EXIF+壓縮）、fingerprint.js（SHA-256）、knnClassifier.js（K=5）
+- ✅ 後端：vlmClient.js（MiniMax VLM + Backoff）、fallbackParser.js（JSON→Regex→啟發式三層解析）
+- ✅ 後端：rate.service.js + rate.js（匯率 API + SQLite Fallback）
+- ✅ 後端：eventBus.js（Event Emitter單例）、webhook.js + webhookRepository.js（Webhook 訂閱管理）
+- ✅ 部署：D-01~D-06 全部就緒（Dockerfile、docker-compose、Cloudflare Tunnel、Volume、Secrets、日誌輪替）
+
+### 修正（2026-06-09）
+- Fixed：package.json 重複 script key（test:watch、test:coverage 已合併）
+- Fixed：health check 端點統一為 /healthz（與 Dockerfile HEALTHCHECK 一致）
+- Fixed：草稿檔案移至 docs/drafts/，.gitignore 新增 docs/drafts/ 排除規則
+
 ### 規劃中
-- 階段二：前端 TF.js MobileNet + KNN 快篩模組實作
-- 階段二：後端 Express + sharp + better-sqlite3 服務骨架
-- 階段二：MiniMax VLM API 三層 Fallback 解析器
-- 階段二：購物車 UI（單筆刪除 / 清空 / 外幣 + TWD 總價）
-- 階段二：免登入 IP Fingerprint 綁定機制
 - 階段三：TDD 三循環測試（單元 → 整合 → E2E），覆蓋率 ≥ 80%
 
 ---

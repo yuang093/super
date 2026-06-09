@@ -3,15 +3,15 @@
 // 對應 [todo_progress.md B-07](../../todo_progress.md)
 //設計：參照 Node.js EventEmitter 但杜絕記憶體洩漏（自動解綁 once監聽者）
 
-'use strict';
+'use strict'
 
-const EventEmitter = require('events');
+const EventEmitter = require('events')
 
 /**
  * 全域事件匯流排單例
  * 防止重複建立導致訂閱散落在不同 emitter實例
  */
-let globalBus = null;
+let globalBus = null
 
 /**
  * 取得全域事件匯流排
@@ -19,11 +19,11 @@ let globalBus = null;
  */
 function getBus() {
   if (!globalBus) {
-    globalBus = new EventEmitter();
+    globalBus = new EventEmitter()
     // 防止記憶體洩漏：設定最大監聽者數量
-    globalBus.setMaxListeners(100);
+    globalBus.setMaxListeners(100)
   }
-  return globalBus;
+  return globalBus
 }
 
 /**
@@ -33,9 +33,9 @@ function getBus() {
  * @returns {Function} - 取消訂閱函式
  */
 function on(eventName, listener) {
-  const bus = getBus();
-  bus.on(eventName, listener);
-  return () => bus.off(eventName, listener);
+  const bus = getBus()
+  bus.on(eventName, listener)
+  return () => bus.off(eventName, listener)
 }
 
 /**
@@ -45,9 +45,9 @@ function on(eventName, listener) {
  * @returns {Function} - 取消訂閱函式
  */
 function once(eventName, listener) {
-  const bus = getBus();
-  bus.once(eventName, listener);
-  return () => bus.off(eventName, listener);
+  const bus = getBus()
+  bus.once(eventName, listener)
+  return () => bus.off(eventName, listener)
 }
 
 /**
@@ -57,9 +57,9 @@ function once(eventName, listener) {
  */
 function emit(eventName, payload) {
   try {
-    getBus().emit(eventName, payload);
+    getBus().emit(eventName, payload)
   } catch (err) {
-    console.error(`[EventBus] 事件發送失敗: ${eventName}`, err);
+    console.error(`[EventBus] 事件發送失敗: ${eventName}`, err)
   }
 }
 
@@ -69,18 +69,18 @@ function emit(eventName, payload) {
  * @returns {number}
  */
 function listenerCount(eventName) {
-  const bus = getBus();
+  const bus = getBus()
   if (eventName) {
-    return bus.listenerCount(eventName);
+    return bus.listenerCount(eventName)
   }
-  return bus.eventNames().reduce((sum, name) => sum + bus.listenerCount(name), 0);
+  return bus.eventNames().reduce((sum, name) => sum + bus.listenerCount(name), 0)
 }
 
 /**
  * 移除所有監聽者（主要用於測試）
  */
 function removeAllListeners() {
-  getBus().removeAllListeners();
+  getBus().removeAllListeners()
 }
 
 /**
@@ -88,8 +88,8 @@ function removeAllListeners() {
  */
 function resetBus() {
   if (globalBus) {
-    globalBus.removeAllListeners();
-    globalBus = null;
+    globalBus.removeAllListeners()
+    globalBus = null
   }
 }
 
@@ -107,7 +107,7 @@ const ITEM_EVENTS = {
   ITEM_REMOVED: 'item:removed',
   /** 清空購物車 */
   CART_CLEARED: 'cart:cleared',
-};
+}
 
 /**
  * 辨識相關事件
@@ -119,7 +119,7 @@ const RECOGNITION_EVENTS = {
   RECOGNITION_FAILED: 'recognition:failed',
   /** 圖片壓縮完成 */
   IMAGE_COMPRESSED: 'image:compressed',
-};
+}
 
 /**
  * 匯率相關事件
@@ -129,7 +129,7 @@ const RATE_EVENTS = {
   RATE_UPDATED: 'rate:updated',
   /** 匯率過期 */
   RATE_STALE: 'rate:stale',
-};
+}
 
 /**
  * Webhook 相關事件
@@ -141,7 +141,7 @@ const WEBHOOK_EVENTS = {
   WEBHOOK_SENT: 'webhook:sent',
   /** Webhook 發送失敗 */
   WEBHOOK_FAILED: 'webhook:failed',
-};
+}
 
 module.exports = {
   getBus,
@@ -155,4 +155,4 @@ module.exports = {
   RECOGNITION_EVENTS,
   RATE_EVENTS,
   WEBHOOK_EVENTS,
-};
+}

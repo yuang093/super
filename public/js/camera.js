@@ -3,9 +3,9 @@
 // 對應 [todo_progress.md F-05]
 //錯誤處理：NotAllowedError、NotFoundError、NotReadableError
 
-'use strict';
+'use strict'
 
-import { processImageBlob } from './image-pipeline.js';
+import { processImageBlob } from './image-pipeline.js'
 
 /**
  * 錯誤代碼對應的友善提示訊息
@@ -17,7 +17,7 @@ const ERROR_MESSAGES = {
   OverconstrainedError: '相機規格不符合。請嘗試使用相簿選擇照片。',
   AbortError: '相機作業被中斷。',
   default: '無法開啟相機，請嘗試從相簿選擇照片。',
-};
+}
 
 /**
  * 顯示錯誤提示（Toast 樣式）
@@ -25,21 +25,21 @@ const ERROR_MESSAGES = {
  */
 function showErrorToast(message) {
   // 移除既有 toast
-  const existing = document.querySelector('.error-toast');
-  if (existing) existing.remove();
+  const existing = document.querySelector('.error-toast')
+  if (existing) existing.remove()
 
-  const toast = document.createElement('div');
-  toast.className = 'error-toast';
-  toast.textContent = message;
-  toast.setAttribute('role', 'alert');
-  document.body.appendChild(toast);
+  const toast = document.createElement('div')
+  toast.className = 'error-toast'
+  toast.textContent = message
+  toast.setAttribute('role', 'alert')
+  document.body.appendChild(toast)
 
   // 3 秒後自動移除
   setTimeout(() => {
     if (toast.parentNode) {
-      toast.remove();
+      toast.remove()
     }
-  }, 3000);
+  }, 3000)
 }
 
 /**
@@ -49,12 +49,12 @@ function showErrorToast(message) {
  */
 function getFriendlyError(err) {
   if (err.name && ERROR_MESSAGES[err.name]) {
-    return ERROR_MESSAGES[err.name];
+    return ERROR_MESSAGES[err.name]
   }
   if (err.message && err.message.includes('Permission')) {
-    return ERROR_MESSAGES.NotAllowedError;
+    return ERROR_MESSAGES.NotAllowedError
   }
-  return ERROR_MESSAGES.default;
+  return ERROR_MESSAGES.default
 }
 
 /**
@@ -68,21 +68,21 @@ export class Camera {
    * @param {string} [options.canvasElementId='preview-canvas'] - Canvas 元素 ID
    */
   constructor(options = {}) {
-    this.videoElementId = options.videoElementId || 'camera-video';
-    this.canvasElementId = options.canvasElementId || 'preview-canvas';
-    this._stream = null;
-    this._video = null;
-    this._canvas = null;
-    this._ctx = null;
-    this._isActive = false;
- }
+    this.videoElementId = options.videoElementId || 'camera-video'
+    this.canvasElementId = options.canvasElementId || 'preview-canvas'
+    this._stream = null
+    this._video = null
+    this._canvas = null
+    this._ctx = null
+    this._isActive = false
+  }
 
   /**
    * 檢查相機是否可用
    * @returns {boolean}
    */
   isSupported() {
-    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
   }
 
   /**
@@ -92,12 +92,12 @@ export class Camera {
    */
   async start() {
     if (!this.isSupported()) {
-      throw new Error('您的瀏覽器不支援相機功能。請使用 Chrome、Safari 或 Firefox 最新版本。');
+      throw new Error('您的瀏覽器不支援相機功能。請使用 Chrome、Safari 或 Firefox 最新版本。')
     }
 
     // 如果已有串流，先停止
     if (this._stream) {
-      await this.stop();
+      await this.stop()
     }
 
     try {
@@ -108,35 +108,35 @@ export class Camera {
           height: { ideal: 1080 },
         },
         audio: false,
-      });
+      })
 
       // 建立隱藏的 video元素
-      this._video = document.createElement('video');
-      this._video.id = this.videoElementId;
-      this._video.setAttribute('autoplay', '');
-      this._video.setAttribute('playsinline', '');
-      this._video.setAttribute('muted', '');
-      this._video.style.display = 'none';
-      this._video.srcObject = this._stream;
+      this._video = document.createElement('video')
+      this._video.id = this.videoElementId
+      this._video.setAttribute('autoplay', '')
+      this._video.setAttribute('playsinline', '')
+      this._video.setAttribute('muted', '')
+      this._video.style.display = 'none'
+      this._video.srcObject = this._stream
 
       // 等待影片元載入完成
       await new Promise((resolve, reject) => {
         this._video.onloadedmetadata = () => {
-          this._video.play().then(resolve).catch(reject);
-        };
-        this._video.onerror = () => reject(new Error('影片載入失敗'));
-      });
+          this._video.play().then(resolve).catch(reject)
+        }
+        this._video.onerror = () => reject(new Error('影片載入失敗'))
+      })
 
-      this._isActive = true;
+      this._isActive = true
       console.log('[Camera] 相機已啟動', {
         width: this._video.videoWidth,
         height: this._video.videoHeight,
-      });
+      })
 
-      return this._stream;
+      return this._stream
     } catch (err) {
-      console.error('[Camera] 開啟相機失敗', err.name, err.message);
-      throw err;
+      console.error('[Camera] 開啟相機失敗', err.name, err.message)
+      throw err
     }
   }
 
@@ -146,17 +146,17 @@ export class Camera {
   stop() {
     if (this._stream) {
       this._stream.getTracks().forEach((track) => {
-        track.stop();
-      });
-      this._stream = null;
+        track.stop()
+      })
+      this._stream = null
     }
     if (this._video) {
-      this._video.srcObject = null;
-      this._video.remove();
-      this._video = null;
+      this._video.srcObject = null
+      this._video.remove()
+      this._video = null
     }
-    this._isActive = false;
-    console.log('[Camera] 相機已停止');
+    this._isActive = false
+    console.log('[Camera] 相機已停止')
   }
 
   /**
@@ -166,22 +166,22 @@ export class Camera {
    */
   async loadFromFile(file) {
     if (!file || !file.type.startsWith('image/')) {
-      throw new Error('請選擇有效的圖片檔案。');
+      throw new Error('請選擇有效的圖片檔案。')
     }
 
     console.log('[Camera] 從相簿載入', {
       name: file.name,
       type: file.type,
       size: file.size,
-    });
+    })
 
     // 停止相機（如果正在使用）
     if (this._isActive) {
-      await this.stop();
+      await this.stop()
     }
 
     // 執行影像處理管線（含 EXIF 修正 + 壓縮）
-    const result = await processImageBlob(file);
+    const result = await processImageBlob(file)
 
     return {
       blob: file,
@@ -189,7 +189,7 @@ export class Camera {
       width: result.width,
       height: result.height,
       bytes: result.bytes,
-    };
+    }
   }
 
   /**
@@ -198,38 +198,38 @@ export class Camera {
    */
   async capture() {
     if (!this._isActive || !this._video) {
-      throw new Error('相機尚未啟動，無法拍照。');
+      throw new Error('相機尚未啟動，無法拍照。')
     }
 
-    const video = this._video;
+    const video = this._video
 
     // 建立 Canvas 並截圖
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(video, 0, 0)
 
     // 轉為 Blob
     const blob = await new Promise((resolve, reject) => {
       canvas.toBlob(
         (b) => {
-          if (b) resolve(b);
-          else reject(new Error('Canvas轉 Blob 失敗'));
+          if (b) resolve(b)
+          else reject(new Error('Canvas轉 Blob 失敗'))
         },
         'image/jpeg',
         0.95
-      );
-    });
+      )
+    })
 
     // 執行影像處理管線（含 EXIF 修正 + 壓縮）
-    const result = await processImageBlob(blob);
+    const result = await processImageBlob(blob)
 
     console.log('[Camera] 拍照完成', {
       originalSize: blob.size,
       compressedSize: result.bytes,
       dimensions: `${result.width}x${result.height}`,
-    });
+    })
 
     return {
       blob,
@@ -237,7 +237,7 @@ export class Camera {
       width: result.width,
       height: result.height,
       bytes: result.bytes,
-    };
+    }
   }
 
   /**
@@ -245,7 +245,7 @@ export class Camera {
    * @returns {boolean}
    */
   isActive() {
-    return this._isActive;
+    return this._isActive
   }
 }
 
@@ -259,12 +259,12 @@ export class Camera {
  */
 export async function withCameraErrorHandling(fn, callbacks = {}) {
   try {
-    callbacks.onStart?.();
-    return await fn();
+    callbacks.onStart?.()
+    return await fn()
   } catch (err) {
-    const friendlyMessage = getFriendlyError(err);
-    showErrorToast(friendlyMessage);
-    callbacks.onError?.(err, friendlyMessage);
-    return null;
+    const friendlyMessage = getFriendlyError(err)
+    showErrorToast(friendlyMessage)
+    callbacks.onError?.(err, friendlyMessage)
+    return null
   }
 }

@@ -2,9 +2,9 @@
 // items 表的 CRUD 與業務查詢
 // 對應 [todo_progress.md F-06](../../todo_progress.md) 購物車功能
 
-'use strict';
+'use strict'
 
-const BaseRepository = require('./baseRepository');
+const BaseRepository = require('./baseRepository')
 
 /**
  * 商品 Repository
@@ -12,7 +12,7 @@ const BaseRepository = require('./baseRepository');
  */
 class ItemRepository extends BaseRepository {
   constructor(db) {
-    super(db, 'items');
+    super(db, 'items')
   }
 
   /**
@@ -27,17 +27,17 @@ class ItemRepository extends BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   create({ fingerprint, name, price, currency = 'TWD', imagePath = null, vlmRawResponse = null }) {
-    if (!fingerprint) throw new Error('fingerprint 不可為空');
-    if (!name) throw new Error('name 不可為空');
-    if (typeof price !== 'number' || price < 0) throw new Error('price 必須為非負數');
+    if (!fingerprint) throw new Error('fingerprint 不可為空')
+    if (!name) throw new Error('name 不可為空')
+    if (typeof price !== 'number' || price < 0) throw new Error('price 必須為非負數')
 
-    const now = Date.now();
+    const now = Date.now()
     return this.db
       .prepare(
         `INSERT INTO items (fingerprint, name, price, currency, image_path, vlm_raw_response, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
       )
-      .run(fingerprint, name, price, currency, imagePath, vlmRawResponse, now, now);
+      .run(fingerprint, name, price, currency, imagePath, vlmRawResponse, now, now)
   }
 
   /**
@@ -54,7 +54,7 @@ class ItemRepository extends BaseRepository {
         `SELECT * FROM items WHERE fingerprint = ?
          ORDER BY created_at DESC LIMIT ? OFFSET ?`
       )
-      .all(fingerprint, limit, offset);
+      .all(fingerprint, limit, offset)
   }
 
   /**
@@ -69,7 +69,7 @@ class ItemRepository extends BaseRepository {
          FROM items WHERE fingerprint = ?
          GROUP BY currency`
       )
-      .all(fingerprint);
+      .all(fingerprint)
   }
 
   /**
@@ -82,7 +82,7 @@ class ItemRepository extends BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   updateById(id, { name, price, currency }) {
-    const now = Date.now();
+    const now = Date.now()
     return this.db
       .prepare(
         `UPDATE items SET
@@ -92,7 +92,7 @@ class ItemRepository extends BaseRepository {
          updated_at = ?
          WHERE id = ?`
       )
-      .run(name, price, currency, now, id);
+      .run(name, price, currency, now, id)
   }
 
   /**
@@ -101,8 +101,8 @@ class ItemRepository extends BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   deleteAllByFingerprint(fingerprint) {
-    return this.db.prepare('DELETE FROM items WHERE fingerprint = ?').run(fingerprint);
+    return this.db.prepare('DELETE FROM items WHERE fingerprint = ?').run(fingerprint)
   }
 }
 
-module.exports = ItemRepository;
+module.exports = ItemRepository

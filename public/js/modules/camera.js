@@ -2,7 +2,7 @@
 // 拍照模組：getUserMedia 相機呼叫 + 通用檔案選擇
 // 對應 [todo_progress.md F-04](../../todo_progress.md)
 
-'use strict';
+'use strict'
 
 /**
  * 相機類別
@@ -15,10 +15,10 @@ export class Camera {
    */
   constructor(videoElement) {
     if (!videoElement) {
-      throw new Error('Camera 需要 video 元素');
+      throw new Error('Camera 需要 video 元素')
     }
-    this.video = videoElement;
-    this.stream = null;
+    this.video = videoElement
+    this.stream = null
   }
 
   /**
@@ -27,10 +27,10 @@ export class Camera {
    * @returns {Promise<boolean>} 成功與否
    */
   async start() {
-    console.log('[Camera] 請求 getUserMedia 權限...');
+    console.log('[Camera] 請求 getUserMedia 權限...')
     if (!navigator.mediaDevices?.getUserMedia) {
-      console.error('[Camera] 瀏覽器不支援 getUserMedia');
-      return { success: false, reason: 'BROWSER_NOT_SUPPORTED' };
+      console.error('[Camera] 瀏覽器不支援 getUserMedia')
+      return { success: false, reason: 'BROWSER_NOT_SUPPORTED' }
     }
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
@@ -40,17 +40,17 @@ export class Camera {
           height: { ideal: 720 },
         },
         audio: false,
-      });
-      this.video.srcObject = this.stream;
+      })
+      this.video.srcObject = this.stream
       console.log('[Camera] 啟動成功', {
         tracks: this.stream.getTracks().length,
         videoWidth: this.video.videoWidth,
         videoHeight: this.video.videoHeight,
-      });
-      return { success: true };
+      })
+      return { success: true }
     } catch (err) {
-      console.error('[Camera] 啟動失敗', err.name, err.message);
-      return { success: false, reason: err.name, message: err.message };
+      console.error('[Camera] 啟動失敗', err.name, err.message)
+      return { success: false, reason: err.name, message: err.message }
     }
   }
 
@@ -59,10 +59,10 @@ export class Camera {
    */
   stop() {
     if (this.stream) {
-      this.stream.getTracks().forEach((track) => track.stop());
-      this.stream = null;
-      this.video.srcObject = null;
-      console.log('[Camera] 已停止');
+      this.stream.getTracks().forEach((track) => track.stop())
+      this.stream = null
+      this.video.srcObject = null
+      console.log('[Camera] 已停止')
     }
   }
 
@@ -73,20 +73,20 @@ export class Camera {
    */
   async capture(quality = 0.85) {
     if (!this.stream || !this.video.videoWidth) {
-      throw new Error('相機未啟動或未就緒');
+      throw new Error('相機未啟動或未就緒')
     }
-    const canvas = document.createElement('canvas');
-    canvas.width = this.video.videoWidth;
-    canvas.height = this.video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(this.video, 0, 0);
+    const canvas = document.createElement('canvas')
+    canvas.width = this.video.videoWidth
+    canvas.height = this.video.videoHeight
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(this.video, 0, 0)
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => (blob ? resolve(blob) : reject(new Error('拍照失敗'))),
         'image/jpeg',
         quality
-      );
-    });
+      )
+    })
   }
 
   /**
@@ -94,15 +94,13 @@ export class Camera {
    * @returns {boolean}
    */
   static isSupported() {
-    return Boolean(
-      navigator.mediaDevices?.getUserMedia && window.isSecureContext
-    );
+    return Boolean(navigator.mediaDevices?.getUserMedia && window.isSecureContext)
   }
 
   /**
    * 檢查當前是否在 HTTPS 安全環境
    */
   static isSecureContext() {
-    return window.isSecureContext === true;
+    return window.isSecureContext === true
   }
 }

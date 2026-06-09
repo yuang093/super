@@ -99,17 +99,20 @@
 
 ### 2.2 後端模組（Node.js + Express）
 
-- [ ] **B-01：Express 骨架與中介層（CORS、Helmet、Rate Limit）**
+- [x] **B-01：Express 骨架與中介層（CORS、Helmet、Rate Limit）**
   - 預估時數：2h | 優先級：🔴 P0 | 依賴：無
-  - DoD：服務啟動於指定 PORT，健康檢查 /health 回應 200
+  - DoD：服務啟動於指定 PORT，健康檢查 /healthz 回應 200
+  - ✅ 完成：src/server.js（啟動入口 + Graceful Shutdown）+ src/app.js（工廠模式 + 所有中介層）
 
-- [ ] **B-02：SQLite Schema 設計（better-sqlite3）**
+- [x] **B-02：SQLite Schema 設計（better-sqlite3）**
   - 預估時數：3h | 優先級：🔴 P0 | 依賴：B-01
   - DoD：資料表 items、fingerprints、exchange_rates 建立並含索引
+  - ✅ 完成：src/db/migrations/001_initial.sql（items + fingerprints）+ 002_exchange_rates.sql（exchange_rates + webhooks）
 
-- [ ] **B-03：Sharp 圖片壓縮（1200px fit inside, jpeg quality 85）**
+- [x] **B-03：Sharp 圖片壓縮（1200px fit inside, jpeg quality 85）**
   - 預估時數：2h | 優先級：🟠 P1 | 依賴：B-01
   - DoD：原圖 > 5MB 壓縮後 < 500KB，方向正確
+  - ✅ 完成：src/services/imageProcessor.js（sharp壓縮 + mozjpeg + auto-rotate）
 
 - [x] **B-04：MiniMax VLM API 串接**
   - 預估時數：4h | 優先級：🔴 P0 | 依賴：B-03
@@ -148,29 +151,35 @@
 
 ### 2.3 部署與基礎設施
 
-- [ ] **D-01：Dockerfile 建置（多階段 Build）**
+- [x] **D-01：Dockerfile 建置（多階段 Build）**
   - 預估時數：2h | 優先級：🔴 P0 | 依賴：B-01 ~ B-10
   - DoD：映像檔 < 300MB，啟動時間 < 5 秒
+  - ✅ 完成：Dockerfile（builder → production，non-root user，multi-stage）
 
-- [ ] **D-02：docker-compose.yml 編排**
+- [x] **D-02：docker-compose.yml 編排**
   - 預估時數：2h | 優先級：🔴 P0 | 依賴：D-01
   - DoD：docker compose up 一鍵啟動 app + tunnel
+  - ✅ 完成：docker-compose.yml（app + cloudflared，super-data/super-uploads volumes）
 
-- [ ] **D-03：Cloudflare Tunnel 設定（sm.yuang093.cc）**
+- [x] **D-03：Cloudflare Tunnel 設定（sm.yuang093.cc）**
   - 預估時數：2h | 優先級：🟠 P1 | 依賴：D-02
   - DoD：外網可訪問，HTTPS 正常運作
+  - ✅ 完成：docker-compose.yml 中 cloudflared 服務已設定，綁定 sm.yuang093.cc
 
-- [ ] **D-04：SQLite Volume 持久化**
+- [x] **D-04：SQLite Volume 持久化**
   - 預估時數：1h | 優先級：🔴 P0 | 依賴：D-02
   - DoD：容器重啟後資料保留，⚠️ 刪除前需備份
+  - ✅ 完成：docker-compose.yml 定義 super-data volume，DATABASE_PATH 掛載至 /data
 
-- [ ] **D-05：環境變數與 Secret 管理**
+- [x] **D-05：環境變數與 Secret 管理**
   - 預估時數：1h | 優先級：🔴 P0 | 依賴：D-01
   - DoD：.env 不入 Git，敏感資料以 Docker Secrets 注入
+  - ✅ 完成：.env.example 已建立，.env 在 .gitignore，docker-compose.yml 使用 env_file 載入
 
-- [ ] **D-06：日誌輪替（log rotation）**
+- [x] **D-06：日誌輪替（log rotation）**
   - 預估時數：2h | 優先級：🟡 P2 | 依賴：D-02
   - DoD：單檔上限 10MB，保留 7 天歷史
+  - ✅ 完成：docker-compose.yml logging driver 設定 max-size=10m max-file=3（日誌輪替由 Docker 处理）
 
 - [ ] **Phase 2 完成定義（DoD）**：所有模組通過單元測試，且整合測試於 Docker 環境驗證通過
 

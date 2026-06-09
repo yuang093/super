@@ -3,10 +3,10 @@
 // 區分 OperationalError（可預期）vs ProgrammingError（程式錯誤）
 // 統一回應結構：{error: {code, message, requestId, details?}}
 
-'use strict';
+'use strict'
 
-const logger = require('../utils/logger');
-const { getEnv } = require('../config/env');
+const logger = require('../utils/logger')
+const { getEnv } = require('../config/env')
 
 /**
  * 應用層級錯誤類別
@@ -22,13 +22,13 @@ class AppError extends Error {
    * @param {boolean} [options.isOperational=true] - 是否為可預期錯誤
    */
   constructor(message, { code, status, details, isOperational = true } = {}) {
-    super(message);
-    this.name = 'AppError';
-    this.code = code || 'INTERNAL_ERROR';
-    this.status = status || 500;
-    this.details = details;
-    this.isOperational = isOperational;
-    Error.captureStackTrace(this, this.constructor);
+    super(message)
+    this.name = 'AppError'
+    this.code = code || 'INTERNAL_ERROR'
+    this.status = status || 500
+    this.details = details
+    this.isOperational = isOperational
+    Error.captureStackTrace(this, this.constructor)
   }
 }
 
@@ -37,10 +37,12 @@ class AppError extends Error {
  * 必須在 errorHandler 之前掛載
  */
 function notFoundHandler(req, res, next) {
-  next(new AppError(`路徑不存在：${req.method} ${req.path}`, {
-    code: 'NOT_FOUND',
-    status: 404,
-  }));
+  next(
+    new AppError(`路徑不存在：${req.method} ${req.path}`, {
+      code: 'NOT_FOUND',
+      status: 404,
+    })
+  )
 }
 
 /**
@@ -50,42 +52,46 @@ function notFoundHandler(req, res, next) {
 // eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
   const env = (() => {
-    try { return getEnv(); } catch { return { NODE_ENV: 'development' }; }
-  })();
+    try {
+      return getEnv()
+    } catch {
+      return { NODE_ENV: 'development' }
+    }
+  })()
 
   // 判斷錯誤類型
-  const isAppError = err instanceof AppError;
-  const isCorsError = err.message && err.message.startsWith('CORS 政策不允許');
+  const isAppError = err instanceof AppError
+  const isCorsError = err.message && err.message.startsWith('CORS 政策不允許')
 
-  let status, code, message, details;
+  let status, code, message, details
 
   if (isAppError) {
-    status = err.status;
-    code = err.code;
-    message = err.message;
-    details = err.details;
+    status = err.status
+    code = err.code
+    message = err.message
+    details = err.details
   } else if (isCorsError) {
-    status = 403;
-    code = 'CORS_BLOCKED';
-    message = err.message;
+    status = 403
+    code = 'CORS_BLOCKED'
+    message = err.message
   } else if (err.name === 'ZodError') {
-    status = 400;
-    code = 'VALIDATION_ERROR';
-    message = '請求參數驗證失敗';
-    details = { issues: err.issues };
+    status = 400
+    code = 'VALIDATION_ERROR'
+    message = '請求參數驗證失敗'
+    details = { issues: err.issues }
   } else if (err.type === 'entity.too.large') {
-    status = 413;
-    code = 'PAYLOAD_TOO_LARGE';
-    message = '請求主體超過大小限制';
+    status = 413
+    code = 'PAYLOAD_TOO_LARGE'
+    message = '請求主體超過大小限制'
   } else if (err.type === 'entity.parse.failed') {
-    status = 400;
-    code = 'INVALID_JSON';
-    message = '請求主體 JSON 格式錯誤';
+    status = 400
+    code = 'INVALID_JSON'
+    message = '請求主體 JSON 格式錯誤'
   } else {
     // 程式錯誤（不可預期）
-    status = 500;
-    code = 'INTERNAL_ERROR';
-    message = '伺服器內部錯誤';
+    status = 500
+    code = 'INTERNAL_ERROR'
+    message = '伺服器內部錯誤'
   }
 
   // 記錄日誌
@@ -96,14 +102,14 @@ function errorHandler(err, req, res, next) {
     status,
     code,
     error: err.message,
-  };
+  }
 
   if (isAppError && err.isOperational) {
     // 可預期的錯誤：warn 等級即可
-    logger.warn('⚠️ 應用層級錯誤', logPayload);
+    logger.warn('⚠️ 應用層級錯誤', logPayload)
   } else {
     // 程式錯誤：error 等級並記錄 stack
-    logger.error('💥 未預期錯誤', { ...logPayload, stack: err.stack });
+    logger.error('💥 未預期錯誤', { ...logPayload, stack: err.stack })
   }
 
   // 回應結構
@@ -114,18 +120,18 @@ function errorHandler(err, req, res, next) {
       requestId: req.requestId,
       ...(details && { details }),
     },
-  };
+  }
 
   // 開發環境額外暴露 stack（生產環境絕不暴露）
   if (env.NODE_ENV !== 'production' && !isAppError) {
-    responseBody.error.stack = err.stack;
+    responseBody.error.stack = err.stack
   }
 
-  res.status(status).json(responseBody);
+  res.status(status).json(responseBody)
 }
 
 module.exports = {
   AppError,
   notFoundHandler,
   errorHandler,
-};
+}

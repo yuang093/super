@@ -2,13 +2,13 @@
 // 健康檢查路由
 // 提供 /healthz 端點供 Docker healthcheck、負載均衡器、監控系統使用
 
-'use strict';
+'use strict'
 
-const express = require('express');
-const { getEnv } = require('../config/env');
-const packageJson = require('../../package.json');
+const express = require('express')
+const { getEnv } = require('../config/env')
+const packageJson = require('../../package.json')
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * GET /healthz
@@ -16,8 +16,8 @@ const router = express.Router();
  * @returns {Object} {status, uptime, version, env, timestamp, checks}
  */
 router.get('/healthz', (req, res) => {
-  const env = getEnv();
-  const uptime = process.uptime();
+  const env = getEnv()
+  const uptime = process.uptime()
 
   res.status(200).json({
     status: 'ok',
@@ -31,8 +31,8 @@ router.get('/healthz', (req, res) => {
       // B-02: { database: 'ok' }
       // B-08: { exchangeApi: 'ok' }
     },
-  });
-});
+  })
+})
 
 /**
  * 將秒數格式化為「Xd Yh Zm Ws」格式
@@ -40,18 +40,18 @@ router.get('/healthz', (req, res) => {
  * @returns {string}
  */
 function formatUptime(seconds) {
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = Math.floor(seconds % 60)
 
-  const parts = [];
-  if (days > 0) parts.push(`${days}d`);
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
-  parts.push(`${secs}s`);
+  const parts = []
+  if (days > 0) parts.push(`${days}d`)
+  if (hours > 0) parts.push(`${hours}h`)
+  if (minutes > 0) parts.push(`${minutes}m`)
+  parts.push(`${secs}s`)
 
-  return parts.join(' ');
+  return parts.join(' ')
 }
 
-module.exports = router;
+module.exports = router

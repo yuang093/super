@@ -77,3 +77,9 @@ coverage/
 .claude/
 .assistant/
 .aider*
+
+# --- Development drafts & notes ----------------------------------------
+# Do not commit working notes, AI prompts, or development drafts.
+docs/drafts/
+*.draft.md
+*.tmp.md

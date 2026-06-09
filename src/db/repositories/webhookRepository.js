@@ -2,16 +2,16 @@
 // webhook_subscriptions 表操作
 // 對應 [todo_progress.md B-09](../../todo_progress.md)
 
-'use strict';
+'use strict'
 
-const BaseRepository = require('./baseRepository');
+const BaseRepository = require('./baseRepository')
 
 /**
  * Webhook 訂閱 Repository
  */
 class WebhookRepository extends BaseRepository {
   constructor(db) {
-    super(db, 'webhook_subscriptions');
+    super(db, 'webhook_subscriptions')
   }
 
   /**
@@ -24,14 +24,14 @@ class WebhookRepository extends BaseRepository {
    */
   create({ url, events, secretHash }) {
     if (!url || !events || !secretHash) {
-      throw new Error('url、events、secretHash 不可為空');
+      throw new Error('url、events、secretHash 不可為空')
     }
     return this.db
       .prepare(
         `INSERT INTO webhook_subscriptions (url, events, secret_hash, is_active, created_at)
          VALUES (?, ?, ?, 1, ?)`
       )
-      .run(url, JSON.stringify(events), secretHash, Date.now());
+      .run(url, JSON.stringify(events), secretHash, Date.now())
   }
 
   /**
@@ -39,9 +39,7 @@ class WebhookRepository extends BaseRepository {
    * @returns {Array}
    */
   findActive() {
-    return this.db
-      .prepare(`SELECT * FROM webhook_subscriptions WHERE is_active = 1`)
-      .all();
+    return this.db.prepare(`SELECT * FROM webhook_subscriptions WHERE is_active = 1`).all()
   }
 
   /**
@@ -50,17 +48,15 @@ class WebhookRepository extends BaseRepository {
    * @returns {Array}
    */
   findByEvent(eventName) {
-    const rows = this.db
-      .prepare(`SELECT * FROM webhook_subscriptions WHERE is_active = 1`)
-      .all();
+    const rows = this.db.prepare(`SELECT * FROM webhook_subscriptions WHERE is_active = 1`).all()
     return rows.filter((row) => {
       try {
-        const events = JSON.parse(row.events);
-        return events.includes(eventName);
+        const events = JSON.parse(row.events)
+        return events.includes(eventName)
       } catch (_) {
-        return false;
+        return false
       }
-    });
+    })
   }
 
   /**
@@ -70,7 +66,7 @@ class WebhookRepository extends BaseRepository {
   updateLastTriggered(id) {
     this.db
       .prepare(`UPDATE webhook_subscriptions SET last_triggered_at = ? WHERE id = ?`)
-      .run(Date.now(), id);
+      .run(Date.now(), id)
   }
 
   /**
@@ -79,10 +75,8 @@ class WebhookRepository extends BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   deactivate(id) {
-    return this.db
-      .prepare(`UPDATE webhook_subscriptions SET is_active = 0 WHERE id = ?`)
-      .run(id);
+    return this.db.prepare(`UPDATE webhook_subscriptions SET is_active = 0 WHERE id = ?`).run(id)
   }
 }
 
-module.exports = WebhookRepository;
+module.exports = WebhookRepository

@@ -2,9 +2,9 @@
 // exchange_rates 表操作
 // 對應 [todo_progress.md B-08](../../todo_progress.md) 匯率 API + SQLite Fallback
 
-'use strict';
+'use strict'
 
-const BaseRepository = require('./baseRepository');
+const BaseRepository = require('./baseRepository')
 
 /**
  * 匯率 Repository
@@ -12,7 +12,7 @@ const BaseRepository = require('./baseRepository');
  */
 class ExchangeRateRepository extends BaseRepository {
   constructor(db) {
-    super(db, 'exchange_rates');
+    super(db, 'exchange_rates')
   }
 
   /**
@@ -25,10 +25,10 @@ class ExchangeRateRepository extends BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   upsert({ baseCurrency, targetCurrency, rate, source = 'exchangerate-api.com' }) {
-    if (!baseCurrency || !targetCurrency) throw new Error('baseCurrency 與 targetCurrency 不可為空');
-    if (typeof rate !== 'number' || rate <= 0) throw new Error('rate 必須為正數');
+    if (!baseCurrency || !targetCurrency) throw new Error('baseCurrency 與 targetCurrency 不可為空')
+    if (typeof rate !== 'number' || rate <= 0) throw new Error('rate 必須為正數')
 
-    const now = Date.now();
+    const now = Date.now()
     return this.db
       .prepare(
         `INSERT INTO exchange_rates (base_currency, target_currency, rate, fetched_at, source)
@@ -38,7 +38,7 @@ class ExchangeRateRepository extends BaseRepository {
            fetched_at = excluded.fetched_at,
            source = excluded.source`
       )
-      .run(baseCurrency, targetCurrency, rate, now, source);
+      .run(baseCurrency, targetCurrency, rate, now, source)
   }
 
   /**
@@ -54,7 +54,7 @@ class ExchangeRateRepository extends BaseRepository {
          WHERE base_currency = ? AND target_currency = ?
          ORDER BY fetched_at DESC LIMIT 1`
       )
-      .get(baseCurrency, targetCurrency);
+      .get(baseCurrency, targetCurrency)
   }
 
   /**
@@ -65,9 +65,9 @@ class ExchangeRateRepository extends BaseRepository {
    * @returns {boolean} - true 表示過期或不存在
    */
   isStale(baseCurrency, targetCurrency, ttlHours = 24) {
-    const record = this.findByPair(baseCurrency, targetCurrency);
-    if (!record) return true;
-    return Date.now() - record.fetched_at > ttlHours * 60 * 60 * 1000;
+    const record = this.findByPair(baseCurrency, targetCurrency)
+    if (!record) return true
+    return Date.now() - record.fetched_at > ttlHours * 60 * 60 * 1000
   }
 
   /**
@@ -76,9 +76,9 @@ class ExchangeRateRepository extends BaseRepository {
    * @returns {import('better-sqlite3').RunResult}
    */
   cleanOld(ttlHours = 168) {
-    const threshold = Date.now() - ttlHours * 60 * 60 * 1000;
-    return this.db.prepare('DELETE FROM exchange_rates WHERE fetched_at < ?').run(threshold);
+    const threshold = Date.now() - ttlHours * 60 * 60 * 1000
+    return this.db.prepare('DELETE FROM exchange_rates WHERE fetched_at < ?').run(threshold)
   }
 }
 
-module.exports = ExchangeRateRepository;
+module.exports = ExchangeRateRepository

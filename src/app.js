@@ -2,22 +2,22 @@
 // Express 應用工廠
 // 採用「工廠函式」模式，便於測試注入與多實例（如 worker thread）
 
-'use strict';
+'use strict'
 
-const express = require('express');
-const path = require('node:path');
+const express = require('express')
+const path = require('node:path')
 
-const { getEnv } = require('./config/env');
-const logger = require('./utils/logger');
-const { createCorsMiddleware } = require('./middleware/cors');
-const { createHelmetMiddleware } = require('./middleware/helmet');
-const { createRateLimitMiddleware } = require('./middleware/rateLimit');
-const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
-const healthRouter = require('./routes/health');
-const captureRouter = require('./routes/capture');
-const itemsRouter = require('./routes/items');
-const rateRouter = require('./routes/rate');
-const webhookRouter = require('./routes/webhook');
+const { getEnv } = require('./config/env')
+const logger = require('./utils/logger')
+const { createCorsMiddleware } = require('./middleware/cors')
+const { createHelmetMiddleware } = require('./middleware/helmet')
+const { createRateLimitMiddleware } = require('./middleware/rateLimit')
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler')
+const healthRouter = require('./routes/health')
+const captureRouter = require('./routes/capture')
+const itemsRouter = require('./routes/items')
+const rateRouter = require('./routes/rate')
+const webhookRouter = require('./routes/webhook')
 
 /**
  * 建立 Express 應用實例
@@ -26,49 +26,49 @@ const webhookRouter = require('./routes/webhook');
  * @returns {express.Express}
  */
 function createApp(options = {}) {
-  const env = options.env || getEnv();
-  const app = express();
+  const env = options.env || getEnv()
+  const app = express()
 
   // 隱藏 Express 框架資訊（減少被探測的機會）
-  app.disable('x-powered-by');
+  app.disable('x-powered-by')
 
   // 設定 EJS 視圖引擎（之後 B-04 ~ B-10 可能用到）
-  app.set('view engine', 'ejs');
-  app.set('views', path.join(__dirname, 'views'));
+  app.set('view engine', 'ejs')
+  app.set('views', path.join(__dirname, 'views'))
 
   // === 請求 ID 中介層（必須在 logger 之前） ===
   app.use((req, res, next) => {
-    const requestId = req.headers['x-request-id'] || generateRequestId();
-    req.requestId = requestId;
-    res.setHeader('X-Request-Id', requestId);
-    next();
-  });
+    const requestId = req.headers['x-request-id'] || generateRequestId()
+    req.requestId = requestId
+    res.setHeader('X-Request-Id', requestId)
+    next()
+  })
 
   // === HTTP 存取日誌 ===
   app.use((req, res, next) => {
-    const start = Date.now();
+    const start = Date.now()
     res.on('finish', () => {
-      const duration = Date.now() - start;
+      const duration = Date.now() - start
       logger.info('📥 HTTP 請求', {
         requestId: req.requestId,
         method: req.method,
         path: req.path,
         status: res.statusCode,
         durationMs: duration,
-      });
-    });
-    next();
-  });
+      })
+    })
+    next()
+  })
 
   // === 安全中介層鏈（注意：/api/capture 的 multipart 不能被 json/urlencoded 攔截）===
-  app.use(createHelmetMiddleware(env));
-  app.use(createCorsMiddleware(env));
+  app.use(createHelmetMiddleware(env))
+  app.use(createCorsMiddleware(env))
   // 暫時禁用 rate limiter 以便除錯 static file 403 問題
   // app.use(createRateLimitMiddleware(env));
 
   // === 請求解析 ===
-  app.use(express.json({ limit: '1mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+  app.use(express.json({ limit: '1mb' }))
+  app.use(express.urlencoded({ extended: true, limit: '1mb' }))
 
   // === 靜態檔案（前端） ===
   // JS/CSS 設 no-store（避免 Cloudflare Edge 快取舊版本導致 403 持續）
@@ -80,35 +80,35 @@ function createApp(options = {}) {
       setHeaders: (res, filePath) => {
         if (/\.(js|mjs|html|css)$/i.test(filePath)) {
           // JS/CSS/HTML 不快取，確保更新立即生效
-          res.setHeader('Cache-Control', 'no-store, must-revalidate');
-          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Cache-Control', 'no-store, must-revalidate')
+          res.setHeader('Pragma', 'no-cache')
         } else {
           // 圖片、字型等可快取 7 天
-          res.setHeader('Cache-Control', 'public, max-age=604800');
+          res.setHeader('Cache-Control', 'public, max-age=604800')
         }
       },
     })
-  );
+  )
 
   // === 路由掛載 ===
-  app.use('/', healthRouter);
-  app.use('/api/capture', captureRouter);
-  app.use('/api/items', itemsRouter);
-  app.use('/api', rateRouter);
-  app.use('/api/webhook', webhookRouter);
+  app.use('/', healthRouter)
+  app.use('/api/capture', captureRouter)
+  app.use('/api/items', itemsRouter)
+  app.use('/api', rateRouter)
+  app.use('/api/webhook', webhookRouter)
 
   // === 404 處理（必須在 errorHandler 之前） ===
-  app.use(notFoundHandler);
+  app.use(notFoundHandler)
 
   // === 統一錯誤處理（必須在最後一個中介層） ===
-  app.use(errorHandler);
+  app.use(errorHandler)
 
   logger.debug('🏗️ Express 應用已建立', {
     env: env.NODE_ENV,
     middleware: ['helmet', 'cors', 'rateLimit', 'json', 'static', 'errorHandler'],
-  });
+  })
 
-  return app;
+  return app
 }
 
 /**
@@ -116,7 +116,7 @@ function createApp(options = {}) {
  * @returns {string}
  */
 function generateRequestId() {
-  return Math.random().toString(36).slice(2, 10);
+  return Math.random().toString(36).slice(2, 10)
 }
 
-module.exports = { createApp };
+module.exports = { createApp }

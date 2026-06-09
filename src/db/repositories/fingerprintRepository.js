@@ -2,9 +2,9 @@
 // fingerprints 表操作
 // 對應 [todo_progress.md F-08](../../todo_progress.md) 與 [PROJECT_CONTEXT.md §7](../../PROJECT_CONTEXT.md)
 
-'use strict';
+'use strict'
 
-const BaseRepository = require('./baseRepository');
+const BaseRepository = require('./baseRepository')
 
 /**
  * IP Fingerprint Repository
@@ -12,7 +12,7 @@ const BaseRepository = require('./baseRepository');
  */
 class FingerprintRepository extends BaseRepository {
   constructor(db) {
-    super(db, 'fingerprints');
+    super(db, 'fingerprints')
   }
 
   /**
@@ -21,18 +21,18 @@ class FingerprintRepository extends BaseRepository {
    * @returns {number} - fingerprint ID
    */
   upsert(fingerprintHash) {
-    if (!fingerprintHash) throw new Error('fingerprintHash 不可為空');
+    if (!fingerprintHash) throw new Error('fingerprintHash 不可為空')
 
-    const now = Date.now();
-    const existing = this.findByHash(fingerprintHash);
+    const now = Date.now()
+    const existing = this.findByHash(fingerprintHash)
 
     if (existing) {
       this.db
         .prepare(
           'UPDATE fingerprints SET last_seen_at = ?, total_items = total_items + 1 WHERE id = ?'
         )
-        .run(now, existing.id);
-      return Number(existing.id);
+        .run(now, existing.id)
+      return Number(existing.id)
     }
 
     const result = this.db
@@ -40,8 +40,8 @@ class FingerprintRepository extends BaseRepository {
         `INSERT INTO fingerprints (fingerprint_hash, first_seen_at, last_seen_at, total_items)
          VALUES (?, ?, ?, 1)`
       )
-      .run(fingerprintHash, now, now);
-    return Number(result.lastInsertRowid);
+      .run(fingerprintHash, now, now)
+    return Number(result.lastInsertRowid)
   }
 
   /**
@@ -52,7 +52,7 @@ class FingerprintRepository extends BaseRepository {
   findByHash(fingerprintHash) {
     return this.db
       .prepare('SELECT * FROM fingerprints WHERE fingerprint_hash = ?')
-      .get(fingerprintHash);
+      .get(fingerprintHash)
   }
 
   /**
@@ -60,11 +60,11 @@ class FingerprintRepository extends BaseRepository {
    * @returns {Object[]}
    */
   findActive(daysWindow = 30) {
-    const threshold = Date.now() - daysWindow * 24 * 60 * 60 * 1000;
+    const threshold = Date.now() - daysWindow * 24 * 60 * 60 * 1000
     return this.db
       .prepare('SELECT * FROM fingerprints WHERE last_seen_at >= ? ORDER BY last_seen_at DESC')
-      .all(threshold);
+      .all(threshold)
   }
 }
 
-module.exports = FingerprintRepository;
+module.exports = FingerprintRepository

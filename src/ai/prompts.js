@@ -2,7 +2,7 @@
 // VLM（視覺語言模型）的提示詞模板
 // 對應 [todo_progress.md B-04](../../todo_progress.md) 與 [PROJECT_CONTEXT.md §8](../../PROJECT_CONTEXT.md)
 
-'use strict';
+'use strict'
 
 /**
  * 通用商品辨識提示詞（MiniMax-M3 相容）
@@ -39,7 +39,7 @@ RULES:
 8. DO NOT wrap in markdown code blocks
 9. NO preamble text
 
-Return now:`;
+Return now:`
 
 /**
  * 價格標籤專用提示詞（更聚焦於價格）
@@ -58,9 +58,9 @@ Return ONLY JSON:
 
 If you cannot read the price clearly, set confidence below 0.5.
 
-Return now:`;
+Return now:`
 
 module.exports = {
   PRODUCT_RECOGNITION_PROMPT,
   PRICE_TAG_PROMPT,
-};
+}

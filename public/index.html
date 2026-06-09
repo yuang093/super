@@ -1,219 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Supermarket Tracker — AI 影像辨識購物記帳，邊逛超市邊拍照，自動辨識商品名稱與價格，統整外幣與新台幣總花費。">
-  <meta name="theme-color" content="#FFD93D">
-  <title>🛒 Supermarket Tracker — 粗獷歡樂版</title>
-  <!-- 字型預載 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-  <!-- 樣式 -->
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%92%3C/text%3E%3C/svg%3E">
-</head>
-<body>
-  <!-- Header：粗獷歡樂風標題 -->
-  <header class="app-header" role="banner">
-    <h1 class="app-title">
-      <span aria-hidden="true">🛒</span>
-      SUPERMARKET TRACKER
-    </h1>
-    <p class="app-subtitle">拍照 · 記帳 · 換算，3 秒搞定！</p>
-    <div class="app-status" id="app-status" role="status" aria-live="polite">
-      <span class="status-indicator" id="status-dot" aria-hidden="true"></span>
-      <span class="status-text" id="status-text">連線中…</span>
-    </div>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Supermarket Tracker — AI 影像辨識購物記帳，邊逛超市邊拍照，自動辨識商品名稱與價格，統整外幣與新台幣總花費。"
+    />
+    <meta name="theme-color" content="#FFD93D" />
+    <title>🛒 Supermarket Tracker — 粗獷歡樂版</title>
+    <!-- 字型預載 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- 樣式 -->
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%92%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <!-- Header：粗獷歡樂風標題 -->
+    <header class="app-header" role="banner">
+      <h1 class="app-title">
+        <span aria-hidden="true">🛒</span>
+        SUPERMARKET TRACKER
+      </h1>
+      <p class="app-subtitle">拍照 · 記帳 · 換算，3 秒搞定！</p>
+      <div class="app-status" id="app-status" role="status" aria-live="polite">
+        <span class="status-indicator" id="status-dot" aria-hidden="true"></span>
+        <span class="status-text" id="status-text">連線中…</span>
+      </div>
+    </header>
 
-  <!-- Main：主要功能區 -->
-  <main class="app-main" role="main">
-    <div class="container">
+    <!-- Main：主要功能區 -->
+    <main class="app-main" role="main">
+      <div class="container">
+        <!-- 拍照辨識區（F-01 + F-04 + F-05） -->
+        <section class="card capture-section" aria-labelledby="capture-title">
+          <h2 id="capture-title" class="card-title">
+            <span aria-hidden="true">📸</span>
+            拍照辨識
+          </h2>
+          <p class="card-description">拍攝商品或價格標籤，AI 將自動辨識品名與金額。</p>
 
-      <!-- 拍照辨識區（F-01 + F-04 + F-05） -->
-      <section class="card capture-section" aria-labelledby="capture-title">
-        <h2 id="capture-title" class="card-title">
-          <span aria-hidden="true">📸</span>
-          拍照辨識
-        </h2>
-        <p class="card-description">拍攝商品或價格標籤，AI 將自動辨識品名與金額。</p>
-
-        <!-- 模型載入進度條（F-02） -->
-        <div id="model-progress" class="progress-container" role="progressbar"
-             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
-             aria-label="MobileNet 模型載入進度" hidden>
-          <div class="progress-label" id="model-progress-label">準備中…</div>
-          <div class="progress-track">
-            <div class="progress-fill" id="model-progress-fill"></div>
-          </div>
-        </div>
-
-        <!-- 拍照舞台（由 camera.js 動態渲染） -->
-        <div class="capture-stage" id="capture-stage">
-          <!-- 三個操作按鈕 -->
-          <div class="capture-buttons" id="capture-buttons">
-            <!-- 📷 拍照按鈕：啟動後鏡頭 -->
-            <label class="btn-capture-action btn-capture-primary" for="btn-camera-trigger" title="開啟相機拍照">
-              <span class="btn-icon" aria-hidden="true">📷</span>
-              <span>拍照</span>
-            </label>
-            <input type="button" id="btn-camera-trigger" class="file-input-hidden" aria-label="開啟相機">
-
-            <!-- 🖼️ 從相簿選取按鈕 -->
-            <label class="btn-capture-action btn-capture-alt" for="input-gallery" title="從相簿選擇照片">
-              <span class="btn-icon" aria-hidden="true">🖼️</span>
-              <span>從相簿選</span>
-            </label>
-            <input type="file" id="input-gallery" class="file-input-hidden"
-                   accept="image/*" aria-label="選擇相簿照片">
-
-            <!-- 📁 上傳檔案按鈕 -->
-            <label class="btn-capture-action btn-capture-alt2" for="input-upload" title="上傳圖片檔案">
-              <span class="btn-icon" aria-hidden="true">📁</span>
-              <span>上傳檔案</span>
-            </label>
-            <input type="file" id="input-upload" class="file-input-hidden"
-                   accept="image/jpeg,image/png,image/webp" aria-label="上傳圖片檔案">
-          </div>
-
-          <!-- 隱藏的 file input（由 camera.js 控制） -->
-          <input type="file" id="file-input-hidden" class="file-input-hidden"
-                 accept="image/*" capture="environment" aria-hidden="true">
-
-          <!-- 預覽區塊（F-04 截圖結果） -->
-          <div class="capture-preview" id="capture-preview" style="display:none;">
-            <canvas id="preview-canvas" class="preview-img" aria-label="圖片預覽"></canvas>
-            <div class="preview-info" id="preview-info"></div>
-            <div class="preview-actions">
-              <button id="btn-add-cart" class="btn-capture-action btn-capture-primary" type="button">
-                <span>🛒</span>
-                <span>加入購物車</span>
-              </button>
-              <button id="btn-retake" class="btn-capture-action" type="button">
-                <span>🔄</span>
-                <span>重選</span>
-              </button>
+          <!-- 模型載入進度條（F-02） -->
+          <div
+            id="model-progress"
+            class="progress-container"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            aria-label="MobileNet 模型載入進度"
+            hidden
+          >
+            <div class="progress-label" id="model-progress-label">準備中…</div>
+            <div class="progress-track">
+              <div class="progress-fill" id="model-progress-fill"></div>
             </div>
           </div>
 
-          <!-- 處理進度條 -->
-          <div class="capture-progress" id="capture-progress" style="display:none;">
-            <div class="progress-text" id="capture-progress-text">⏳ 處理中…</div>
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="capture-progress-fill"></div>
+          <!-- 拍照舞台（由 camera.js 動態渲染） -->
+          <div class="capture-stage" id="capture-stage">
+            <!-- 三個操作按鈕 -->
+            <div class="capture-buttons" id="capture-buttons">
+              <!-- 📷 拍照按鈕：啟動後鏡頭 -->
+              <label class="btn-capture-action btn-capture-primary" for="btn-camera-trigger" title="開啟相機拍照">
+                <span class="btn-icon" aria-hidden="true">📷</span>
+                <span>拍照</span>
+              </label>
+              <input type="button" id="btn-camera-trigger" class="file-input-hidden" aria-label="開啟相機" />
+
+              <!-- 🖼️ 從相簿選取按鈕 -->
+              <label class="btn-capture-action btn-capture-alt" for="input-gallery" title="從相簿選擇照片">
+                <span class="btn-icon" aria-hidden="true">🖼️</span>
+                <span>從相簿選</span>
+              </label>
+              <input
+                type="file"
+                id="input-gallery"
+                class="file-input-hidden"
+                accept="image/*"
+                aria-label="選擇相簿照片"
+              />
+
+              <!-- 📁 上傳檔案按鈕 -->
+              <label class="btn-capture-action btn-capture-alt2" for="input-upload" title="上傳圖片檔案">
+                <span class="btn-icon" aria-hidden="true">📁</span>
+                <span>上傳檔案</span>
+              </label>
+              <input
+                type="file"
+                id="input-upload"
+                class="file-input-hidden"
+                accept="image/jpeg,image/png,image/webp"
+                aria-label="上傳圖片檔案"
+              />
+            </div>
+
+            <!-- 隱藏的 file input（由 camera.js 控制） -->
+            <input
+              type="file"
+              id="file-input-hidden"
+              class="file-input-hidden"
+              accept="image/*"
+              capture="environment"
+              aria-hidden="true"
+            />
+
+            <!-- 預覽區塊（F-04 截圖結果） -->
+            <div class="capture-preview" id="capture-preview" style="display: none">
+              <canvas id="preview-canvas" class="preview-img" aria-label="圖片預覽"></canvas>
+              <div class="preview-info" id="preview-info"></div>
+              <div class="preview-actions">
+                <button id="btn-add-cart" class="btn-capture-action btn-capture-primary" type="button">
+                  <span>🛒</span>
+                  <span>加入購物車</span>
+                </button>
+                <button id="btn-retake" class="btn-capture-action" type="button">
+                  <span>🔄</span>
+                  <span>重選</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 處理進度條 -->
+            <div class="capture-progress" id="capture-progress" style="display: none">
+              <div class="progress-text" id="capture-progress-text">⏳ 處理中…</div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="capture-progress-fill"></div>
+              </div>
+            </div>
+
+            <!-- 辨識結果 -->
+            <div class="capture-result" id="capture-result" style="display: none"></div>
+          </div>
+        </section>
+
+        <!-- 購物車區（F-06） -->
+        <section class="card cart-section" aria-labelledby="cart-title">
+          <h2 id="cart-title" class="card-title">
+            <span aria-hidden="true">🛒</span>
+            購物車
+          </h2>
+          <p class="card-description">新增的商品會列於此，並即時換算為新台幣總價。</p>
+
+          <!-- 工具列 -->
+          <div class="item-list-toolbar">
+            <button id="btn-refresh-cart" class="btn-cart-action" type="button" title="重新整理">
+              <span>🔄</span>
+              <span>重新整理</span>
+            </button>
+            <button id="btn-clear-cart" class="btn-cart-action btn-cart-danger" type="button" title="清空所有商品">
+              <span>🗑️</span>
+              <span>清空</span>
+            </button>
+          </div>
+
+          <!-- 購物車列表 -->
+          <div class="item-list" id="item-list">
+            <div class="item-list-empty">🛒 購物車是空的，去拍個商品吧！</div>
+          </div>
+
+          <!-- 總計區塊 -->
+          <div class="cart-summary" id="cart-summary" style="display: none">
+            <h4>💰總計</h4>
+            <div class="summary-rows" id="summary-rows"></div>
+          </div>
+        </section>
+
+        <!-- 外幣雙顯示區（F-07） -->
+        <section class="card exchange-section" aria-labelledby="exchange-title">
+          <h2 id="exchange-title" class="card-title">
+            <span aria-hidden="true">💱</span>
+            即時匯率
+          </h2>
+          <p class="card-description">自動將外幣金額換算為新台幣。</p>
+          <div class="exchange-rates" id="exchange-rates">
+            <div class="exchange-rate-row">
+              <span class="exchange-rate-currency">USD</span>
+              <span class="exchange-rate-value" id="rate-usd">--</span>
+              <span class="exchange-rate-twd">→ TWD --</span>
+            </div>
+            <div class="exchange-rate-row">
+              <span class="exchange-rate-currency">JPY</span>
+              <span class="exchange-rate-value" id="rate-jpy">--</span>
+              <span class="exchange-rate-twd">→ TWD --</span>
+            </div>
+            <div class="exchange-rate-row">
+              <span class="exchange-rate-currency">EUR</span>
+              <span class="exchange-rate-value" id="rate-eur">--</span>
+              <span class="exchange-rate-twd">→ TWD --</span>
             </div>
           </div>
+        </section>
+      </div>
+    </main>
 
-          <!-- 辨識結果 -->
-          <div class="capture-result" id="capture-result" style="display:none;"></div>
-        </div>
-      </section>
+    <!-- Footer -->
+    <footer class="app-footer" role="contentinfo">
+      <p class="footer-text">
+        Supermarket Tracker <span class="version-badge">v0.1.0</span> · Powered by
+        <span class="tech-badge">TensorFlow.js</span> + <span class="tech-badge">MiniMax VLM</span> +
+        <span class="tech-badge">Cloudflare Tunnel</span>
+      </p>
+    </footer>
 
-      <!-- 購物車區（F-06） -->
-      <section class="card cart-section" aria-labelledby="cart-title">
-        <h2 id="cart-title" class="card-title">
-          <span aria-hidden="true">🛒</span>
-          購物車
-        </h2>
-        <p class="card-description">新增的商品會列於此，並即時換算為新台幣總價。</p>
-
-        <!-- 工具列 -->
-        <div class="item-list-toolbar">
-          <button id="btn-refresh-cart" class="btn-cart-action" type="button" title="重新整理">
-            <span>🔄</span>
-            <span>重新整理</span>
-          </button>
-          <button id="btn-clear-cart" class="btn-cart-action btn-cart-danger" type="button" title="清空所有商品">
-            <span>🗑️</span>
-            <span>清空</span>
-          </button>
-        </div>
-
-        <!-- 購物車列表 -->
-        <div class="item-list" id="item-list">
-          <div class="item-list-empty">🛒 購物車是空的，去拍個商品吧！</div>
-        </div>
-
-        <!-- 總計區塊 -->
-        <div class="cart-summary" id="cart-summary" style="display:none;">
-          <h4>💰總計</h4>
-          <div class="summary-rows" id="summary-rows"></div>
-        </div>
-      </section>
-
-      <!-- 外幣雙顯示區（F-07） -->
-      <section class="card exchange-section" aria-labelledby="exchange-title">
-        <h2 id="exchange-title" class="card-title">
-          <span aria-hidden="true">💱</span>
-          即時匯率
-        </h2>
-        <p class="card-description">自動將外幣金額換算為新台幣。</p>
-        <div class="exchange-rates" id="exchange-rates">
-          <div class="exchange-rate-row">
-            <span class="exchange-rate-currency">USD</span>
-            <span class="exchange-rate-value" id="rate-usd">--</span>
-            <span class="exchange-rate-twd">→ TWD --</span>
-          </div>
-          <div class="exchange-rate-row">
-            <span class="exchange-rate-currency">JPY</span>
-            <span class="exchange-rate-value" id="rate-jpy">--</span>
-            <span class="exchange-rate-twd">→ TWD --</span>
-          </div>
-          <div class="exchange-rate-row">
-            <span class="exchange-rate-currency">EUR</span>
-            <span class="exchange-rate-value" id="rate-eur">--</span>
-            <span class="exchange-rate-twd">→ TWD --</span>
-          </div>
-        </div>
-      </section>
-
+    <!-- Sticky Bottom CTA -->
+    <div class="sticky-cta">
+      <button class="btn-primary" type="button" id="btn-checkout" aria-label="結帳">
+        <span class="btn-icon" aria-hidden="true">💥</span>
+        <span>結帳 · 開始記帳</span>
+      </button>
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="app-footer" role="contentinfo">
-    <p class="footer-text">
-      Supermarket Tracker <span class="version-badge">v0.1.0</span>
-      · Powered by <span class="tech-badge">TensorFlow.js</span>
-      + <span class="tech-badge">MiniMax VLM</span>
-      + <span class="tech-badge">Cloudflare Tunnel</span>
-    </p>
-  </footer>
+    <!-- 底部 Tab Bar -->
+    <nav class="tab-bar" role="navigation" aria-label="主導航">
+      <a href="#" class="tab-item active" aria-current="page">
+        <span class="tab-icon" aria-hidden="true">🏠</span>
+        <span>首頁</span>
+      </a>
+      <a href="#cart-title" class="tab-item">
+        <span class="tab-icon" aria-hidden="true">🛒</span>
+        <span>購物車</span>
+      </a>
+      <a href="#capture-title" class="tab-item tab-fab" aria-label="拍照辨識">
+        <span class="tab-circle" aria-hidden="true">📸</span>
+      </a>
+      <a href="#exchange-title" class="tab-item">
+        <span class="tab-icon" aria-hidden="true">💱</span>
+        <span>匯率</span>
+      </a>
+      <a href="#" class="tab-item">
+        <span class="tab-icon" aria-hidden="true">📊</span>
+        <span>統計</span>
+      </a>
+    </nav>
 
-  <!-- Sticky Bottom CTA -->
-  <div class="sticky-cta">
-    <button class="btn-primary" type="button" id="btn-checkout" aria-label="結帳">
-      <span class="btn-icon" aria-hidden="true">💥</span>
-      <span>結帳 · 開始記帳</span>
-    </button>
-  </div>
-
-  <!-- 底部 Tab Bar -->
-  <nav class="tab-bar" role="navigation" aria-label="主導航">
-    <a href="#" class="tab-item active" aria-current="page">
-      <span class="tab-icon" aria-hidden="true">🏠</span>
-      <span>首頁</span>
-    </a>
-    <a href="#cart-title" class="tab-item">
-      <span class="tab-icon" aria-hidden="true">🛒</span>
-      <span>購物車</span>
-    </a>
-    <a href="#capture-title" class="tab-item tab-fab" aria-label="拍照辨識">
-      <span class="tab-circle" aria-hidden="true">📸</span>
-    </a>
-    <a href="#exchange-title" class="tab-item">
-      <span class="tab-icon" aria-hidden="true">💱</span>
-      <span>匯率</span>
-    </a>
-    <a href="#" class="tab-item">
-      <span class="tab-icon" aria-hidden="true">📊</span>
-      <span>統計</span>
-    </a>
-  </nav>
-
-  <!-- JS模組（ES Module）-->
-  <script type="module" src="/js/app.js" defer></script>
-</body>
+    <!-- JS模組（ES Module）-->
+    <script type="module" src="/js/app.js" defer></script>
+  </body>
 </html>

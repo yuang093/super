@@ -2,9 +2,9 @@
 // 結構化 JSON 日誌工具
 // 不依賴第三方套件（pino / winston），保持輕量與可移植性
 
-'use strict';
+'use strict'
 
-const { getEnv } = require('../config/env');
+const { getEnv } = require('../config/env')
 
 /**
  * 結構化日誌記錄器
@@ -14,9 +14,9 @@ const { getEnv } = require('../config/env');
 class Logger {
   constructor() {
     /** @type {'debug' | 'info' | 'warn' | 'error'} */
-    this.level = 'info';
+    this.level = 'info'
     /** @type {number} 數字越大越詳細 */
-    this.levelRank = { debug: 0, info: 1, warn: 2, error: 3 };
+    this.levelRank = { debug: 0, info: 1, warn: 2, error: 3 }
   }
 
   /**
@@ -24,10 +24,10 @@ class Logger {
    */
   init() {
     try {
-      this.level = getEnv().LOG_LEVEL;
+      this.level = getEnv().LOG_LEVEL
     } catch {
       // 啟動階段 env 尚未驗證時，使用預設
-      this.level = 'info';
+      this.level = 'info'
     }
   }
 
@@ -37,7 +37,7 @@ class Logger {
    * @returns {boolean}
    */
   shouldLog(targetLevel) {
-    return this.levelRank[targetLevel] >= this.levelRank[this.level];
+    return this.levelRank[targetLevel] >= this.levelRank[this.level]
   }
 
   /**
@@ -47,42 +47,42 @@ class Logger {
    * @param {Object} [meta]
    */
   log(level, message, meta = {}) {
-    if (!this.shouldLog(level)) return;
+    if (!this.shouldLog(level)) return
 
     const record = {
       timestamp: new Date().toISOString(),
       level,
       message,
       ...meta,
-    };
+    }
 
-    const line = JSON.stringify(record);
+    const line = JSON.stringify(record)
 
     if (level === 'error') {
-      process.stderr.write(line + '\n');
+      process.stderr.write(line + '\n')
     } else {
-      process.stdout.write(line + '\n');
+      process.stdout.write(line + '\n')
     }
   }
 
   debug(message, meta) {
-    this.log('debug', message, meta);
+    this.log('debug', message, meta)
   }
 
   info(message, meta) {
-    this.log('info', message, meta);
+    this.log('info', message, meta)
   }
 
   warn(message, meta) {
-    this.log('warn', message, meta);
+    this.log('warn', message, meta)
   }
 
   error(message, meta) {
-    this.log('error', message, meta);
+    this.log('error', message, meta)
   }
 }
 
 // 單例
-const logger = new Logger();
+const logger = new Logger()
 
-module.exports = logger;
+module.exports = logger
