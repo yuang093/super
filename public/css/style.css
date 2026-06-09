@@ -788,7 +788,15 @@ img {
   z-index: 1000;
   max-width: calc(100vw - 32px);
   text-align: center;
-  animation: toast-in300ms var(--bounce);
+  /* 預設隱藏 */
+  display: none;
+  opacity: 0;
+}
+
+/* Toast 顯示時（.visible class 由 JS 動態新增） */
+.error-toast.visible {
+  display: block;
+  animation: toast-in 300ms var(--bounce) forwards;
 }
 
 @keyframes toast-in {

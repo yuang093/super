@@ -53,7 +53,15 @@ cp .env.example .env
 docker compose up -d
 ```
 
-啟動完成後，瀏覽器開啟 <http://localhost:3000> 即可使用。
+啟動完成後，瀏覽器開啟 <http://localhost:3000> 或 <http://localhost:3001> 即可使用。
+
+### ⚠️ 相機功能說明
+
+相機功能需要安全環境（HTTPS 或 localhost）：
+
+- ✅ 本機測試：http://localhost:3001（自動符合安全環境例外）
+- ✅ 正式環境：https://sm.yuang093.cc（Cloudflare Tunnel 提供 HTTPS）
+- ❌ 手機透過區域 IP 連線（如 http://192.168.1.x:3001）不支援相機，請改用相簿選取功能
 
 ---
 

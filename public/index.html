@@ -104,15 +104,8 @@
               />
             </div>
 
-            <!-- 隱藏的 file input（由 camera.js 控制） -->
-            <input
-              type="file"
-              id="file-input-hidden"
-              class="file-input-hidden"
-              accept="image/*"
-              capture="environment"
-              aria-hidden="true"
-            />
+            <!-- 隱藏的 file input（由 camera.js 控制，不用 capture 屬性） -->
+            <input type="file" id="file-input-hidden" class="file-input-hidden" accept="image/*" aria-hidden="true" />
 
             <!-- 預覽區塊（F-04 截圖結果） -->
             <div class="capture-preview" id="capture-preview" style="display: none">

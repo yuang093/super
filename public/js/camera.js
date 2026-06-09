@@ -20,26 +20,35 @@ const ERROR_MESSAGES = {
 }
 
 /**
- * 顯示錯誤提示（Toast 樣式）
+ * 顯示錯誤提示（Toast 樣式，自動 5 秒後消失）
  * @param {string} message -錯誤訊息
  */
 function showErrorToast(message) {
-  // 移除既有 toast
-  const existing = document.querySelector('.error-toast')
-  if (existing) existing.remove()
+  let toast = document.getElementById('error-toast')
+  if (!toast) {
+    toast = document.createElement('div')
+    toast.id = 'error-toast'
+    toast.setAttribute('role', 'alert')
+    toast.setAttribute('aria-live', 'assertive')
+    document.body.appendChild(toast)
+  }
 
-  const toast = document.createElement('div')
-  toast.className = 'error-toast'
   toast.textContent = message
-  toast.setAttribute('role', 'alert')
-  document.body.appendChild(toast)
+  toast.classList.add('visible')
 
-  // 3 秒後自動移除
-  setTimeout(() => {
-    if (toast.parentNode) {
-      toast.remove()
-    }
-  }, 3000)
+  // 5 秒後自動隱藏
+  if (toast._timeout) clearTimeout(toast._timeout)
+  toast._timeout = setTimeout(() => {
+    toast.classList.remove('visible')
+  }, 5000)
+}
+
+/**
+ * 顯示錯誤（showErrorToast 的別名，供外部呼叫）
+ * @param {string} message -繁體中文錯誤訊息
+ */
+export function showError(message) {
+  showErrorToast(message)
 }
 
 /**
@@ -91,8 +100,19 @@ export class Camera {
    * @throws {Error} -權限被拒或無相機時拋出錯誤
    */
   async start() {
+    // 檢查 Secure Context（getUserMedia 需要 HTTPS 或 localhost）
+    if (!window.isSecureContext) {
+      const msg =
+        '📷 相機功能需要 HTTPS 連線。\n' +
+        '請透過 https://sm.yuang093.cc 開啟，或使用 localhost 本機測試。'
+      showErrorToast(msg)
+      throw new Error('NOT_SECURE_CONTEXT')
+    }
+
     if (!this.isSupported()) {
-      throw new Error('您的瀏覽器不支援相機功能。請使用 Chrome、Safari 或 Firefox 最新版本。')
+      const err = new Error('您的瀏覽器不支援相機功能。請使用 Chrome、Safari 或 Firefox 最新版本。')
+      showErrorToast(err.message)
+      throw err
     }
 
     // 如果已有串流，先停止
@@ -109,35 +129,66 @@ export class Camera {
         },
         audio: false,
       })
-
-      // 建立隱藏的 video元素
-      this._video = document.createElement('video')
-      this._video.id = this.videoElementId
-      this._video.setAttribute('autoplay', '')
-      this._video.setAttribute('playsinline', '')
-      this._video.setAttribute('muted', '')
-      this._video.style.display = 'none'
-      this._video.srcObject = this._stream
-
-      // 等待影片元載入完成
-      await new Promise((resolve, reject) => {
-        this._video.onloadedmetadata = () => {
-          this._video.play().then(resolve).catch(reject)
-        }
-        this._video.onerror = () => reject(new Error('影片載入失敗'))
-      })
-
-      this._isActive = true
-      console.log('[Camera] 相機已啟動', {
-        width: this._video.videoWidth,
-        height: this._video.videoHeight,
-      })
-
-      return this._stream
     } catch (err) {
-      console.error('[Camera] 開啟相機失敗', err.name, err.message)
+      // 完整的錯誤分級處理，每個分支都在 UI 顯示
+      let msg
+      switch (err.name) {
+        case 'NotAllowedError':
+        case 'PermissionDeniedError':
+          msg = '❌ 相機權限被拒絕。\n' + '請到瀏覽器設定 → 網站設定 → 允許相機。'
+          break
+        case 'NotFoundError':
+        case 'DevicesNotFoundError':
+          msg = '❌ 找不到相機裝置。請確認裝置有相機，或改用相簿選取。'
+          break
+        case 'NotReadableError':
+        case 'TrackStartError':
+          msg = '❌ 相機被其他程式佔用中。\n' + '請關閉其他使用相機的應用程式後再試。'
+          break
+        case 'OverconstrainedError': {
+          msg = '❌ 找不到後鏡頭，嘗試改用前鏡頭...'
+          // 降級重試：改用基本 video: true
+          showErrorToast(msg)
+          try {
+            this._stream = await navigator.mediaDevices.getUserMedia({ video: true })
+          } catch {
+            msg = '❌ 無法開啟任何相機。請改用相簿選取功能。'
+            showErrorToast(msg)
+            throw new Error('CAMERA_FALLBACK_FAILED')
+          }
+          break
+        }
+        default:
+          msg = `❌ 相機開啟失敗（${err.name}）。請改用相簿選取功能。`
+      }
+      if (msg) showErrorToast(msg)
       throw err
     }
+
+    // 建立隱藏的 video元素
+    this._video = document.createElement('video')
+    this._video.id = this.videoElementId
+    this._video.setAttribute('autoplay', '')
+    this._video.setAttribute('playsinline', '')
+    this._video.setAttribute('muted', '')
+    this._video.style.display = 'none'
+    this._video.srcObject = this._stream
+
+    // 等待影片元載入完成
+    await new Promise((resolve, reject) => {
+      this._video.onloadedmetadata = () => {
+        this._video.play().then(resolve).catch(reject)
+      }
+      this._video.onerror = () => reject(new Error('影片載入失敗'))
+    })
+
+    this._isActive = true
+    console.log('[Camera] 相機已啟動', {
+      width: this._video.videoWidth,
+      height: this._video.videoHeight,
+    })
+
+    return this._stream
   }
 
   /**
