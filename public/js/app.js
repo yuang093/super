@@ -113,9 +113,12 @@ async function handleGallerySelect(file) {
 
     showProgress('🖼️ 圖片已載入', 100)
     showPreview(currentImageData)
+
+    // 自動觸發 AI 辨識與加入購物車流程
+    await handleAddToCart()
   } catch (err) {
     hideProgress()
-    showToast(err.message || '圖片處理失敗')
+    showToast(err.message || '圖片處理失敗', 'error')
   }
 }
 
