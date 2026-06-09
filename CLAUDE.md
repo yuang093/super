@@ -44,6 +44,7 @@
 - ✅ 單元測試覆蓋率 ≥ 80%（對應 [TESTING_PLAN.md](./TESTING_PLAN.md)）
 - ✅ 程式碼無 Placeholder 殘留（CI 階段以 grep 攔截）
 - ✅ 通過 Linter（ESLint / Prettier）檢查
+- ✅ 提交前**先執行語法檢查**（`node --check`）確認無錯誤
 - ✅ 對應 [todo_progress.md](./todo_progress.md) 項目狀態更新
 - ✅ 若涉及破壞性變更，[CHANGELOG.md](./CHANGELOG.md) 必須同步更新
 
