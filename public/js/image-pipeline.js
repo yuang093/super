@@ -281,7 +281,8 @@ export async function processImageBlob(blob, options = {}) {
   console.log('[ImagePipeline] EXIF Orientation:', orientation, 'blob.size:', blob.size)
 
   // 執行壓縮
-  return compressImage(img, orientation, options)
+  const result = await compressImage(img, orientation, options)
+  return { ...result, orientation }
 }
 
 /**

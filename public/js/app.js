@@ -160,6 +160,7 @@ async function handleGallerySelect(file) {
       width: result.width,
       height: result.height,
       bytes: result.bytes,
+      orientation: result.orientation,
     }
 
     showProgress('🖼️ 圖片已載入', 100)
@@ -308,7 +309,8 @@ function showPreview(imageData) {
 
   //顯示資訊
   if (info) {
-    info.textContent = `${imageData.width}×${imageData.height} · ${formatBytes(imageData.bytes)}`
+    const orientText = imageData.orientation ? ` · EXIF↗${imageData.orientation}` : ''
+    info.textContent = `${imageData.width}×${imageData.height} · ${formatBytes(imageData.bytes)}${orientText}`
   }
 
   // 切換顯示
