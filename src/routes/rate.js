@@ -58,14 +58,28 @@ router.get('/rate', async (req, res, next) => {
 router.get('/rates', async (req, res, next) => {
   try {
     const rateService = getRateService()
-    const rates = await rateService.getRates('USD')
+    // API 回傳「每 1 USD = X 外幣」，需轉換為「每 1 外幣 = Y TWD」
+    // 公式：TWD_rate = TWD_USD_rate / ForeignCurrency_USD_rate
+    const usdRates = await rateService.getRates('USD')
+    const twdPerUsd = usdRates.TWD || 31.5
 
-    logger.debug('💱 匯率列表查詢', { currencies: Object.keys(rates) })
+    // 將「每 USD」格式轉換為「每單位外幣可換多少 TWD」
+    const ratesAsTwd = {}
+    for (const [currency, ratePerUsd] of Object.entries(usdRates)) {
+      if (currency === 'TWD') {
+        ratesAsTwd[currency] = 1
+      } else if (typeof ratePerUsd === 'number' && ratePerUsd > 0) {
+        // 1 外幣 = TWD_USD / ForeignCurrency_USD TWD
+        ratesAsTwd[currency] = parseFloat((twdPerUsd / ratePerUsd).toFixed(6))
+      }
+    }
+
+    logger.debug('💱 匯率列表查詢（已轉換為 TWD 格式）', { currencies: Object.keys(ratesAsTwd) })
 
     res.json({
       success: true,
       base: 'USD',
-      rates,
+      rates: ratesAsTwd,
       timestamp: Date.now(),
     })
   } catch (err) {
