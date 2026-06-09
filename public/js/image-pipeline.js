@@ -22,10 +22,10 @@ const ORIENTATION_MATRIX = {
   2: { rotate: 0, flipX: true, flipY: false },
   3: { rotate: 180, flipX: false, flipY: false },
   4: { rotate: 0, flipX: false, flipY: true },
-  5: { rotate: 90, flipX: true, flipY: false },
-  6: { rotate: 90, flipX: false, flipY: false }, // iPhone 直立
-  7: { rotate: 270, flipX: true, flipY: false },
-  8: { rotate: 270, flipX: false, flipY: false },
+  5: { rotate: 270, flipX: true, flipY: false },
+  6: { rotate: 270, flipX: false, flipY: false }, // iPhone 直立：順時針轉 90° = canvas 270°
+  7: { rotate: 90, flipX: true, flipY: false },
+  8: { rotate: 90, flipX: false, flipY: false },
 }
 
 /**
@@ -69,7 +69,8 @@ function getExifOrientation(buffer) {
         // TIFF header起始位置（offset + 10 是 "Exif\0\0" 後的第一個 byte）
         const tiffStart = offset + 10
         // Byte order：II = little-endian，MM = big-endian
-        const byteOrder = view.getUint16(tiffStart)
+        // 注意：getUint16 第二個參數預設為 false（big-endian），所以 MM 會讀成 0x4D4D
+        const byteOrder = view.getUint16(tiffStart, false)
         const littleEndian = byteOrder === 0x4949 // 'II'
 
         // IFD0偏移量
@@ -88,6 +89,7 @@ function getExifOrientation(buffer) {
             const type = view.getUint16(entryOffset + 2, littleEndian)
             if (type === 3) {
               const orientation = view.getUint16(entryOffset + 8, littleEndian)
+              console.log('[getExifOrientation] found orientation:', orientation, 'byteOrder:', byteOrder.toString(16))
               return orientation >= 1 && orientation <= 8 ? orientation : 1
             }
             return 1
@@ -124,40 +126,30 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   const matrix = ORIENTATION_MATRIX[orientation] || ORIENTATION_MATRIX[1]
   const needsSwap = [5, 6, 7, 8].includes(orientation)
 
-  console.log('[applyOrientation]', { orientation, canvasWidth, canvasHeight, needsSwap, imgW: img.width, imgH: img.height })
-
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
   ctx.save()
 
   // 將 Canvas 中心移動到原點
   ctx.translate(canvasWidth / 2, canvasHeight / 2)
 
-  // 套用翻轉（X軸翻轉）
-  if (matrix.flipX) {
-    ctx.scale(-1, 1)
-  }
-  // 套用翻轉（Y軸翻轉）
-  if (matrix.flipY) {
-    ctx.scale(1, -1)
-  }
+  // 套用翻轉
+  if (matrix.flipX) ctx.scale(-1, 1)
+  if (matrix.flipY) ctx.scale(1, -1)
 
-  // 套用旋轉（弧度）
-  if (matrix.rotate !== 0) {
-    ctx.rotate((matrix.rotate * Math.PI) / 180)
-  }
+  // 套用旋轉
+  if (matrix.rotate !== 0) ctx.rotate((matrix.rotate * Math.PI) / 180)
 
-  // 計算 scale
+  // 計算 scale：用目標尺寸除以原始影像尺寸
+  // 旋轉後需要 swap 的情況下，目標區域是交換後的尺寸
   const targetW = needsSwap ? canvasHeight : canvasWidth
   const targetH = needsSwap ? canvasWidth : canvasHeight
   const scaleX = targetW / img.width
   const scaleY = targetH / img.height
   const scale = Math.min(scaleX, scaleY)
-  const scaledW = img.width * scale
-  const scaledH = img.height * scale
-
-  console.log('[applyOrientation] scale:', { targetW, targetH, scaleX, scaleY, scale, scaledW, scaledH })
 
   // 圖片中心對齊 Canvas 中心
+  const scaledW = img.width * scale
+  const scaledH = img.height * scale
   ctx.drawImage(img, -scaledW / 2, -scaledH / 2, scaledW, scaledH)
 
   ctx.restore()
