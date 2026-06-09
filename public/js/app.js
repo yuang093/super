@@ -94,15 +94,20 @@ async function checkHealth() {
 }
 
 // ============================================================================
+// ============================================================================
 // 相簿選取：從相簿載入圖片
 // ============================================================================
 async function handleGallerySelect(file) {
   if (!file) return
 
+  console.log('[App] handleGallerySelect 收到檔案:', { name: file.name, type: file.type, size: file.size })
+
   try {
     showProgress('🖼️ 處理圖片中…', 30)
 
     const result = await processImageBlob(file)
+    console.log('[App] processImageBlob 完成', { width: result.width, height: result.height, bytes: result.bytes })
+
     currentImageData = {
       blob: file,
       base64: result.base64,
@@ -113,10 +118,12 @@ async function handleGallerySelect(file) {
 
     showProgress('🖼️ 圖片已載入', 100)
     showPreview(currentImageData)
+    console.log('[App] 預覽已顯示，即將自動觸發 AI 辨識')
 
     // 自動觸發 AI 辨識與加入購物車流程
     await handleAddToCart()
   } catch (err) {
+    console.error('[App] handleGallerySelect 錯誤:', err)
     hideProgress()
     showToast(err.message || '圖片處理失敗', 'error')
   }
@@ -127,9 +134,12 @@ async function handleGallerySelect(file) {
 // ============================================================================
 async function handleAddToCart() {
   if (!currentImageData) {
-    showToast('請先選擇或拍攝圖片')
+    console.warn('[App] currentImageData 是空的，無法加入購物車')
+    showToast('請先選擇或拍攝圖片', 'error')
     return
   }
+
+  console.log('[App] handleAddToCart 開始', { base64Length: currentImageData.base64.length, width: currentImageData.width, height: currentImageData.height })
 
   showProgress('🛒 加入購物車中…', 50)
 
@@ -151,14 +161,20 @@ async function handleAddToCart() {
     formData.append('image', blob, 'capture.jpg')
     formData.append('fingerprint', app.state.fingerprint)
 
+    console.log('[App] 準備送出 /api/capture 请求，blob size:', blob.size)
+
     const response = await fetch('/api/capture', {
       method: 'POST',
       body: formData,
     })
 
+    console.log('[App] 收到回應', { status: response.status, ok: response.ok })
+
     const data = await response.json()
+    console.log('[App] /api/capture 回應資料:', JSON.stringify(data).slice(0, 200))
 
     if (data.success) {
+      console.log('[App] 辨識成功，加入購物車:', data.item.name)
       // 後端已寫入 DB，這裡只是本機 UI 更新
       cart.addItem({
         name: data.item.name,
@@ -176,15 +192,16 @@ async function handleAddToCart() {
 
       // 清除預覽
       resetPreview()
-      showToast(`✅ ${data.item.name} 已加入購物車`)
+      showToast(`✅ ${data.item.name} 已加入購物車`, 'success')
     } else {
+      console.warn('[App] 辨識失敗:', data.error?.message)
       showResult({
         success: false,
         error: data.error,
       })
     }
   } catch (err) {
-    console.error('[App] 加入購物車失敗', err)
+    console.error('[App] 加入購物車失敗（網路錯誤）:', err)
     showResult({
       success: false,
       error: { message: err.message },
