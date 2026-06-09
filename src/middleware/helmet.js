@@ -25,10 +25,10 @@ function createHelmetMiddleware(env) {
           directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
-            scriptSrcElem: ["'self'", 'https://cdn.jsdelivr.net'],
+            scriptSrcElem: ["'self'", 'https://cdn.jsdelivr.net', 'https://static.cloudflareinsights.com'],
             scriptSrcAttr: ["'none'"],
-            styleSrc: ["'self'", 'https://fonts.googleapis.com'],
-            styleSrcElem: ["'self'", 'https://fonts.googleapis.com'],
+            styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
+            styleSrcElem: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
             imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
             connectSrc: [
               "'self'",
