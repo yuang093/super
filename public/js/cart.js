@@ -341,6 +341,17 @@ export function getDefaultRates() {
 }
 
 /**
+ * 將數字格式化成千分位逗號字串
+ * @param {number|string} num - 數字或數字字串
+ * @returns {string}
+ */
+function toThousands(num) {
+  const parts = Number(num).toFixed(2).split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return parts.join('.')
+}
+
+/**
  * 格式化價格顯示
  * @param {number} price - 價格
  * @param {string} [currency='TWD'] - 幣別
@@ -356,7 +367,7 @@ export function formatPrice(price, currency = 'TWD') {
     TWD: 'NT$',
   }
   const symbol = symbols[currency] || currency + ' '
-  return `${symbol}${price.toFixed(2)}`
+  return `${symbol}${toThousands(price)}`
 }
 
 /**

@@ -193,6 +193,10 @@ async function handleAddToCart() {
   isProcessing = true
   lockAllButtons()
 
+  // 自動分析時隱藏「分析並加入購物車」按鈕
+  const btnAddCart = $('btn-add-cart')
+  if (btnAddCart) btnAddCart.style.visibility = 'hidden'
+
   console.log('[App] handleAddToCart 開始', {
     base64Length: currentImageData.base64.length,
     width: currentImageData.width,
@@ -252,6 +256,13 @@ async function handleAddToCart() {
       // 清除預覽
       resetPreview()
       showToast(`✅ ${data.item.name} 已加入購物車`, 'success')
+
+      // 超過 ¥5000 日幣，顯示退稅提示
+      if (data.item.currency === 'JPY' && data.item.price > 5000) {
+        setTimeout(() => {
+          showToast('💡 消費超過 ¥5,000，可能符合免稅資格（請保留發票）', 'info')
+        }, 100)
+      }
     } else {
       console.warn('[App] 辨識失敗:', data.error?.message)
       showResult({
