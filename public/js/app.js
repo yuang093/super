@@ -659,24 +659,6 @@ async function initApp() {
     })
   }
 
-  // 🖼️ 相簿選取
-  const inputGallery = $('input-gallery')
-  if (inputGallery) {
-    inputGallery.addEventListener('change', (e) => {
-      const file = e.target.files?.[0]
-      if (file) handleGallerySelect(file)
-    })
-  }
-
-  // 📁 上傳檔案
-  const inputUpload = $('input-upload')
-  if (inputUpload) {
-    inputUpload.addEventListener('change', (e) => {
-      const file = e.target.files?.[0]
-      if (file) handleGallerySelect(file)
-    })
-  }
-
   // 🔄 重選按鈕
   const btnRetake = $('btn-retake')
   if (btnRetake) {

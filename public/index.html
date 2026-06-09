@@ -68,9 +68,8 @@
 
           <!-- 拍照舞台 -->
           <div class="capture-stage" id="capture-stage">
-            <!-- 三個操作按鈕 -->
+            <!-- 拍照按鈕：啟動後鏡頭（唯一按鈕） -->
             <div class="capture-buttons" id="capture-buttons">
-              <!-- 📷 拍照按鈕：啟動後鏡頭 -->
               <label class="btn-capture-action btn-capture-primary" for="btn-camera-trigger" title="開啟相機拍照">
                 <span class="btn-icon" aria-hidden="true">📷</span>
                 <span>拍照</span>
@@ -80,33 +79,7 @@
                 id="btn-camera-trigger"
                 class="file-input-hidden"
                 accept="image/*"
-                aria-label="開啟相機拍照或選取圖片"
-              />
-
-              <!-- 🖼️ 從相簿選取按鈕：會彈出拍照/相簿/檔案選擇 -->
-              <label class="btn-capture-action btn-capture-alt" for="input-gallery" title="從相簿選擇照片">
-                <span class="btn-icon" aria-hidden="true">🖼️</span>
-                <span>從相簿選</span>
-              </label>
-              <input
-                type="file"
-                id="input-gallery"
-                class="file-input-hidden"
-                accept="image/*"
-                aria-label="選擇相簿照片或拍攝新照片"
-              />
-
-              <!-- 📁 上傳檔案按鈕 -->
-              <label class="btn-capture-action btn-capture-alt2" for="input-upload" title="上傳圖片檔案">
-                <span class="btn-icon" aria-hidden="true">📁</span>
-                <span>上傳檔案</span>
-              </label>
-              <input
-                type="file"
-                id="input-upload"
-                class="file-input-hidden"
-                accept="image/jpeg,image/png,image/webp"
-                aria-label="上傳圖片檔案"
+                aria-label="開啟相機拍照"
               />
             </div>
 

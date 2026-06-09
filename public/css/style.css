@@ -287,10 +287,6 @@ img {
   background: var(--mint);
 }
 
-.btn-capture-alt2 {
-  background: var(--lavender);
-}
-
 /* 按鈕鎖定防誤按（disabled 狀態） */
 .btn-disabled,
 .file-input-hidden:disabled + label {
