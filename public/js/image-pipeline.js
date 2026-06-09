@@ -142,13 +142,18 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
     ctx.rotate((matrix.rotate * Math.PI) / 180)
   }
 
-  // 計算偏移量：需要 swap 的情況（90°/270°）要用交換後的尺寸
-  const needsSwap = [5, 6, 7, 8].includes(orientation)
-  const offsetX = needsSwap ? -img.height / 2 : -img.width / 2
-  const offsetY = needsSwap ? -img.width / 2 : -img.height / 2
+  // 計算 scale：確保影像完整fit進canvas（旋轉後寬高可能交換）
+  // 使用交換後的 canvas 尺寸來計算，確保正確fit
+  const rotatedW = [5, 6, 7, 8].includes(orientation) ? canvasHeight : canvasWidth
+  const rotatedH = [5, 6, 7, 8].includes(orientation) ? canvasWidth : canvasHeight
+  const scaleX = rotatedW / img.width
+  const scaleY = rotatedH / img.height
+  const scale = Math.min(scaleX, scaleY)
 
-  // 繪製圖片（圖片中心對齊 Canvas中心）
-  ctx.drawImage(img, offsetX, offsetY)
+  // 繪製圖片：圖片中心對齊 Canvas 中心
+  const scaledW = img.width * scale
+  const scaledH = img.height * scale
+  ctx.drawImage(img, -scaledW / 2, -scaledH / 2, scaledW, scaledH)
 
   ctx.restore()
 }
