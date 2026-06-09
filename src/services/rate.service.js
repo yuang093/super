@@ -133,11 +133,23 @@ class RateService {
       const data = await response.json()
 
       // 解析 exchangerate-api.com v4 回應格式
-      // 回應格式：{ base: "USD", rates: { TWD: 31.5, JPY: 150.2, ... } }
+      // 回應格式：{ base: "USD", rates: { TWD: 31.5, JPY: 150.2, KRW: 1350, ... } }
+      // 注意：API 回傳「每 1 USD = X 外幣」，需轉換為「每 1 外幣 = Y TWD」
       if (data.rates && typeof data.rates === 'object') {
+        const twdPerUsd = data.rates.TWD || 31.5
+        const ratesConverted = {}
+        for (const [currency, ratePerUsd] of Object.entries(data.rates)) {
+          if (currency === 'TWD') {
+            ratesConverted[currency] = 1
+          } else if (typeof ratePerUsd === 'number' && ratePerUsd > 0) {
+            // 1 外幣 = TWD/USD / 外幣/USD = TWD per 外幣
+            ratesConverted[currency] = parseFloat((twdPerUsd / ratePerUsd).toFixed(6))
+          }
+        }
+        ratesConverted[baseCurrency] = 1
         return {
           success: true,
-          rates: { ...data.rates, [baseCurrency]: 1 },
+          rates: ratesConverted,
           source: 'exchangerate-api.com',
         }
       }
@@ -245,18 +257,23 @@ class RateService {
    * @returns {Object}
    */
   _getDefaultRates() {
+    // 所有匯率為「每 1 外幣 = X TWD」格式
+    // 31.5 TWD/USD → 1 USD = 31.5 TWD
+    // JPY: 31.5/150 ≈ 0.21 (1 JPY = 0.21 TWD)
+    // KRW: 31.5/1350 ≈ 0.0233 (1 KRW = 0.0233 TWD)
+    // CNY: 31.5/7.2 ≈ 4.375 (1 CNY = 4.375 TWD)
     return {
       USD: 1,
-      TWD: 31.5,
+      TWD: 1,
       JPY: 0.21,
       EUR: 0.91,
-      KRW: 0.023,
-      CNY: 4.35,
+      KRW: 0.0233,
+      CNY: 4.38,
       GBP: 0.79,
       AUD: 0.65,
       CAD: 0.74,
       CHF: 0.88,
-      HKD: 3.9,
+      HKD: 4.05,
       SGD: 4.2,
       THB: 0.88,
     }
