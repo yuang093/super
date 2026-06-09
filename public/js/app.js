@@ -78,6 +78,7 @@ function unlockAllButtons() {
 let cart = null
 let currentImageData = null // 目前預覽中的圖片資料
 let isProcessing = false // 是否正在處理中（防止重複點擊）
+let isAutoAnalysis = false // 是否為自動分析模式（由 handleGallerySelect 觸發）
 
 // ============================================================================
 // 狀態指示器更新
@@ -166,6 +167,7 @@ async function handleGallerySelect(file) {
     console.log('[App] 預覽已顯示，即將自動觸發 AI 辨識')
 
     // 自動觸發 AI 辨識與加入購物車流程
+    isAutoAnalysis = true
     await handleAddToCart()
   } catch (err) {
     console.error('[App] handleGallerySelect 錯誤:', err)
@@ -186,7 +188,8 @@ async function handleAddToCart() {
     showToast('請先選擇或拍攝圖片', 'error')
     return
   }
-  if (isProcessing) {
+  // 手動點擊時防止重複，但自動分析（isAutoAnalysis）應跳過此檢查
+  if (isProcessing && !isAutoAnalysis) {
     console.warn('[App] 正在處理中，忽略此次點擊')
     return
   }
@@ -279,6 +282,7 @@ async function handleAddToCart() {
   } finally {
     hideProgress()
     isProcessing = false
+    isAutoAnalysis = false
     unlockAllButtons()
   }
 }
