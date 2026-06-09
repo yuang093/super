@@ -309,8 +309,10 @@ function showPreview(imageData) {
 
   //顯示資訊
   if (info) {
+    const needsSwap = [5, 6, 7, 8].includes(imageData.orientation)
+    const swapText = needsSwap ? ' 🔄swapped' : ''
     const orientText = imageData.orientation ? ` · EXIF↗${imageData.orientation}` : ''
-    info.textContent = `${imageData.width}×${imageData.height} · ${formatBytes(imageData.bytes)}${orientText}`
+    info.textContent = `${imageData.width}×${imageData.height}${swapText} · ${formatBytes(imageData.bytes)}${orientText}`
   }
 
   // 切換顯示
