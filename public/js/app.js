@@ -164,6 +164,7 @@ async function handleGallerySelect(file) {
     }
 
     showProgress('🖼️ 圖片已載入', 100)
+    console.log('[handleGallerySelect] result width:', result.width, 'height:', result.height)
     showPreview(currentImageData)
     console.log('[App] 預覽已顯示，即將自動觸發 AI 辨識')
 
@@ -310,9 +311,9 @@ function showPreview(imageData) {
   //顯示資訊
   if (info) {
     const needsSwap = [5, 6, 7, 8].includes(imageData.orientation)
-    const swapText = needsSwap ? ' 🔄swapped' : ''
-    const orientText = imageData.orientation ? ` · EXIF↗${imageData.orientation}` : ''
-    info.textContent = `${imageData.width}×${imageData.height}${swapText} · ${formatBytes(imageData.bytes)}${orientText}`
+    const swapText = needsSwap ? ' 🔄swap' : ''
+    const orientText = imageData.orientation ? ` EXIF↗${imageData.orientation}` : ''
+    info.textContent = `[${result.width}×${result.height}]${swapText}${orientText} · ${formatBytes(imageData.bytes)}`
   }
 
   // 切換顯示
