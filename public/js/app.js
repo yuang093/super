@@ -192,10 +192,6 @@ async function handleAddToCart() {
   }
   isProcessing = true
   lockAllButtons()
-    console.warn('[App] currentImageData 是空的，無法加入購物車')
-    showToast('請先選擇或拍攝圖片', 'error')
-    return
-  }
 
   console.log('[App] handleAddToCart 開始', {
     base64Length: currentImageData.base64.length,

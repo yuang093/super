@@ -1,33 +1,53 @@
-root@localhost:/opt/super# docker compose logs --tail=30 app
+oot@localhost:/opt/super# docker compose logs app --tail=50
 WARN[0000] /opt/super/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
-super-app  | {"timestamp":"2026-06-09T14:46:38.117Z","level":"info","message":"📥 HTTP 請求","requestId":"aemvrhv0","method":"GET","path":"/healthz","status":200,"durationMs":5}
-super-app  | {"timestamp":"2026-06-09T14:46:39.952Z","level":"info","message":"📥 HTTP 請求","requestId":"i303pt11","method":"GET","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T14:46:41.115Z","level":"info","message":"📥 HTTP 請求","requestId":"9zkopli5","method":"GET","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T14:46:44.233Z","level":"info","message":"📥 HTTP 請求","requestId":"iwpdnnu2","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:46:47.060Z","level":"info","message":"📥 HTTP 請求","requestId":"u9qd3ym4","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:46:48.197Z","level":"info","message":"📥 HTTP 請求","requestId":"vs03cxis","method":"GET","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T14:46:50.149Z","level":"info","message":"📥 HTTP 請求","requestId":"s5h7mmnd","method":"GET","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T14:46:50.321Z","level":"info","message":"📥 HTTP 請求","requestId":"bqxwirv4","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:46:52.547Z","level":"info","message":"📥 HTTP 請求","requestId":"5prci61c","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:05.513Z","level":"info","message":"📥 HTTP 請求","requestId":"b0xonjbd","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:06.583Z","level":"info","message":"📸 收到拍照上傳","size":17321,"mimetype":"image/jpeg","fingerprint":"fp_tb9p7srcmq6p3ryv"}
-super-app  | {"timestamp":"2026-06-09T14:47:06.583Z","level":"info","message":"🖼️ 開始壓縮圖片","originalSize":17321,"mimetype":"image/jpeg"}
-super-app  | {"timestamp":"2026-06-09T14:47:06.597Z","level":"info","message":"🖼️ 圖片壓縮完成","originalBytes":17321,"compressedBytes":15293,"reductionPercent":"11.7%","dimensions":"259x194","path":"/uploads/efc853da276a1aea-1781016426597.jpg"}
-super-app  | {"timestamp":"2026-06-09T14:47:06.597Z","level":"info","message":"✅ 圖片壓縮完成","originalSize":17321,"compressedSize":15293,"reduction":"11.7%"}
-super-app  | {"timestamp":"2026-06-09T14:47:06.598Z","level":"info","message":"🤖 開始 VLM 辨識","model":"MiniMax-M3"}
-super-app  | {"timestamp":"2026-06-09T14:47:08.127Z","level":"info","message":"📥 HTTP 請求","requestId":"ayhs7l7h","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:08.306Z","level":"info","message":"📥 HTTP 請求","requestId":"k6j47j8j","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:10.032Z","level":"info","message":"📥 HTTP 請求","requestId":"rbtoa865","method":"GET","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T14:47:13.622Z","level":"info","message":"📥 HTTP 請求","requestId":"ghi7dzmm","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:14.291Z","level":"info","message":"📥 HTTP 請求","requestId":"7mbgohbe","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:14.725Z","level":"info","message":"✅ VLM 辨識成功","attempt":1,"latencyMs":8127,"contentLength":717}
-super-app  | {"timestamp":"2026-06-09T14:47:14.725Z","level":"info","message":"✅ VLM 辨識成功","attempts":1,"latencyMs":8127,"contentLength":717}
-super-app  | {"timestamp":"2026-06-09T14:47:14.725Z","level":"info","message":"✅ 商品解析完成","method":"json","success":true,"name":"リケン EX+ 緑黄色野菜&乳酸菌","price":5690,"currency":"JPY"}
-super-app  | {"timestamp":"2026-06-09T14:47:14.727Z","level":"error","message":"💥 未預期錯誤","requestId":"tzah65k8","method":"POST","path":"/api/capture","status":500,"code":"INTERNAL_ERROR","error":"FingerprintRepository is not a constructor","stack":"TypeError: FingerprintRepository is not a constructor\n    at /app/src/routes/capture.js:100:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
-super-app  | {"timestamp":"2026-06-09T14:47:14.728Z","level":"info","message":"📥 HTTP 請求","requestId":"tzah65k8","method":"POST","path":"/api/capture","status":500,"durationMs":8151}
-super-app  | {"timestamp":"2026-06-09T14:47:18.623Z","level":"info","message":"📥 HTTP 請求","requestId":"ms2ni2yt","method":"GET","path":"/healthz","status":200,"durationMs":4}
-super-app  | {"timestamp":"2026-06-09T14:47:19.557Z","level":"info","message":"📥 HTTP 請求","requestId":"m4pmmdu5","method":"GET","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:22.527Z","level":"info","message":"📥 HTTP 請求","requestId":"f5boj6w6","method":"GET","path":"/healthz","status":200,"durationMs":2}
-super-app  | {"timestamp":"2026-06-09T14:47:22.595Z","level":"info","message":"📥 HTTP 請求","requestId":"i40okep5","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
-super-app  | {"timestamp":"2026-06-09T14:47:22.686Z","level":"info","message":"📥 HTTP 請求","requestId":"ucmmdfu3","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:40.273Z","level":"info","message":"📥 HTTP 請求","requestId":"233j44bk","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:41.454Z","level":"info","message":"📥 HTTP 請求","requestId":"mfzltcmm","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:44.972Z","level":"info","message":"📥 HTTP 請求","requestId":"aoxi8j8d","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:46.499Z","level":"info","message":"📥 HTTP 請求","requestId":"wm79szqe","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:55:46.672Z","level":"info","message":"📥 HTTP 請求","requestId":"isi1wbat","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:46.852Z","level":"info","message":"📥 HTTP 請求","requestId":"ip14ywlf","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:47.354Z","level":"info","message":"📥 HTTP 請求","requestId":"hmf2uf1q","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:55:47.550Z","level":"info","message":"📥 HTTP 請求","requestId":"esegqmq9","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:55:51.361Z","level":"info","message":"📥 HTTP 請求","requestId":"qcuchjsu","method":"GET","path":"/","status":200,"durationMs":5}
+super-app  | {"timestamp":"2026-06-09T15:55:51.743Z","level":"info","message":"📥 HTTP 請求","requestId":"xy3i79mx","method":"GET","path":"/css/style.css","status":200,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T15:55:51.771Z","level":"info","message":"📥 HTTP 請求","requestId":"tihylu87","method":"GET","path":"/js/app.js","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:55:58.523Z","level":"info","message":"📥 HTTP 請求","requestId":"34j5c0my","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:00.737Z","level":"info","message":"📥 HTTP 請求","requestId":"wuqioc4v","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:09.548Z","level":"info","message":"📥 HTTP 請求","requestId":"4ltyry87","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:10.114Z","level":"info","message":"📥 HTTP 請求","requestId":"s5io38jv","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:10.311Z","level":"info","message":"📥 HTTP 請求","requestId":"9gosj0wn","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:11.620Z","level":"info","message":"📥 HTTP 請求","requestId":"qkimt8rx","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:14.708Z","level":"info","message":"📥 HTTP 請求","requestId":"n63zpqov","method":"GET","path":"/","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:15.075Z","level":"info","message":"📥 HTTP 請求","requestId":"wzqzcudo","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:15.184Z","level":"info","message":"📥 HTTP 請求","requestId":"w3gdp033","method":"GET","path":"/css/style.css","status":200,"durationMs":5}
+super-app  | {"timestamp":"2026-06-09T15:56:15.322Z","level":"info","message":"📥 HTTP 請求","requestId":"3t9cgbf0","method":"GET","path":"/js/app.js","status":200,"durationMs":3}
+super-app  | {"timestamp":"2026-06-09T15:56:18.966Z","level":"info","message":"📥 HTTP 請求","requestId":"6wyxvzbi","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:19.142Z","level":"info","message":"📥 HTTP 請求","requestId":"yhn2bdja","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:19.314Z","level":"info","message":"📥 HTTP 請求","requestId":"di1p73xm","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:19.485Z","level":"info","message":"📥 HTTP 請求","requestId":"fop616as","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:19.489Z","level":"info","message":"📥 HTTP 請求","requestId":"rsisg6a5","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:29.230Z","level":"info","message":"📥 HTTP 請求","requestId":"lj8o14l8","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:33.216Z","level":"info","message":"📥 HTTP 請求","requestId":"81zhk5p5","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:40.177Z","level":"info","message":"📥 HTTP 請求","requestId":"hoqgi8ps","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:40.363Z","level":"info","message":"📥 HTTP 請求","requestId":"m4tgpa9y","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:56:41.622Z","level":"info","message":"📥 HTTP 請求","requestId":"6xvht9x9","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:45.143Z","level":"info","message":"📥 HTTP 請求","requestId":"76lt4w0k","method":"HEAD","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:49.534Z","level":"info","message":"📥 HTTP 請求","requestId":"4ak6y5ci","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:49.705Z","level":"info","message":"📥 HTTP 請求","requestId":"kfubqyzh","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:51.445Z","level":"info","message":"📥 HTTP 請求","requestId":"2g2cg8y8","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:51.618Z","level":"info","message":"📥 HTTP 請求","requestId":"lgqf59mx","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:56:51.793Z","level":"info","message":"📥 HTTP 請求","requestId":"5d55gkd7","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:01.724Z","level":"info","message":"📥 HTTP 請求","requestId":"3xh7qcm3","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:03.919Z","level":"info","message":"📥 HTTP 請求","requestId":"lvnmo3sb","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:10.194Z","level":"info","message":"📥 HTTP 請求","requestId":"my4rlwze","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:10.366Z","level":"info","message":"📥 HTTP 請求","requestId":"7rhvyl1d","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:11.638Z","level":"info","message":"📥 HTTP 請求","requestId":"5zqfoz86","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:57:15.194Z","level":"info","message":"📥 HTTP 請求","requestId":"sjiz4tf4","method":"HEAD","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:57:21.994Z","level":"info","message":"📥 HTTP 請求","requestId":"mkouzepw","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:22.194Z","level":"info","message":"📥 HTTP 請求","requestId":"o3mueag8","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:57:23.954Z","level":"info","message":"📥 HTTP 請求","requestId":"absjwurk","method":"GET","path":"/healthz","status":200,"durationMs":5}
+super-app  | {"timestamp":"2026-06-09T15:57:24.128Z","level":"info","message":"📥 HTTP 請求","requestId":"bpopbuq0","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:24.299Z","level":"info","message":"📥 HTTP 請求","requestId":"p3zpit2b","method":"GET","path":"/healthz","status":200,"durationMs":1}
+super-app  | {"timestamp":"2026-06-09T15:57:32.034Z","level":"info","message":"📥 HTTP 請求","requestId":"6wa4vss8","method":"GET","path":"/healthz","status":200,"durationMs":2}
+super-app  | {"timestamp":"2026-06-09T15:57:34.228Z","level":"info","message":"📥 HTTP 請求","requestId":"hcaixulx","method":"GET","path":"/healthz","status":200,"durationMs":2}
 root@localhost:/opt/super# 
