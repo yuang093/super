@@ -19,6 +19,10 @@ class RateService {
     this.apiEndpoint = env.EXCHANGE_API_ENDPOINT
     this.fallbackTtlHours = env.EXCHANGE_FALLBACK_TTL_HOURS
     this._db = null
+    // 記憶體快取（1小時TTL，減少 API 請求次數）
+    this._memCache = null
+    this._memCacheTimestamp = 0
+    this._memCacheTtlMs = 60 * 60 * 1000 // 1小時
   }
 
   /** 取得資料庫連線（延遲初始化） */
@@ -35,35 +39,56 @@ class RateService {
   }
 
   /**
-   * 抓取最新匯率（依賴 API，失敗時降級 SQLite）
+   * 抓取最新匯率（記憶體快取 1 小時，只在過期時才打 API）
    * @param {string} [baseCurrency='USD'] - 基準幣別
    * @returns {Promise<Object>} - 匯率對應表 { USD: 1, TWD: 31.5, JPY: 0.21, ... }
    */
   async getRates(baseCurrency = 'USD') {
-    // 嘗試從 API 抓取
-    const apiResult = await this._fetchFromApi(baseCurrency)
-
-    if (apiResult.success) {
-      // API成功：更新 SQLite 快取
-      await this._updateCache(apiResult.rates, apiResult.source)
-      logger.info('💱 匯率已從 API 更新', { baseCurrency, rates: Object.keys(apiResult.rates) })
-      return apiResult.rates
+    // 記憶體快取還有效：直接回傳
+    if (this._memCache && Date.now() - this._memCacheTimestamp < this._memCacheTtlMs) {
+      return this._memCache
     }
 
-    // API 失敗：降級讀取 SQLite
-    logger.warn('⚠️ 匯率 API 失敗，降級讀取 SQLite 快取', {
-      error: apiResult.errorMessage,
-    })
-    const cachedRates = this._getCachedRates(baseCurrency)
+    // 快取過期或不存在：背景更新
+    this._refreshRatesInBackground(baseCurrency)
+    return this._memCache || this._getDefaultRates()
+  }
 
-    if (cachedRates) {
-      logger.info('✅匯率已從 SQLite 快取取得', { baseCurrency, ageHours: apiResult.ageHours })
-      return cachedRates
+  /**
+   * 背景更新匯率（不打擾主流程）
+   * @private
+   */
+  async _refreshRatesInBackground(baseCurrency = 'USD') {
+    try {
+      const apiResult = await this._fetchFromApi(baseCurrency)
+
+      if (apiResult.success) {
+        await this._updateCache(apiResult.rates, apiResult.source)
+        this._memCache = apiResult.rates
+        this._memCacheTimestamp = Date.now()
+        logger.info('💱 匯率已更新（背景）', { baseCurrency })
+        return
+      }
+
+      // API 失敗：降級讀取 SQLite
+      const cachedRates = this._getCachedRates(baseCurrency)
+      if (cachedRates) {
+        this._memCache = cachedRates
+        this._memCacheTimestamp = Date.now()
+        logger.info('✅ 匯率已從 SQLite 快取載入（背景）')
+        return
+      }
+
+      // SQLite 也沒有：用預設值
+      this._memCache = this._getDefaultRates()
+      this._memCacheTimestamp = Date.now()
+    } catch (err) {
+      logger.error('❌ 背景更新匯率失敗', { error: err.message })
+      if (!this._memCache) {
+        this._memCache = this._getDefaultRates()
+        this._memCacheTimestamp = Date.now()
+      }
     }
-
-    // SQLite 也沒有：回傳預設值（保底）
-    logger.error('❌ 無可用匯率，回傳預設值')
-    return this._getDefaultRates()
   }
 
   /**
@@ -231,6 +256,9 @@ class RateService {
       AUD: 0.65,
       CAD: 0.74,
       CHF: 0.88,
+      HKD: 3.9,
+      SGD: 4.2,
+      THB: 0.88,
     }
   }
 }

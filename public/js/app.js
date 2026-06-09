@@ -100,13 +100,21 @@ async function checkHealth() {
 async function handleGallerySelect(file) {
   if (!file) return
 
-  console.log('[App] handleGallerySelect 收到檔案:', { name: file.name, type: file.type, size: file.size })
+  console.log('[App] handleGallerySelect 收到檔案:', {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+  })
 
   try {
     showProgress('🖼️ 處理圖片中…', 30)
 
     const result = await processImageBlob(file)
-    console.log('[App] processImageBlob 完成', { width: result.width, height: result.height, bytes: result.bytes })
+    console.log('[App] processImageBlob 完成', {
+      width: result.width,
+      height: result.height,
+      bytes: result.bytes,
+    })
 
     currentImageData = {
       blob: file,
@@ -139,7 +147,11 @@ async function handleAddToCart() {
     return
   }
 
-  console.log('[App] handleAddToCart 開始', { base64Length: currentImageData.base64.length, width: currentImageData.width, height: currentImageData.height })
+  console.log('[App] handleAddToCart 開始', {
+    base64Length: currentImageData.base64.length,
+    width: currentImageData.width,
+    height: currentImageData.height,
+  })
 
   showProgress('🛒 加入購物車中…', 50)
 
@@ -182,6 +194,7 @@ async function handleAddToCart() {
         currency: data.item.currency,
         confidence: data.item.confidence,
         parseMethod: data.item.parseMethod,
+        imageBase64: currentImageData?.base64 || null,
       })
 
       showResult({
@@ -399,7 +412,7 @@ function renderCart() {
     .map(
       (item) => `
  <div class="cart-item" data-id="${item.id}">
-      <div class="cart-item-emoji">📦</div>
+      ${item.imageBase64 ? `<img class="cart-item-thumb" src="${item.imageBase64}" alt="${escapeHtml(item.name)}" loading="lazy" />` : '<div class="cart-item-emoji">📦</div>'}
       <div class="cart-item-info">
         <div class="cart-item-name">${escapeHtml(item.name)}</div>
         <div class="cart-item-meta">${formatRelativeTime(item.createdAt)}</div>
@@ -421,6 +434,21 @@ function renderCart() {
         cart.removeItem(id)
         renderCart()
       }
+    })
+  })
+
+  // 縮圖點擊放大（Lightbox）
+  listEl.querySelectorAll('.cart-item-thumb').forEach((img) => {
+    img.addEventListener('click', (e) => {
+      e.stopPropagation()
+      const overlay = document.createElement('div')
+      overlay.className = 'lightbox-overlay'
+      overlay.innerHTML = `<button class="lightbox-close" aria-label="關閉">×</button><img src="${img.src}" alt="${img.alt}" />`
+      document.body.appendChild(overlay)
+      overlay.querySelector('.lightbox-close').addEventListener('click', () => overlay.remove())
+      overlay.addEventListener('click', (ev) => {
+        if (ev.target === overlay) overlay.remove()
+      })
     })
   })
 
@@ -459,17 +487,17 @@ function renderCart() {
 // ============================================================================
 
 /**
- * 更新匯率顯示
+ * 更新匯率顯示（只顯示常用幣別：USD、JPY、KRW）
  */
 function updateExchangeRates() {
   const rates = cart.getRates()
   const rateUsd = $('rate-usd')
   const rateJpy = $('rate-jpy')
-  const rateEur = $('rate-eur')
+  const rateKrw = $('rate-krw')
 
   if (rateUsd) rateUsd.textContent = rates.USD?.toFixed(4) || '--'
   if (rateJpy) rateJpy.textContent = rates.JPY?.toFixed(4) || '--'
-  if (rateEur) rateEur.textContent = rates.EUR?.toFixed(4) || '--'
+  if (rateKrw) rateKrw.textContent = rates.KRW?.toFixed(4) || '--'
 }
 
 /**
