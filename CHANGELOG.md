@@ -30,6 +30,10 @@
 - Fixed：package.json 重複 script key（test:watch、test:coverage 已合併）
 - Fixed：health check 端點統一為 /healthz（與 Dockerfile HEALTHCHECK 一致）
 - Fixed：草稿檔案移至 docs/drafts/，.gitignore 新增 docs/drafts/ 排除規則
+- Fixed：BUG-01 — 移除 btn-camera-trigger 的 capture="environment" 屬性，改由瀏覽器自行判斷（桌面彈檔案選擇器、手機彈拍照/相簿選單）
+- Fixed：BUG-02 — 重構 showToast 函式，加入 type 參數與 .visible class 動畫機制
+- Fixed：BUG-03 — handleAddToCart 的 base64 切分加入防禦性檢查，同時支援有無 data URL 前綴
+- Fixed：BUG-04 — 確認 /api/rates 路由掛載正確（rateRouter 掛於 /api，前端 fetchRates 可正常呼叫）
 
 ### 規劃中
 - 階段三：TDD 三循環測試（單元 → 整合 → E2E），覆蓋率 ≥ 80%

@@ -137,7 +137,10 @@ async function handleAddToCart() {
     // 呼叫後端 API 進行 VLM 辨識
     const formData = new FormData()
     //將 base64 轉回 Blob
-    const byteString = atob(currentImageData.base64.split(',')[1])
+    const base64Str = currentImageData.base64.includes(',')
+      ? currentImageData.base64.split(',')[1]
+      : currentImageData.base64
+    const byteString = atob(base64Str)
     const mimeType = currentImageData.base64.match(/data:([^;]+);/)?.[1] || 'image/jpeg'
     const ab = new ArrayBuffer(byteString.length)
     const ia = new Uint8Array(ab)
@@ -303,20 +306,31 @@ function showResult({ success, item, error }) {
 }
 
 /**
- * 顯示 Toast 提示
+ * 顯示 Toast 提示訊息（3 秒後自動消失）
+ * @param {string} message - 顯示訊息
+ * @param {'info'|'error'|'success'} type - 類型
  */
-function showToast(message) {
-  const existing = document.querySelector('.error-toast')
+function showToast(message, type = 'info') {
+  // 移除舊的 toast
+  const existing = document.querySelector('.app-toast')
   if (existing) existing.remove()
 
   const toast = document.createElement('div')
-  toast.className = 'error-toast'
+  toast.className = `app-toast app-toast-${type}`
   toast.textContent = message
   toast.setAttribute('role', 'alert')
   document.body.appendChild(toast)
 
+  // 立即顯示（觸發 CSS 動畫）
+  requestAnimationFrame(() => {
+    toast.classList.add('visible')
+  })
+
   setTimeout(() => {
-    if (toast.parentNode) toast.remove()
+    toast.classList.remove('visible')
+    setTimeout(() => {
+      if (toast.parentNode) toast.remove()
+    }, 300) // 等待動畫結束
   }, 3000)
 }
 
