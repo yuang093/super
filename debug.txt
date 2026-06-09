@@ -1,0 +1,23 @@
+root@localhost:~# cd /opt/super
+root@localhost:/opt/super# git pull
+remote: Enumerating objects: 33, done.
+remote: Counting objects: 100% (33/33), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 19 (delta 14), reused 16 (delta 11), pack-reused 0 (from 0)
+Unpacking objects: 100% (19/19), 3.92 KiB | 309.00 KiB/s, done.
+From https://github.com/yuang093/super
+   b994f05..7a06442  main       -> origin/main
+Updating b994f05..7a06442
+Fast-forward
+ src/app.js                          | 25 ++++++++++++++++++++-----
+ src/middleware/cors.js              |  2 ++
+ src/middleware/helmet.js            | 56 ++++++++++++++++++++++++--------------------------------
+ src/middleware/upload.js            |  9 ++++++---
+ src/routes/items.js                 |  2 +-
+ tests/fixtures/vlm-responses.js     | 31 +++++++++++++++++--------------
+ tests/integration/vlmClient.test.js |  2 +-
+ 7 files changed, 71 insertions(+), 56 deletions(-)
+root@localhost:/opt/super# npm install
+Command 'npm' not found, but can be installed with:
+apt install npm
+root@localhost:/opt/super# 
