@@ -8,7 +8,7 @@
  * 通用商品辨識提示詞（MiniMax-M3 相容）
  *
  * 要求回傳結構化 JSON 包含：
- * - name: 商品名稱（中文優先，若無則英文）
+ * - name: 商品名稱（含中文翻譯，外語名稱需附上中文）
  * - price: 價格（數字，不含貨幣符號）
  * - currency: ISO 4217 三字代碼（TWD、USD、JPY 等）
  * - confidence: 0-1 之間的信心度
@@ -21,12 +21,19 @@ const PRODUCT_RECOGNITION_PROMPT = `You are a product recognition specialist for
 Analyze the image and return ONLY a valid JSON object (no markdown, no explanations) with this exact structure:
 
 {
-  "name": "商品名稱（中文優先）",
+  "name": "商品名稱（含中文翻譯）",
   "price": 45.00,
   "currency": "TWD",
   "confidence": 0.92,
   "category": "fruit"
 }
+
+TRANSLATION RULES:
+- If product name is in Japanese (e.g., リキュレEX+), return: "リキュレEX+ (日本商品翻譯名稱)"
+- If product name is in English (e.g., Vicks VapoRub), return: "Vicks VapoRub (美國薄荷膏)"
+- If product name is in Korean, return: "韓文名 (中文翻譯)"
+- If product name is already in Chinese, keep as-is
+- ALWAYS include Chinese translation in parentheses after the original name
 
 RULES:
 1. Return ONLY the JSON object, nothing else
@@ -49,12 +56,14 @@ const PRICE_TAG_PROMPT = `This is a price tag or shelf label. Extract the produc
 
 Return ONLY JSON:
 {
-  "name": "商品名稱",
+  "name": "商品名稱（含中文翻譯）",
   "price": 45.00,
   "currency": "TWD",
   "confidence": 0.95,
   "category": "other"
 }
+
+TRANSLATION: If product name is not in Chinese, add Chinese translation in parentheses.
 
 If you cannot read the price clearly, set confidence below 0.5.
 

@@ -277,12 +277,11 @@ export class Cart {
       byCurrency[item.currency].count += 1
     })
 
-    // 轉為陣列格式
+    // 轉為陣列格式（注意：totalTWD 已在 sumTWD() 統一計算，這裡只呈現原幣別總額）
     const currencySummaries = Object.entries(byCurrency).map(([currency, data]) => ({
       currency,
       total: data.total,
       count: data.count,
-      totalTWD: data.total * (this._rates[currency] || 1),
     }))
 
     return {
