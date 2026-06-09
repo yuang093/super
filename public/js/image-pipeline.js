@@ -122,6 +122,9 @@ function getExifOrientation(buffer) {
  */
 function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   const matrix = ORIENTATION_MATRIX[orientation] || ORIENTATION_MATRIX[1]
+  const needsSwap = [5, 6, 7, 8].includes(orientation)
+
+  console.log('[applyOrientation]', { orientation, canvasWidth, canvasHeight, needsSwap, imgW: img.width, imgH: img.height })
 
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
   ctx.save()
@@ -129,10 +132,11 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   // 將 Canvas 中心移動到原點
   ctx.translate(canvasWidth / 2, canvasHeight / 2)
 
-  // 套用翻轉
+  // 套用翻轉（X軸翻轉）
   if (matrix.flipX) {
     ctx.scale(-1, 1)
   }
+  // 套用翻轉（Y軸翻轉）
   if (matrix.flipY) {
     ctx.scale(1, -1)
   }
@@ -142,17 +146,18 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
     ctx.rotate((matrix.rotate * Math.PI) / 180)
   }
 
-  // 計算 scale：確保影像完整fit進canvas（旋轉後寬高可能交換）
-  // 使用交換後的 canvas 尺寸來計算，確保正確fit
-  const rotatedW = [5, 6, 7, 8].includes(orientation) ? canvasHeight : canvasWidth
-  const rotatedH = [5, 6, 7, 8].includes(orientation) ? canvasWidth : canvasHeight
-  const scaleX = rotatedW / img.width
-  const scaleY = rotatedH / img.height
+  // 計算 scale
+  const targetW = needsSwap ? canvasHeight : canvasWidth
+  const targetH = needsSwap ? canvasWidth : canvasHeight
+  const scaleX = targetW / img.width
+  const scaleY = targetH / img.height
   const scale = Math.min(scaleX, scaleY)
-
-  // 繪製圖片：圖片中心對齊 Canvas 中心
   const scaledW = img.width * scale
   const scaledH = img.height * scale
+
+  console.log('[applyOrientation] scale:', { targetW, targetH, scaleX, scaleY, scale, scaledW, scaledH })
+
+  // 圖片中心對齊 Canvas 中心
   ctx.drawImage(img, -scaledW / 2, -scaledH / 2, scaledW, scaledH)
 
   ctx.restore()
