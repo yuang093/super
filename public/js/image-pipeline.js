@@ -126,7 +126,7 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
   ctx.save()
 
-  // 將原圖中心移動到 Canvas中心
+  // 將 Canvas 中心移動到原點
   ctx.translate(canvasWidth / 2, canvasHeight / 2)
 
   // 套用翻轉
@@ -142,8 +142,13 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
     ctx.rotate((matrix.rotate * Math.PI) / 180)
   }
 
+  // 計算偏移量：需要 swap 的情況（90°/270°）要用交換後的尺寸
+  const needsSwap = [5, 6, 7, 8].includes(orientation)
+  const offsetX = needsSwap ? -img.height / 2 : -img.width / 2
+  const offsetY = needsSwap ? -img.width / 2 : -img.height / 2
+
   // 繪製圖片（圖片中心對齊 Canvas中心）
-  ctx.drawImage(img, -img.width / 2, -img.height / 2)
+  ctx.drawImage(img, offsetX, offsetY)
 
   ctx.restore()
 }
