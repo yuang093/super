@@ -673,6 +673,18 @@ img {
   font-size: 18px;
 }
 
+/* 退稅提示 */
+.tax-refund-hint {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #fff8e1;
+  border: 1.5px solid #ffc107;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #5d4037;
+  line-height: 1.4;
+}
+
 /* ==========================================================================
    外幣雙顯示區（F-07）
    ========================================================================== */

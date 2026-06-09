@@ -192,6 +192,14 @@ export async function compressImage(img, orientation, options = {}) {
   const canvasWidth = needsSwap ? drawHeight : drawWidth
   const canvasHeight = needsSwap ? drawWidth : drawHeight
 
+  console.log('[ImagePipeline] compressImage', {
+    imgNatural: `${img.width}x${img.height}`,
+    drawSize: `${drawWidth}x${drawHeight}`,
+    canvasSize: `${canvasWidth}x${canvasHeight}`,
+    needsSwap,
+    orientation,
+  })
+
   // 建立 Stage 1 Canvas
   const canvas1 = document.createElement('canvas')
   canvas1.width = canvasWidth
@@ -270,6 +278,7 @@ export async function processImageBlob(blob, options = {}) {
   // 讀取 ArrayBuffer 以取出 EXIF Orientation
   const arrayBuffer = await blob.arrayBuffer()
   const orientation = getExifOrientation(arrayBuffer)
+  console.log('[ImagePipeline] EXIF Orientation:', orientation, 'blob.size:', blob.size)
 
   // 執行壓縮
   return compressImage(img, orientation, options)

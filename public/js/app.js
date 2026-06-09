@@ -259,14 +259,7 @@ async function handleAddToCart() {
       // 清除預覽
       resetPreview()
       showToast(`✅ ${data.item.name} 已加入購物車`, 'success')
-
-      // 超過 ¥5000 日幣，顯示退稅提示
-      console.log('[App] 退稅檢查', { currency: data.item.currency, price: data.item.price, type: typeof data.item.price })
-      if (data.item.currency === 'JPY' && Number(data.item.price) > 5000) {
-        setTimeout(() => {
-          showToast('💡 消費超過 ¥5,000，可能符合免稅資格（請保留發票）', 'info')
-        }, 100)
-      }
+      // 退稅提示已移至 renderCart() 的 Summary 區塊固定顯示
     } else {
       console.warn('[App] 辨識失敗:', data.error?.message)
       showResult({
@@ -569,6 +562,16 @@ function renderCart() {
           <span class="summary-amount">${formatPrice(summary.totalTWD, 'TWD')}</span>
         </div>
       `
+
+      // 退稅提示：任一筆 JPY 商品超過 ¥5000 即持續顯示
+      const hasJpyOver5000 = items.some((item) => item.currency === 'JPY' && Number(item.price) > 5000)
+      if (hasJpyOver5000) {
+        summaryRowsEl.innerHTML += `
+          <div class="tax-refund-hint">
+            💡 消費超過 ¥5,000，可能符合免稅資格（請保留發票）
+          </div>
+        `
+      }
     } else {
       summaryEl.style.display = 'none'
     }
