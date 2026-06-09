@@ -1,0 +1,926 @@
+/* 🤖 public/css/style.css
+ * Supermarket Tracker — Mobile First 響應式樣式
+ * 設計規範：[CLAUDE.md §3.3] 程式碼風格
+ * 響應式斷點：375px → 768px → 1024px → 1920px
+ * 最小 touch target：44x44px
+ */
+
+/* ==========================================================================
+   CSS 變數（粗獷歡樂 Brutalist Joy 配色）
+   ========================================================================== */
+:root {
+  /*核心配色 */
+  --yellow: #FFD93D;
+  --coral: #FF6B6B;
+  --mint: #4ECDC4;
+  --lavender: #A78BFA;
+  --black: #1A1A1A;
+  --white: #FFFFFF;
+
+  /* 字型 */
+  --font-display: "Fredoka", "Noto Sans TC", sans-serif;
+  --font-body: "Fredoka", "Noto Sans TC", sans-serif;
+
+  /* 粗黑邊框 */
+  --border-thick: 4px solid var(--black);
+  --border-thin: 3px solid var(--black);
+
+  /* 硬陰影（撞擊感）*/
+  --shadow-sm: 4px 4px 0 var(--black);
+  --shadow-md: 6px 6px 0 var(--black);
+  --shadow-lg: 8px 8px 0 var(--black);
+
+  /* 過渡 */
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-base: 200ms var(--bounce);
+
+  /* Safe area（iOS 瀏覽器）*/
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+
+/* ==========================================================================
+   Reset& Base（所有元素 box-sizing 統一）
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--black);
+  background-color: var(--yellow);
+  background-image:
+    radial-gradient(circle at 15% 10%, var(--coral) 0%, transparent 8%),
+    radial-gradient(circle at 85% 20%, var(--mint) 0%, transparent 10%),
+    radial-gradient(circle at 50% 80%, var(--lavender) 0%, transparent 12%),
+    radial-gradient(var(--black) 1.5px, transparent 1.5px);
+  background-size: auto, auto, auto, 24px 24px;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding:
+    calc(20px + var(--safe-top))
+16px
+    calc(110px + var(--safe-bottom))
+16px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+p {
+  line-height: 1.5;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ==========================================================================
+   無障礙 Focus樣式（粗黑邊框）
+   ========================================================================== */
+:focus-visible {
+  outline: 4px solid var(--coral);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   卡片元件（粗獷歡樂風格）
+   ========================================================================== */
+.card {
+  background: var(--white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-md);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 20px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.app-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.app-title {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.app-subtitle {
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.app-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: var(--border-thin);
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.status-indicator.online {
+  background: var(--mint);
+}
+
+.status-indicator.offline {
+  background: var(--coral);
+}
+
+.app-status.offline .status-text {
+  color: var(--coral);
+}
+
+/* ==========================================================================
+   主要內容區域
+   ========================================================================== */
+.app-main {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   拍照辨識區（F-01, F-04, F-05）
+   ========================================================================== */
+.capture-section {
+  /*拍照卡片样式 */
+}
+
+.capture-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 拍照按鈕群組 */
+.capture-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* 主要操作按鈕（最小 44x44px touch target）*/
+.btn-capture-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 12px 20px;
+  background: var(--yellow);
+  border: var(--border-thick);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.btn-capture-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-capture-action:active {
+  transform: translateY(2px) translateX(2px);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
+.btn-capture-action .btn-icon {
+  font-size: 24px;
+}
+
+/* 相機按鈕（主要）*/
+.btn-capture-primary {
+  background: var(--coral);
+  color: var(--white);
+}
+
+.btn-capture-primary:hover {
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-capture-primary:active {
+  transform: translateY(2px) translateX(2px) rotate(-1deg);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
+/* 相簿按鈕（替代）*/
+.btn-capture-alt {
+  background: var(--mint);
+}
+
+.btn-capture-alt2 {
+  background: var(--lavender);
+}
+
+/* 隱藏的 file input（以 label 作為點擊目標）*/
+.file-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* 預覽區塊 */
+.capture-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.preview-img {
+  max-width: 100%;
+  max-height: 300px;
+  border: var(--border-thick);
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.preview-info {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* 進度條 */
+.capture-progress {
+  width: 100%;
+  text-align: center;
+}
+
+.progress-text {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 12px;
+  background: #eee;
+  border: 2px solid var(--black);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--mint);
+  border-radius: 4px;
+  transition: width 200ms ease;
+}
+
+/* 結果區塊 */
+.capture-result {
+  width: 100%;
+}
+
+.result-card {
+  border: var(--border-thick);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.result-success {
+  background: #e8f5e9;
+  border-color: var(--mint);
+}
+
+.result-error {
+  background: #ffebee;
+  border-color: var(--coral);
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.result-label {
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.result-value {
+  font-weight: 600;
+}
+
+.result-action-hint {
+  font-size: 13px;
+  color: #555;
+  margin-top: 8px;
+}
+
+.result-error-code {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   購物車區（F-06）
+   ========================================================================== */
+.cart-section {
+  /* 購物车卡片样式 */
+}
+
+.item-list-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.btn-cart-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
+  background: var(--white);
+  border: var(--border-thin);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.btn-cart-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-cart-action:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn-cart-danger {
+  background: #ffebee;
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-list-empty,
+.item-list-loading,
+.item-list-error {
+  text-align: center;
+  padding: 24px;
+  font-size: 14px;
+  color: #777;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.item-list-error {
+  color: var(--coral);
+  background: #ffebee;
+}
+
+/* 購物車商品項目 */
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--white);
+  border: var(--border-thin);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cart-item-emoji {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-name {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-item-meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.cart-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.cart-item-price {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.btn-item-delete {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-base);
+}
+
+.btn-item-delete:hover {
+  transform: scale(1.1);
+}
+
+.btn-item-delete:active {
+  transform: scale(0.95);
+}
+
+/* 購物車總計 */
+.cart-summary {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--yellow);
+  border: var(--border-thick);
+  border-radius: 12px;
+}
+
+.cart-summary h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.summary-currency {
+  font-weight: 700;
+  min-width: 40px;
+}
+
+.summary-count {
+  color: #555;
+  flex: 1;
+}
+
+.summary-amount {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* ==========================================================================
+   外幣雙顯示區（F-07）
+   ========================================================================== */
+.exchange-section {
+  /* 匯率卡片样式 */
+}
+
+.exchange-rates {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exchange-rate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f5f5f5;
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.exchange-rate-currency {
+  font-weight: 700;
+}
+
+.exchange-rate-value {
+  font-weight: 600;
+}
+
+.exchange-rate-twd {
+  font-size: 12px;
+  color: #777;
+}
+
+/* ==========================================================================
+   底部 Sticky CTA
+   ========================================================================== */
+.sticky-cta {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom));
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.sticky-cta .btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  background: var(--coral);
+  color: var(--white);
+  border: var(--border-thick);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  font-size: 18px;
+  font-weight: 700;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.sticky-cta .btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 10px 10px 0 var(--black);
+}
+
+.sticky-cta .btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+/* ==========================================================================
+   底部 Tab Bar
+   ========================================================================== */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--white);
+  border-top: var(--border-thick);
+  padding: calc(8px + var(--safe-bottom)) 08px;
+  z-index: 200;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #777;
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.tab-item.active {
+  color: var(--coral);
+  font-weight: 700;
+}
+
+.tab-icon {
+  font-size: 22px;
+}
+
+.tab-fab {
+  margin-top: -24px;
+}
+
+.tab-circle {
+  width: 56px;
+  height: 56px;
+  background: var(--coral);
+  border: var(--border-thick);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.app-footer {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 12px;
+  color: #777;
+}
+
+.footer-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.version-badge,
+.tech-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   錯誤提示訊息（通用）
+   ========================================================================== */
+.error-toast {
+  position: fixed;
+  top: calc(20px + var(--safe-top));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--coral);
+  color: var(--white);
+  padding: 12px 20px;
+  border: var(--border-thick);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+  animation: toast-in300ms var(--bounce);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ==========================================================================
+   模型載入進度條（F-02）
+   ========================================================================== */
+.progress-container {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.progress-label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: #eee;
+  border: 2px solid var(--black);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--lavender);
+  border-radius: 3px;
+  transition: width 200ms ease;
+}
+
+/* ==========================================================================
+   響應式斷點（Tablet768px+）
+   ========================================================================== */
+@media (min-width: 768px) {
+  body {
+    padding: 24px 24px calc(110px + var(--safe-bottom));
+  }
+
+  .app-title {
+    font-size: 36px;
+  }
+
+  .card {
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .card-title {
+    font-size: 24px;
+  }
+
+  .capture-buttons {
+    gap: 16px;
+  }
+
+  .btn-capture-action {
+    padding: 14px 28px;
+    font-size: 18px;
+  }
+
+  .preview-img {
+    max-height: 400px;
+  }
+
+  .cart-item {
+    padding: 16px;
+  }
+
+  .sticky-cta {
+    bottom: calc(90px + var(--safe-bottom));
+  }
+}
+
+/* ==========================================================================
+   響應式斷點（Desktop 1024px+）
+   ========================================================================== */
+@media (min-width: 1024px) {
+  body {
+    padding: 32px 32px calc(120px + var(--safe-bottom));
+  }
+
+  .app-main {
+    max-width: 800px;
+  }
+
+  .app-title {
+    font-size: 42px;
+  }
+
+  .card {
+    padding: 28px;
+    margin-bottom: 28px;
+  }
+
+  .capture-buttons {
+    gap: 20px;
+  }
+
+  .btn-capture-action {
+    padding: 16px 32px;
+    font-size: 20px;
+  }
+
+  .preview-img {
+    max-height: 500px;
+  }
+
+  .sticky-cta {
+    bottom: calc(100px + var(--safe-bottom));
+  }
+}
+
+/* ==========================================================================
+   響應式斷點（Large Desktop 1920px）
+   ========================================================================== */
+@media (min-width: 1920px) {
+  body {
+    padding: 40px 40px calc(130px + var(--safe-bottom));
+  }
+
+  .app-main {
+    max-width: 1000px;
+  }
+
+  .app-title {
+    font-size: 48px;
+  }
+
+  .card {
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+}

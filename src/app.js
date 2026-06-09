@@ -16,6 +16,8 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const healthRouter = require('./routes/health');
 const captureRouter = require('./routes/capture');
 const itemsRouter = require('./routes/items');
+const rateRouter = require('./routes/rate');
+const webhookRouter = require('./routes/webhook');
 
 /**
  * 建立 Express 應用實例
@@ -92,6 +94,8 @@ function createApp(options = {}) {
   app.use('/', healthRouter);
   app.use('/api/capture', captureRouter);
   app.use('/api/items', itemsRouter);
+  app.use('/api', rateRouter);
+  app.use('/api/webhook', webhookRouter);
 
   // === 404 處理（必須在 errorHandler 之前） ===
   app.use(notFoundHandler);
