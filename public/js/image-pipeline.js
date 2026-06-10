@@ -23,7 +23,7 @@ const ORIENTATION_MATRIX = {
   3: { rotate: 180, flipX: false, flipY: false },
   4: { rotate: 0, flipX: false, flipY: true },
   5: { rotate: 90, flipX: true, flipY: false },
-  6: { rotate: 90, flipX: false, flipY: false }, // iPhone 直立
+  6: { rotate: -90, flipX: false, flipY: false }, // iPhone 直立：順時針轉 90°
   7: { rotate: 270, flipX: true, flipY: false },
   8: { rotate: 270, flipX: false, flipY: false },
 }
@@ -138,19 +138,15 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   // 圖片中心對齊 Canvas 中心
   const cx = canvasWidth / 2
   const cy = canvasHeight / 2
-  const scaledW = img.width * scale
-  const scaledH = img.height * scale
 
-  // 使用 ctx.transform 直接設置 transformation matrix
-  // 這樣可以避免 translate+rotate 的座標系統複雜度
   ctx.save()
   ctx.translate(cx, cy)
+  ctx.scale(scale, scale) // 先套用 scale（在同一 frame）
 
   if (matrix.flipX) ctx.scale(-1, 1)
   if (matrix.flipY) ctx.scale(1, -1)
   if (matrix.rotate !== 0) ctx.rotate((matrix.rotate * Math.PI) / 180)
 
-  ctx.scale(scale, scale)
   ctx.drawImage(img, -img.width / 2, -img.height / 2)
   ctx.restore()
 }
