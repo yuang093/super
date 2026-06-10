@@ -904,7 +904,7 @@ img {
   left: 50%;
   transform: translateX(-50%);
   color: var(--white);
-  background: var(--coral); /* 預設珊瑚紅背景，確保可讀性 */
+  background: #ff6b6b; /* 預設珊瑚紅背景，確保可讀性 */
   padding: 12px 20px;
   border: var(--border-thick);
   border-radius: 12px;
