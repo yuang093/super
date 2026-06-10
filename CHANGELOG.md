@@ -28,6 +28,10 @@
 - ✅ 匯率顯示格式優化（USD: $1=X, JPY: ¥100=X, KRW: ₩1000=X）
 - ✅ 街口支付斗內連結（☕ 斗內按鈕替換匯率 Tab）
 - ✅ 底部相機按鈕(label for)綁定原生相機
+- ✅ PWA App Icon（manifest.json + apple-touch-icon）
+- ✅ 瀏覽計數器（SQLite 持久化，Docker 部屬不歸零）
+- ✅ 預覽區塊按鈕移除（自動分析不需要）
+- ✅ 結帳按鈕位置優化（z-index、bottom 調整）
 
 ### 已完成（Phase 2 — 2026-06-09）
 - ✅ 前端：style.css（Mobile First）、camera.js、cart.js、image-pipeline.js（EXIF+壓縮）、fingerprint.js（SHA-256）、knnClassifier.js（K=5）

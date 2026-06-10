@@ -58,17 +58,21 @@
 - ✅ 街口支付斗內連結（☕ 斗內按鈕替換匯率 Tab）
 - ✅ Toast 背景色修復（!important 強制顯示）
 - ✅ 匯率顯示格式優化（USD: $1=X, JPY: ¥100=X, KRW: ₩1000=X）
+- ✅ PWA App Icon（manifest.json + apple-touch-icon）
+- ✅ 瀏覽計數器（SQLite 持久化，數字動畫效果）
+- ✅ 預覽區塊按鈕移除（自動分析不需要）
+- ✅ 結帳按鈕位置優化（PWA 模式下不被系統 UI 覆蓋）
 - ⬜ LocalStorage 快取機制
 - ⬜ IP Fingerprint 綁定流程
 
 ### 3.2 後端模組（Node.js + Express + sharp + SQLite）
-- ⬜ Express 伺服器架設與中介層
-- ⬜ sharp 後端壓縮（1200px fit inside / jpeg quality 85）
-- ⬜ better-sqlite3 資料表設計（購物紀錄 + 使用者）
-- ⬜ RESTful API 端點（拍照、購物車、匯率、健康檢查）
-- ⬜ 標準化 Webhook 介面
-- ⬜ Event Emitter 跨模組廣播
-- ⬜ SIGTERM Graceful Shutdown 處理
+- ✅ Express 伺服器架設與中介層
+- ✅ sharp 後端壓縮（1200px fit inside / jpeg quality 85）
+- ✅ better-sqlite3 資料表設計（購物紀錄 + 使用者 + 匯率 + 計數器）
+- ✅ RESTful API 端點（拍照、購物車、匯率、健康檢查、瀏覽計數）
+- ✅ 標準化 Webhook 介面
+- ✅ Event Emitter 跨模組廣播
+- ✅ SIGTERM Graceful Shutdown 處理
 
 ### 3.3 AI 整合（MiniMax VLM）
 - ⬜ MiniMax VLM API 串接
