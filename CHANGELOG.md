@@ -36,6 +36,11 @@
 - ✅ 涵蓋：SHA-256 雜湊、IPv4/IPv6 正規化、port 去除、User-Agent 影響、碰撞測試
 - ✅ 測試通過率：16/16（100%）
 
+### 已完成（Phase 3 — T-I-03 Event Emitter 測試 — 2026-06-10）
+- ✅ 新增 tests/unit/eventBus.test.js（18 個測試）
+- ✅ 涵蓋：on/once/off 訂閱、emit 同步、例外處理、removeAllListeners、resetBus、事件常數
+- ✅ 測試通過率：18/18（100%）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
