@@ -132,41 +132,17 @@ function getExifOrientation(buffer) {
  * @param {number} canvasHeight - 目標 Canvas 高度（已交換）
  */
 /**
- * 根據 Orientation套用方向修正並繪製到 Canvas
- * 卡路里專案方式：translate到角落 → rotate → drawImage(0,0)
+ * 根據 Orientation 繪製到 Canvas
+ * 現代手機瀏覽器會自動根據 EXIF 轉正，只需直接繪製
  * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
  * @param {HTMLImageElement} img - 原始圖片
- * @param {number} orientation - EXIF Orientation 值
- * @param {number} canvasWidth - 目標 Canvas 寬度（未交換）
- * @param {number} canvasHeight - 目標 Canvas 高度（未交換）
+ * @param {number} orientation - EXIF Orientation 值（已廢棄）
+ * @param {number} canvasWidth - 目標 Canvas 寬度
+ * @param {number} canvasHeight - 目標 Canvas 高度
  */
 function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-
-  if (orientation === 6) {
-    // iPhone 直立：translate到左下角 → rotate 90° CCW → draw
-    ctx.save()
-    ctx.translate(0, canvasWidth)           // 左下角（未交換的 canvasWidth）
-    ctx.rotate(Math.PI / 2)                 // 90° CCW（視覺順時針）
-    ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)  // 寬高未交換
-    ctx.restore()
-  } else if (orientation === 8) {
-    // 倒立：translate到左上角 → rotate -90° CW
-    ctx.save()
-    ctx.translate(canvasHeight, 0)
-    ctx.rotate(-Math.PI / 2)
-    ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
-    ctx.restore()
-  } else if (orientation === 3) {
-    ctx.save()
-    ctx.translate(canvasWidth, canvasHeight)
-    ctx.rotate(Math.PI)
-    ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
-    ctx.restore()
-  } else {
-    // 無旋轉（包含 orientation 1, 2, 4, 5）
-    ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
-  }
+  ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
 }
 
 /**
@@ -185,7 +161,7 @@ function estimateJpegSize(canvas, quality) {
 /**
  * 三段式 Canvas 壓縮
  * Stage 1：quality=0.8，maxWidth=1600
- * Stage 2：quality=0.5，target < 500KB
+ * Stage 2：quality=0.5，target < 300KB
  *
  * @param {HTMLImageElement} img - 原始圖片元素
  * @param {number} orientation - EXIF Orientation 值
@@ -193,7 +169,7 @@ function estimateJpegSize(canvas, quality) {
  * @param {number} [options.maxWidth=1600] - 第一階段最大寬度
  * @param {number} [options.quality1=0.8] - 第一階段品質
  * @param {number} [options.quality2=0.5] - 第二階段品質
- * @param {number} [options.targetBytes=500*1024] - 目標位元組數
+ * @param {number} [options.targetBytes=300*1024] - 目標位元組數
  * @returns {Promise<{base64: string, width: number, height: number, bytes: number}>}
  */
 export async function compressImage(img, orientation, options = {}) {
@@ -208,19 +184,8 @@ export async function compressImage(img, orientation, options = {}) {
     drawHeight = Math.round(drawHeight * ratio)
   }
 
-  // 判斷是否需要旋轉（90° 或 270° 需要寬高交換）
-  const needsSwap = [5, 6, 7, 8].includes(orientation)
-  // 注意：canvas 寬高不交換，由 applyOrientation 內部處理
   const canvasWidth = drawWidth
   const canvasHeight = drawHeight
-
-  console.log('[ImagePipeline] compressImage', {
-    imgNatural: `${img.width}x${img.height}`,
-    drawSize: `${drawWidth}x${drawHeight}`,
-    canvasSize: `${canvasWidth}x${canvasHeight}`,
-    needsSwap,
-    orientation,
-  })
 
   // 建立 Stage 1 Canvas
   const canvas1 = document.createElement('canvas')
