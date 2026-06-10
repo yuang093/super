@@ -16,6 +16,8 @@ export function initCaptureUI(container) {
     return
   }
 
+  console.log('[CaptureUI] 開始初始化...')
+
   // 使用可見的 file input（關鍵改動！之前用 display: none 隱藏，某些瀏覽器會忽略）
   // 同時保留 capture 屬性的雙重按鈕：相機模式 + 相簿模式
   container.innerHTML = `
@@ -93,6 +95,11 @@ export function initCaptureUI(container) {
       console.warn('[CaptureUI] 沒有選擇檔案')
       return
     }
+    console.log('[CaptureUI] 選擇檔案', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    })
     showPreview(file)
   }
 
@@ -199,6 +206,18 @@ export function initCaptureUI(container) {
       input.value = ''
     })
   }
+
+  console.log('[CaptureUI] 初始化完成 ✅')
+  console.log(
+    '[CaptureUI] 安全環境:',
+    window.isSecureContext
+      ? '✅ HTTPS'
+      : '❌ 非 HTTPS（getUserMedia 將不可用，但 file input 仍可用）'
+  )
+  console.log(
+    '[CaptureUI] 行動裝置:',
+    /Mobi|Android/i.test(navigator.userAgent) ? '✅ 是' : '❌ 否'
+  )
 }
 
 /**

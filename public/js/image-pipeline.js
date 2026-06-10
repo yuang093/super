@@ -67,6 +67,7 @@ function getExifOrientation(buffer) {
             const type = view.getUint16(entryOffset + 2, littleEndian)
             if (type === 3) {
               const orientation = view.getUint16(entryOffset + 8, littleEndian)
+              console.log('[getExifOrientation] found orientation:', orientation, 'byteOrder:', byteOrder.toString(16))
               return orientation >= 1 && orientation <= 8 ? orientation : 1
             }
             return 1
@@ -100,6 +101,15 @@ function getExifOrientation(buffer) {
  * @param {number} canvasHeight - 目標 Canvas 高度
  */
 /**
+ * 根據 Orientation套用方向修正並繪製到 Canvas
+ * 使用卡路里專案的「translate角落→旋轉→繪製」方式
+ * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
+ * @param {HTMLImageElement} img - 原始圖片
+ * @param {number} orientation - EXIF Orientation 值
+ * @param {number} canvasWidth - 目標 Canvas 寬度（已交換）
+ * @param {number} canvasHeight - 目標 Canvas 高度（已交換）
+ */
+/**
  * 根據 Orientation 繪製到 Canvas
  * 現代手機瀏覽器會自動根據 EXIF 轉正，只需直接繪製
  * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
@@ -113,6 +123,12 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
 }
 
+/**
+ * 估算 JPEG 位元組數量（不實際編碼）
+ * @param {HTMLCanvasElement} canvas
+ * @param {number} quality -品質0~1
+ * @returns {number} - 預估位元組數
+ */
 /**
  * 三段式 Canvas 壓縮
  * Stage 1：quality=0.8，maxWidth=1600
@@ -142,32 +158,52 @@ export async function compressImage(img, orientation, options = {}) {
   const canvasWidth = drawWidth
   const canvasHeight = drawHeight
 
-  // 建立共享 Canvas（避免重複繪製）
-  const canvas = document.createElement('canvas')
-  canvas.width = canvasWidth
-  canvas.height = canvasHeight
-  const ctx = canvas.getContext('2d')
-  applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight)
+  // 建立 Stage 1 Canvas
+  const canvas1 = document.createElement('canvas')
+  canvas1.width = canvasWidth
+  canvas1.height = canvasHeight
+  const ctx1 = canvas1.getContext('2d')
+
+  applyOrientation(ctx1, img, orientation, canvasWidth, canvasHeight)
 
   // Stage 1：quality=0.8
-  let base64 = canvas.toDataURL('image/jpeg', quality1)
-  let currentBytes = Math.round((base64.length - 1) * 0.75)
+  let base64 = canvas1.toDataURL('image/jpeg', quality1)
+  let currentBytes = Math.round((base64.length - 1) * 0.75) // base64 → bytes估算
 
   // Stage 2：quality=0.5（如果超過目標大小）
   if (currentBytes > targetBytes) {
-    base64 = canvas.toDataURL('image/jpeg', quality2)
+    const canvas2 = document.createElement('canvas')
+    canvas2.width = canvasWidth
+    canvas2.height = canvasHeight
+    const ctx2 = canvas2.getContext('2d')
+    applyOrientation(ctx2, img, orientation, canvasWidth, canvasHeight)
+    base64 = canvas2.toDataURL('image/jpeg', quality2)
     currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
   // Stage 3：額外降低品質（如果仍然超過目標）
-  // 逐步遞減 quality 直到低於 targetBytes（共享 canvas，僅改 quality）
+  // 逐步遞減 quality 直到低於 targetBytes
   let quality = quality2
   while (currentBytes > targetBytes && quality > 0.1) {
     quality -= 0.1
-    base64 = canvas.toDataURL('image/jpeg', quality)
+    const canvas3 = document.createElement('canvas')
+    canvas3.width = canvasWidth
+    canvas3.height = canvasHeight
+    const ctx3 = canvas3.getContext('2d')
+    applyOrientation(ctx3, img, orientation, canvasWidth, canvasHeight)
+    base64 = canvas3.toDataURL('image/jpeg', quality)
     currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
+  console.log('[ImagePipeline] 壓縮完成', {
+    original: `${img.width}x${img.height}`,
+    output: `${canvasWidth}x${canvasHeight}`,
+    orientation,
+    finalBytes: currentBytes,
+    quality,
+  })
+
+  console.log('[compressImage] return canvasSize:', `${canvasWidth}x${canvasHeight}`)
   return {
     base64,
     width: canvasWidth,
@@ -201,9 +237,11 @@ export async function processImageBlob(blob, options = {}) {
   // 讀取 ArrayBuffer 以取出 EXIF Orientation
   const arrayBuffer = await blob.arrayBuffer()
   const orientation = getExifOrientation(arrayBuffer)
+  console.log('[ImagePipeline] EXIF Orientation:', orientation, 'blob.size:', blob.size)
 
   // 執行壓縮
   const result = await compressImage(img, orientation, options)
+  console.log('[processImageBlob] 返回', { w: result.width, h: result.height, orientation })
   return { ...result, orientation }
 }
 

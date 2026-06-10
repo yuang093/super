@@ -153,6 +153,7 @@ async function deleteItem(id) {
       throw new Error(data.error?.message || '刪除失敗')
     }
 
+    console.log('[ItemList] 刪除成功', data)
     await loadItems()
   } catch (err) {
     console.error('[ItemList] 刪除失敗', err)
@@ -177,6 +178,7 @@ async function clearCart() {
       throw new Error(data.error?.message || '清空失敗')
     }
 
+    console.log('[ItemList] 清空成功', data)
     await loadItems()
   } catch (err) {
     console.error('[ItemList] 清空失敗', err)

@@ -222,6 +222,7 @@ async function clearTrainingData() {
     const store = tx.objectStore(STORE_NAME)
     const request = store.clear()
     request.onsuccess = () => {
+      console.log('[KNNClassifier] 訓練資料已清除')
       resolve(true)
     }
     request.onerror = () => reject(request.error)
