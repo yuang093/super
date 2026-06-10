@@ -196,18 +196,9 @@ async function handleAddToCart() {
   try {
     // 呼叫後端 API 進行 VLM 辨識
     const formData = new FormData()
-    //將 base64 轉回 Blob
-    const base64Str = currentImageData.base64.includes(',')
-      ? currentImageData.base64.split(',')[1]
-      : currentImageData.base64
-    const byteString = atob(base64Str)
-    const mimeType = currentImageData.base64.match(/data:([^;]+);/)?.[1] || 'image/jpeg'
-    const ab = new ArrayBuffer(byteString.length)
-    const ia = new Uint8Array(ab)
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i)
-    }
-    const blob = new Blob([ab], { type: mimeType })
+    // 將 base64 轉為 Blob（使用 fetch API 高效轉換）
+    const response = await fetch(currentImageData.base64)
+    const blob = await response.blob()
     formData.append('image', blob, 'capture.jpg')
     formData.append('fingerprint', app.state.fingerprint)
 
