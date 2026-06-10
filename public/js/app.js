@@ -589,7 +589,10 @@ function renderCart() {
 // ============================================================================
 
 /**
- * 更新匯率顯示（只顯示常用幣別：USD、JPY、KRW）
+ * 更新匯率顯示（友善心算格式）
+ * USD: $1 = {value}
+ * JPY: ¥100 = {value}（原匯率 × 100）
+ * KRW: ₩1000 = {value}（原匯率 × 1000）
  */
 function updateExchangeRates() {
   const rates = cart.getRates()
@@ -597,9 +600,9 @@ function updateExchangeRates() {
   const rateJpy = $('rate-jpy')
   const rateKrw = $('rate-krw')
 
-  if (rateUsd) rateUsd.textContent = rates.USD?.toFixed(4) || '--'
-  if (rateJpy) rateJpy.textContent = rates.JPY?.toFixed(4) || '--'
-  if (rateKrw) rateKrw.textContent = rates.KRW?.toFixed(4) || '--'
+  if (rateUsd) rateUsd.textContent = rates.USD ? `$${rates.USD.toFixed(1)}` : '--'
+  if (rateJpy) rateJpy.textContent = rates.JPY ? `¥100 = ${(rates.JPY * 100).toFixed(1)}` : '--'
+  if (rateKrw) rateKrw.textContent = rates.KRW ? `₩1000 = ${(rates.KRW * 1000).toFixed(1)}` : '--'
 }
 
 /**
