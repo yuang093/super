@@ -81,6 +81,11 @@
 - ✅ 本地通過：E-TUN-04（healthz 端點）、E-TUN-05（端點一致性）
 - ⚠️  CI only：E-TUN-01/02/03/06（需 cloudflared + 實際網域）
 
+### 已完成（Phase 3 — T-E-05 PWA 離線模式降級 — 2026-06-10）
+- ✅ 新增 tests/e2e/pwa-offline.test.js（10 個案例，9 通過 1 skip）
+- ✅ 涵蓋：Manifest 完整性、Theme Color、Service Worker 文件化需求
+- ⚠️  待修復：android-chrome-192x192.png 不存在
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
