@@ -727,7 +727,7 @@ img {
    ========================================================================== */
 .sticky-cta {
   position: fixed;
-  bottom: calc(80px + var(--safe-bottom));
+  bottom: calc(40px + var(--safe-bottom));
   left: 0;
   right: 0;
   padding: 0 16px;
