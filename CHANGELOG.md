@@ -26,6 +26,11 @@
 - ✅ 單元測試：fallbackParser（47 個）、responseNormalizer（21 個）
 - ✅ 整合測試：captureService（7 個）、items（10 個）、vlmClient（17 個）
 
+### 已完成（Phase 3 — T-U-03 匯率測試 — 2026-06-10）
+- ✅ 新增 tests/unit/exchange.test.js（36 個測試）
+- ✅ 涵蓋：換算邏輯、預設匯率、貨幣驗證、TWD 格式轉換、指數退避、API 解析、零匯率處理、精度測試
+- ✅ 測試通過率：36/36（100%）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
