@@ -32,6 +32,10 @@
 - ✅ 瀏覽計數器（SQLite 持久化，Docker 部屬不歸零）
 - ✅ 預覽區塊按鈕移除（自動分析不需要）
 - ✅ 結帳按鈕位置優化（z-index、bottom 調整）
+- ✅ 商品譯名放第二行顯示（手機小螢幕優化）
+
+### 恢復（2026-06-10）
+- Reverted：Ultracode 效能優化（base64→Blob fetch、Canvas 共用）因導致功能異常已回溯
 
 ### 已完成（Phase 2 — 2026-06-09）
 - ✅ 前端：style.css（Mobile First）、camera.js、cart.js、image-pipeline.js（EXIF+壓縮）、fingerprint.js（SHA-256）、knnClassifier.js（K=5）
