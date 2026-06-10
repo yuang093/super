@@ -122,33 +122,44 @@ function getExifOrientation(buffer) {
  * @param {number} canvasWidth - 目標 Canvas 寬度
  * @param {number} canvasHeight - 目標 Canvas 高度
  */
+/**
+ * 根據 Orientation套用方向修正並繪製到 Canvas
+ * 使用卡路里專案的「translate角落→旋轉→繪製」方式
+ * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
+ * @param {HTMLImageElement} img - 原始圖片
+ * @param {number} orientation - EXIF Orientation 值
+ * @param {number} canvasWidth - 目標 Canvas 寬度（已交換）
+ * @param {number} canvasHeight - 目標 Canvas 高度（已交換）
+ */
 function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
-  const matrix = ORIENTATION_MATRIX[orientation] || ORIENTATION_MATRIX[1]
-  const needsSwap = [5, 6, 7, 8].includes(orientation)
-
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
-  // 計算 scale：用「交換後的目標尺寸」除以「原始影像尺寸」
-  const targetW = needsSwap ? canvasHeight : canvasWidth
-  const targetH = needsSwap ? canvasWidth : canvasHeight
-  const scaleX = targetW / img.width
-  const scaleY = targetH / img.height
-  const scale = Math.min(scaleX, scaleY)
-
-  // 圖片中心對齊 Canvas 中心
-  const cx = canvasWidth / 2
-  const cy = canvasHeight / 2
-
-  ctx.save()
-  ctx.translate(cx, cy)
-  ctx.scale(scale, scale) // 先套用 scale（在同一 frame）
-
-  if (matrix.flipX) ctx.scale(-1, 1)
-  if (matrix.flipY) ctx.scale(1, -1)
-  if (matrix.rotate !== 0) ctx.rotate((matrix.rotate * Math.PI) / 180)
-
-  ctx.drawImage(img, -img.width / 2, -img.height / 2)
-  ctx.restore()
+  // 卡路里專案方式：translate到角落 → 旋轉 → 從(0,0)繪製
+  if (orientation === 6) {
+    // iPhone 直立：旋轉 90° CCW（視覺為順時針）
+    ctx.save()
+    ctx.translate(canvasHeight, 0)  // 移到右上角
+    ctx.rotate(Math.PI / 2)          // 旋轉 90° CCW
+    ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
+    ctx.restore()
+  } else if (orientation === 8) {
+    // 倒立：旋轉 90° CW（視覺為逆時針）
+    ctx.save()
+    ctx.translate(0, canvasWidth)  // 移到左下角
+    ctx.rotate(-Math.PI / 2)     // 旋轉 90° CW
+    ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
+    ctx.restore()
+  } else if (orientation === 3) {
+    // 旋轉 180°
+    ctx.save()
+    ctx.translate(canvasWidth, canvasHeight)
+    ctx.rotate(Math.PI)
+    ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
+    ctx.restore()
+  } else {
+    // 無旋轉（包含 orientation 1, 2, 4, 5）
+    ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
+  }
 }
 
 /**
