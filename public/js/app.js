@@ -425,15 +425,6 @@ function showToast(message, type = 'info') {
 }
 
 /**
- * 格式化位元組
- */
-function formatBytes(bytes) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(2)} MB`
-}
-
-/**
  * HTML跳脫（防 XSS）
  */
 function escapeHtml(str) {

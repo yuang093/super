@@ -7,28 +7,6 @@
 'use strict'
 
 /**
- * EXIF Orientation 對應的旋轉矩陣參數
- * Orientation1：正常（不旋轉）
- * Orientation 2：水平翻轉
- * Orientation 3：旋轉 180°
- * Orientation 4：垂直翻轉
- * Orientation 5：水平翻轉 + 旋轉 90°
- * Orientation 6：旋轉 90°（iPhone 直立常見，俗稱"向左轉"）
- * Orientation 7：水平翻轉 + 旋轉 270°
- * Orientation 8：旋轉 270°
- */
-const ORIENTATION_MATRIX = {
-  1: { rotate: 0, flipX: false, flipY: false },
-  2: { rotate: 0, flipX: true, flipY: false },
-  3: { rotate: 180, flipX: false, flipY: false },
-  4: { rotate: 0, flipX: false, flipY: true },
-  5: { rotate: 90, flipX: true, flipY: false },
-  6: { rotate: -90, flipX: false, flipY: false }, // iPhone 直立：順時針轉 90°
-  7: { rotate: 270, flipX: true, flipY: false },
-  8: { rotate: 270, flipX: false, flipY: false },
-}
-
-/**
  * 從 JPEG ArrayBuffer擷取 EXIF Orientation 值（0x0112）
  * @param {ArrayBuffer} buffer - JPEG 檔案的二進位資料
  * @returns {number} - Orientation 值，預設 1（正常方向）
@@ -151,13 +129,6 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
  * @param {number} quality -品質0~1
  * @returns {number} - 預估位元組數
  */
-function estimateJpegSize(canvas, quality) {
-  //粗估：每像素0.5~1.5 位元組（視品質而定）
-  const pixelCount = canvas.width * canvas.height
-  const bytesPerPixel = quality > 0.7 ? 1.2 : quality > 0.4 ? 0.8 : 0.5
-  return Math.round(pixelCount * bytesPerPixel)
-}
-
 /**
  * 三段式 Canvas 壓縮
  * Stage 1：quality=0.8，maxWidth=1600
@@ -280,13 +251,3 @@ export async function processImageBlob(blob, options = {}) {
  * @param {Object} [options] - 壓縮選項
  * @returns {Promise<{base64: string, width: number, height: number, bytes: number}>}
  */
-export async function recompressFromBase64(base64, options = {}) {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.onload = () => {
-      compressImage(img, 1, options).then(resolve).catch(reject)
-    }
-    img.onerror = () => reject(new Error('Base64 圖片重建失敗'))
-    img.src = base64
-  })
-}
