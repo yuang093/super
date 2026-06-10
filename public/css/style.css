@@ -199,6 +199,41 @@ img {
 }
 
 /* ==========================================================================
+   瀏覽計數器
+   ========================================================================== */
+.visit-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--lavender);
+  color: var(--white);
+  border: var(--border-thin);
+  border-radius: 20px;
+  padding: 6px 14px;
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.visit-icon {
+  font-size: 14px;
+}
+
+.visit-label {
+  opacity: 0.85;
+  font-size: 12px;
+}
+
+.visit-count {
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ==========================================================================
    主要內容區域
    ========================================================================== */
 .app-main {

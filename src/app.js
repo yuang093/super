@@ -18,6 +18,7 @@ const captureRouter = require('./routes/capture')
 const itemsRouter = require('./routes/items')
 const rateRouter = require('./routes/rate')
 const webhookRouter = require('./routes/webhook')
+const visitRouter = require('./routes/visit')
 
 /**
  * 建立 Express 應用實例
@@ -96,6 +97,7 @@ function createApp(options = {}) {
   app.use('/api/items', itemsRouter)
   app.use('/api', rateRouter)
   app.use('/api/webhook', webhookRouter)
+app.use('/api', visitRouter)
 
   // === 404 處理（必須在 errorHandler 之前） ===
   app.use(notFoundHandler)

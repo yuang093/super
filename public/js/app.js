@@ -603,6 +603,52 @@ function updateExchangeRates() {
 }
 
 /**
+ * 瀏覽計數器：抓取並更新瀏覽人次
+ */
+async function fetchVisitCounter() {
+  const countEl = $('visit-count')
+  if (!countEl) return
+  try {
+    const response = await fetch('/api/visit', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(5000),
+    })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const data = await response.json()
+    if (typeof data.count === 'number') {
+      // 數字動畫效果
+      animateCounter(countEl, data.count)
+    }
+  } catch (err) {
+    countEl.textContent = '--'
+  }
+}
+
+/**
+ * 數字動畫效果（從 0 漸進到目標數字）
+ * @param {HTMLElement} el
+ * @param {number} target
+ * @param {number} duration
+ */
+function animateCounter(el, target, duration = 800) {
+  const start = 0
+  const startTime = performance.now()
+  const step = (currentTime) => {
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    // easeOutQuart
+    const eased = 1 - Math.pow(1 - progress, 4)
+    const current = Math.round(start + (target - start) * eased)
+    el.textContent = current.toLocaleString()
+    if (progress < 1) {
+      requestAnimationFrame(step)
+    }
+  }
+  requestAnimationFrame(step)
+}
+
+/**
  * 從後端 API 抓取匯率並更新 Cart
  */
 async function fetchRates() {
@@ -670,6 +716,9 @@ async function initApp() {
 
   // 抓取匯率並更新購物車
   fetchRates()
+
+  // 瀏覽計數器
+  fetchVisitCounter()
 
   // ============================================================================
   //事件綁定
