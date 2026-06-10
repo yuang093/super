@@ -19,6 +19,16 @@
 
 ## [Unreleased]
 
+### 已完成（Phase 2 — 2026-06-10）
+- ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
+- ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
+- ✅ 壓縮目標從 500KB 降至 300KB
+- ✅ UI 區塊順序調整（Summary → Capture → Cart → Exchange）
+- ✅ Toast 背景色修復（!important 強制顯示）
+- ✅ 匯率顯示格式優化（USD: $1=X, JPY: ¥100=X, KRW: ₩1000=X）
+- ✅ 街口支付斗內連結（☕ 斗內按鈕替換匯率 Tab）
+- ✅ 底部相機按鈕(label for)綁定原生相機
+
 ### 已完成（Phase 2 — 2026-06-09）
 - ✅ 前端：style.css（Mobile First）、camera.js、cart.js、image-pipeline.js（EXIF+壓縮）、fingerprint.js（SHA-256）、knnClassifier.js（K=5）
 - ✅ 後端：vlmClient.js（MiniMax VLM + Backoff）、fallbackParser.js（JSON→Regex→啟發式三層解析）
