@@ -138,21 +138,10 @@ async function handleGallerySelect(file) {
   isProcessing = true
   lockAllButtons()
 
-  console.log('[App] handleGallerySelect 收到檔案:', {
-    name: file.name,
-    type: file.type,
-    size: file.size,
-  })
-
   try {
     showProgress('🖼️ 處理圖片中…', 30)
 
     const result = await processImageBlob(file)
-    console.log('[App] processImageBlob 完成', {
-      width: result.width,
-      height: result.height,
-      bytes: result.bytes,
-    })
 
     currentImageData = {
       blob: file,
@@ -167,7 +156,6 @@ async function handleGallerySelect(file) {
 
     showProgress('🖼️ 圖片已載入', 100)
     showPreview(currentImageData)
-    console.log('[App] 預覽已顯示，即將自動觸發 AI 辨識')
 
     // 自動觸發 AI 辨識與加入購物車流程
     isAutoAnalysis = true
@@ -203,12 +191,6 @@ async function handleAddToCart() {
   const btnAddCart = $('btn-add-cart')
   if (btnAddCart) btnAddCart.style.visibility = 'hidden'
 
-  console.log('[App] handleAddToCart 開始', {
-    base64Length: currentImageData.base64.length,
-    width: currentImageData.width,
-    height: currentImageData.height,
-  })
-
   showProgress('🛒 加入購物車中…', 50)
 
   try {
@@ -229,20 +211,14 @@ async function handleAddToCart() {
     formData.append('image', blob, 'capture.jpg')
     formData.append('fingerprint', app.state.fingerprint)
 
-    console.log('[App] 準備送出 /api/capture 请求，blob size:', blob.size)
-
     const response = await fetch('/api/capture', {
       method: 'POST',
       body: formData,
     })
 
-    console.log('[App] 收到回應', { status: response.status, ok: response.ok })
-
     const data = await response.json()
-    console.log('[App] /api/capture 回應資料:', JSON.stringify(data).slice(0, 200))
 
     if (data.success) {
-      console.log('[App] 辨識成功，加入購物車:', data.item.name)
       // 後端已寫入 DB，這裡只是本機 UI 更新
       cart.addItem({
         name: data.item.name,
@@ -536,7 +512,6 @@ function renderCart() {
         return
       }
       cart.updateItemPrice(id, newPrice)
-      console.log('[App] 價格已更新', { id, newPrice })
       renderCart()
     })
     priceEl.addEventListener('keydown', (e) => {
@@ -669,7 +644,6 @@ async function fetchRates() {
     if (data.success && data.rates) {
       cart.updateRates(data.rates)
       updateExchangeRates()
-      console.log('[App] 匯率已更新', data.rates)
     }
   } catch (err) {
     console.warn('[App] 匯率抓取失敗，使用預設值', err.message)
@@ -688,8 +662,6 @@ async function fetchRates() {
 // 初始化
 // ============================================================================
 async function initApp() {
-  console.log('🛒 Supermarket Tracker 啟動中…')
-
   // 初始化購物車
   cart = new Cart(app.state.fingerprint)
 
@@ -797,11 +769,6 @@ async function initApp() {
 
   // 掛載全域物件
   window.app = app
-
-  console.log('✅ Supermarket Tracker 初始化完成', {
-    isOnline: app.state.isOnline,
-    fingerprint: app.state.fingerprint,
-  })
 }
 
 // ============================================================================

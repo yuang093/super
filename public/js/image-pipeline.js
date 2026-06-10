@@ -67,7 +67,6 @@ function getExifOrientation(buffer) {
             const type = view.getUint16(entryOffset + 2, littleEndian)
             if (type === 3) {
               const orientation = view.getUint16(entryOffset + 8, littleEndian)
-              console.log('[getExifOrientation] found orientation:', orientation, 'byteOrder:', byteOrder.toString(16))
               return orientation >= 1 && orientation <= 8 ? orientation : 1
             }
             return 1
@@ -195,15 +194,6 @@ export async function compressImage(img, orientation, options = {}) {
     currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
-  console.log('[ImagePipeline] 壓縮完成', {
-    original: `${img.width}x${img.height}`,
-    output: `${canvasWidth}x${canvasHeight}`,
-    orientation,
-    finalBytes: currentBytes,
-    quality,
-  })
-
-  console.log('[compressImage] return canvasSize:', `${canvasWidth}x${canvasHeight}`)
   return {
     base64,
     width: canvasWidth,
@@ -237,11 +227,9 @@ export async function processImageBlob(blob, options = {}) {
   // 讀取 ArrayBuffer 以取出 EXIF Orientation
   const arrayBuffer = await blob.arrayBuffer()
   const orientation = getExifOrientation(arrayBuffer)
-  console.log('[ImagePipeline] EXIF Orientation:', orientation, 'blob.size:', blob.size)
 
   // 執行壓縮
   const result = await compressImage(img, orientation, options)
-  console.log('[processImageBlob] 返回', { w: result.width, h: result.height, orientation })
   return { ...result, orientation }
 }
 

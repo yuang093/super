@@ -81,7 +81,6 @@ async function clearAll() {
       const store = tx.objectStore(STORE_NAME)
       const request = store.clear()
       request.onsuccess = () => {
-        console.log('[CacheManager] 快取已清除')
         resolve(true)
       }
       request.onerror = () => reject(request.error)

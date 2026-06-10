@@ -171,7 +171,6 @@ export class Cart {
     this._items.push(newItem)
     this._save()
     emitCartEvent(CART_EVENTS.ITEM_ADDED, newItem)
-    console.log('[Cart] 商品已新增', newItem)
     return newItem
   }
 
@@ -190,7 +189,6 @@ export class Cart {
     item.price = newPrice
     this._save()
     emitCartEvent(CART_EVENTS.ITEM_UPDATED, item)
-    console.log('[Cart] 商品價格已更新', { id, newPrice })
     return true
   }
 
@@ -208,7 +206,6 @@ export class Cart {
     const removed = this._items.splice(index, 1)[0]
     this._save()
     emitCartEvent(CART_EVENTS.ITEM_REMOVED, removed)
-    console.log('[Cart] 商品已刪除', removed.name)
     return true
   }
 
@@ -221,7 +218,6 @@ export class Cart {
     this._items = []
     this._save()
     emitCartEvent(CART_EVENTS.CART_CLEARED, { count })
-    console.log('[Cart] 購物車已清空', { count })
     return count
   }
 
@@ -249,7 +245,6 @@ export class Cart {
     this._rates = { ...this._rates, ...rates }
     this._ratesUpdatedAt = Date.now()
     this._save()
-    console.log('[Cart] 匯率已更新', this._rates)
   }
 
   /**
@@ -280,17 +275,8 @@ export class Cart {
     const result = this._items.reduce((total, item) => {
       const rate = this._rates[item.currency] || 1
       const converted = item.price * rate
-      console.log('[Cart] sumTWD 計算', {
-        item: item.name,
-        price: item.price,
-        currency: item.currency,
-        rate,
-        converted,
-        runningTotal: total + converted,
-      })
       return total + converted
     }, 0)
-    console.log('[Cart] sumTWD 最終結果:', result)
     return result
   }
 
