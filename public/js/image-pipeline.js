@@ -131,26 +131,33 @@ function getExifOrientation(buffer) {
  * @param {number} canvasWidth - 目標 Canvas 寬度（已交換）
  * @param {number} canvasHeight - 目標 Canvas 高度（已交換）
  */
+/**
+ * 根據 Orientation套用方向修正並繪製到 Canvas
+ * 卡路里專案方式：translate到角落 → rotate → drawImage(0,0)
+ * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
+ * @param {HTMLImageElement} img - 原始圖片
+ * @param {number} orientation - EXIF Orientation 值
+ * @param {number} canvasWidth - 目標 Canvas 寬度（未交換）
+ * @param {number} canvasHeight - 目標 Canvas 高度（未交換）
+ */
 function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
-  // 卡路里專案方式：translate到角落 → 旋轉 → 從(0,0)繪製
   if (orientation === 6) {
-    // iPhone 直立：旋轉 90° CCW（視覺為順時針）— 使用正值
+    // iPhone 直立：translate到左下角 → rotate 90° CCW → draw
     ctx.save()
-    ctx.translate(canvasHeight, 0)  // 移到右上角
-    ctx.rotate(Math.PI / 2)          // 正值 = CCW in canvas
-    ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
+    ctx.translate(0, canvasWidth)           // 左下角（未交換的 canvasWidth）
+    ctx.rotate(Math.PI / 2)                 // 90° CCW（視覺順時針）
+    ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)  // 寬高未交換
     ctx.restore()
   } else if (orientation === 8) {
-    // 倒立：旋轉 90° CW（視覺為逆時針）
+    // 倒立：translate到左上角 → rotate -90° CW
     ctx.save()
-    ctx.translate(0, canvasWidth)  // 移到左下角
-    ctx.rotate(-Math.PI / 2)        // 負值 = CW in canvas
+    ctx.translate(canvasHeight, 0)
+    ctx.rotate(-Math.PI / 2)
     ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
     ctx.restore()
   } else if (orientation === 3) {
-    // 旋轉 180°
     ctx.save()
     ctx.translate(canvasWidth, canvasHeight)
     ctx.rotate(Math.PI)
@@ -203,8 +210,9 @@ export async function compressImage(img, orientation, options = {}) {
 
   // 判斷是否需要旋轉（90° 或 270° 需要寬高交換）
   const needsSwap = [5, 6, 7, 8].includes(orientation)
-  const canvasWidth = needsSwap ? drawHeight : drawWidth
-  const canvasHeight = needsSwap ? drawWidth : drawHeight
+  // 注意：canvas 寬高不交換，由 applyOrientation 內部處理
+  const canvasWidth = drawWidth
+  const canvasHeight = drawHeight
 
   console.log('[ImagePipeline] compressImage', {
     imgNatural: `${img.width}x${img.height}`,
