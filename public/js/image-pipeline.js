@@ -157,40 +157,29 @@ export async function compressImage(img, orientation, options = {}) {
   const canvasWidth = drawWidth
   const canvasHeight = drawHeight
 
-  // 建立 Stage 1 Canvas
-  const canvas1 = document.createElement('canvas')
-  canvas1.width = canvasWidth
-  canvas1.height = canvasHeight
-  const ctx1 = canvas1.getContext('2d')
-
-  applyOrientation(ctx1, img, orientation, canvasWidth, canvasHeight)
+  // 建立共享 Canvas（避免重複繪製）
+  const canvas = document.createElement('canvas')
+  canvas.width = canvasWidth
+  canvas.height = canvasHeight
+  const ctx = canvas.getContext('2d')
+  applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight)
 
   // Stage 1：quality=0.8
-  let base64 = canvas1.toDataURL('image/jpeg', quality1)
-  let currentBytes = Math.round((base64.length - 1) * 0.75) // base64 → bytes估算
+  let base64 = canvas.toDataURL('image/jpeg', quality1)
+  let currentBytes = Math.round((base64.length - 1) * 0.75)
 
   // Stage 2：quality=0.5（如果超過目標大小）
   if (currentBytes > targetBytes) {
-    const canvas2 = document.createElement('canvas')
-    canvas2.width = canvasWidth
-    canvas2.height = canvasHeight
-    const ctx2 = canvas2.getContext('2d')
-    applyOrientation(ctx2, img, orientation, canvasWidth, canvasHeight)
-    base64 = canvas2.toDataURL('image/jpeg', quality2)
+    base64 = canvas.toDataURL('image/jpeg', quality2)
     currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
   // Stage 3：額外降低品質（如果仍然超過目標）
-  // 逐步遞減 quality 直到低於 targetBytes
+  // 逐步遞減 quality 直到低於 targetBytes（共享 canvas，僅改 quality）
   let quality = quality2
   while (currentBytes > targetBytes && quality > 0.1) {
     quality -= 0.1
-    const canvas3 = document.createElement('canvas')
-    canvas3.width = canvasWidth
-    canvas3.height = canvasHeight
-    const ctx3 = canvas3.getContext('2d')
-    applyOrientation(ctx3, img, orientation, canvasWidth, canvasHeight)
-    base64 = canvas3.toDataURL('image/jpeg', quality)
+    base64 = canvas.toDataURL('image/jpeg', quality)
     currentBytes = Math.round((base64.length - 1) * 0.75)
   }
 
