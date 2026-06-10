@@ -100,15 +100,6 @@ function getExifOrientation(buffer) {
  * @param {number} canvasHeight - 目標 Canvas 高度
  */
 /**
- * 根據 Orientation套用方向修正並繪製到 Canvas
- * 使用卡路里專案的「translate角落→旋轉→繪製」方式
- * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
- * @param {HTMLImageElement} img - 原始圖片
- * @param {number} orientation - EXIF Orientation 值
- * @param {number} canvasWidth - 目標 Canvas 寬度（已交換）
- * @param {number} canvasHeight - 目標 Canvas 高度（已交換）
- */
-/**
  * 根據 Orientation 繪製到 Canvas
  * 現代手機瀏覽器會自動根據 EXIF 轉正，只需直接繪製
  * @param {CanvasRenderingContext2D} ctx - Canvas 2D 上下文
@@ -122,12 +113,6 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
   ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight)
 }
 
-/**
- * 估算 JPEG 位元組數量（不實際編碼）
- * @param {HTMLCanvasElement} canvas
- * @param {number} quality -品質0~1
- * @returns {number} - 預估位元組數
- */
 /**
  * 三段式 Canvas 壓縮
  * Stage 1：quality=0.8，maxWidth=1600
