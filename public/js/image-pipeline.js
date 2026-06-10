@@ -136,17 +136,17 @@ function applyOrientation(ctx, img, orientation, canvasWidth, canvasHeight) {
 
   // 卡路里專案方式：translate到角落 → 旋轉 → 從(0,0)繪製
   if (orientation === 6) {
-    // iPhone 直立：旋轉 90° CCW（視覺為順時針）
+    // iPhone 直立：旋轉 90° CW → 在 canvas 用負值 (-Math.PI/2)
     ctx.save()
     ctx.translate(canvasHeight, 0)  // 移到右上角
-    ctx.rotate(Math.PI / 2)          // 旋轉 90° CCW
+    ctx.rotate(-Math.PI / 2)        // 順時針 = 負值
     ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
     ctx.restore()
   } else if (orientation === 8) {
-    // 倒立：旋轉 90° CW（視覺為逆時針）
+    // 倒立：旋轉 90° CCW → 在 canvas 用正值 (Math.PI/2)
     ctx.save()
     ctx.translate(0, canvasWidth)  // 移到左下角
-    ctx.rotate(-Math.PI / 2)     // 旋轉 90° CW
+    ctx.rotate(Math.PI / 2)       // 逆時針 = 正值
     ctx.drawImage(img, 0, 0, canvasHeight, canvasWidth)
     ctx.restore()
   } else if (orientation === 3) {
