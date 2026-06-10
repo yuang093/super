@@ -197,7 +197,7 @@ function estimateJpegSize(canvas, quality) {
  * @returns {Promise<{base64: string, width: number, height: number, bytes: number}>}
  */
 export async function compressImage(img, orientation, options = {}) {
-  const { maxWidth = 1600, quality1 = 0.8, quality2 = 0.5, targetBytes = 500 * 1024 } = options
+  const { maxWidth = 1600, quality1 = 0.8, quality2 = 0.5, targetBytes = 300 * 1024 } = options
 
   // 計算縮放後尺寸（保持比例，不超過 maxWidth）
   let drawWidth = img.width
