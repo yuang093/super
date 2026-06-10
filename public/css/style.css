@@ -921,6 +921,8 @@ img {
 
 /* Toast 顯示時（.visible class 由 JS 動態新增） */
 .app-toast.visible {
+  display: block !important;
+  opacity: 1 !important;
   animation: toast-in 300ms var(--bounce) forwards;
 }
 
