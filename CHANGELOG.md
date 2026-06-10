@@ -19,6 +19,13 @@
 
 ## [Unreleased]
 
+### 已完成（Phase 3 — 測試基礎設施 — 2026-06-10）
+- ✅ 建立測試環境變數 mock（tests/helpers/test-env.js）
+- ✅ 修復整合測試環境依賴問題（items.test.js、capture.test.js）
+- ✅ 測試通過率：87/87（100%）
+- ✅ 單元測試：fallbackParser（47 個）、responseNormalizer（21 個）
+- ✅ 整合測試：captureService（7 個）、items（10 個）、vlmClient（17 個）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
