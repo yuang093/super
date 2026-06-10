@@ -76,6 +76,11 @@
 - ✅ 涵蓋：8 種 Orientation 解析（1-8）、截斷處理、無 EXIF 預設、邊界值
 - ✅ 測試通過率：15/15（100%）
 
+### 已完成（Phase 3 — T-E-04 Cloudflare Tunnel 可達性 — 2026-06-10）
+- ✅ 新增 tests/e2e/tunnel-reachability.test.js（6 個案例）
+- ✅ 本地通過：E-TUN-04（healthz 端點）、E-TUN-05（端點一致性）
+- ⚠️  CI only：E-TUN-01/02/03/06（需 cloudflared + 實際網域）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
