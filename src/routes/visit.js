@@ -1,40 +1,13 @@
 // 🤖 src/routes/visit.js
-// 瀏覽計數器 API
+// 瀏覽計數器 API（使用 SQLite 持久化）
 // GET /api/visit → { count: number }
 
 'use strict'
 
 const express = require('express')
-const fs = require('node:fs')
-const path = require('node:path')
+const { getDatabase } = require('../db/database')
 
 const router = express.Router()
-const COUNTER_FILE = path.join(__dirname, '..', '..', 'counter.json')
-
-/**
- * 讀取當前計數
- * @returns {number}
- */
-function readCounter() {
-  try {
-    if (fs.existsSync(COUNTER_FILE)) {
-      const data = fs.readFileSync(COUNTER_FILE, 'utf8')
-      const parsed = JSON.parse(data)
-      return typeof parsed.count === 'number' ? parsed.count : 0
-    }
-  } catch (err) {
-    // 檔案損壞或讀取失敗，回傳 0
-  }
-  return 0
-}
-
-/**
- * 寫入計數
- * @param {number} count
- */
-function writeCounter(count) {
-  fs.writeFileSync(COUNTER_FILE, JSON.stringify({ count }, null, 2), 'utf8')
-}
 
 /**
  * GET /api/visit
@@ -42,10 +15,14 @@ function writeCounter(count) {
  */
 router.get('/visit', (req, res) => {
   try {
-    const current = readCounter()
-    const next = current + 1
-    writeCounter(next)
-    res.json({ count: next })
+    const db = getDatabase()
+    // 原子 increment（UPDATE + SELECT 在一個 transaction 內）
+    const result = db.transaction(() => {
+      db.prepare('UPDATE visit_counter SET count = count + 1 WHERE id = 1').run()
+      const row = db.prepare('SELECT count FROM visit_counter WHERE id = 1').get()
+      return row
+    })()
+    res.json({ count: result.count })
   } catch (err) {
     res.status(500).json({ error: '計數器讀寫失敗' })
   }
