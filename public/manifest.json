@@ -1,0 +1,17 @@
+{
+  "name": "Supermarket Tracker",
+  "short_name": "超市記帳",
+  "description": "AI 影像辨識購物記帳，邊逛超市邊拍照，自動辨識商品名稱與價格",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFD93D",
+  "theme_color": "#FFD93D",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
