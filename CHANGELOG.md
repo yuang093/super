@@ -51,6 +51,11 @@
 - ✅ 涵蓋：windowMs、Header 格式、429 回應、keyGenerator、skip、remaining 邏輯、reset 時間
 - ✅ 測試通過率：20/20（100%）
 
+### 已完成（Phase 3 — T-I-06 Graceful Shutdown 測試 — 2026-06-10）
+- ✅ 新增 tests/unit/gracefulShutdown.test.js（15 個測試）
+- ✅ 涵蓋：server.close、SQLite checkpoint、30秒保險絲、temp 清理、timeline 記錄
+- ✅ 測試通過率：15/15（100%）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
