@@ -727,11 +727,11 @@ img {
    ========================================================================== */
 .sticky-cta {
   position: fixed;
-  bottom: calc(60px + var(--safe-bottom));
+  bottom: calc(90px + var(--safe-bottom));
   left: 0;
   right: 0;
   padding: 0 16px;
-  z-index: 300;
+  z-index: 200;
   pointer-events: none;
 }
 
