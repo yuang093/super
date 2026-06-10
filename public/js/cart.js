@@ -21,6 +21,7 @@ const CART_EVENTS = {
  */
 const cartListeners = {
   [CART_EVENTS.ITEM_ADDED]: [],
+  [CART_EVENTS.ITEM_UPDATED]: [],
   [CART_EVENTS.ITEM_REMOVED]: [],
   [CART_EVENTS.CART_CLEARED]: [],
   [CART_EVENTS.CART_LOADED]: [],
