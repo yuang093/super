@@ -41,6 +41,12 @@
     <!-- Main：主要功能區 -->
     <main class="app-main" role="main">
       <div class="container">
+        <!-- 今日總計（Summary - 置頂） -->
+        <div class="cart-summary" id="cart-summary" style="display: none">
+          <h4>💰總計</h4>
+          <div class="summary-rows" id="summary-rows"></div>
+        </div>
+
         <!-- 拍照辨識區（F-01 + F-04 + F-05） -->
         <section class="card capture-section" aria-labelledby="capture-title">
           <h2 id="capture-title" class="card-title">
@@ -137,14 +143,7 @@
             <div class="item-list-empty">🛒 購物車是空的，去拍個商品吧！</div>
           </div>
 
-          <!-- 總計區塊 -->
-          <div class="cart-summary" id="cart-summary" style="display: none">
-            <h4>💰總計</h4>
-            <div class="summary-rows" id="summary-rows"></div>
-          </div>
-        </section>
-
-        <!-- 外幣雙顯示區（F-07） -->
+          <!-- 外幣雙顯示區（F-07） -->
         <section class="card exchange-section" aria-labelledby="exchange-title">
           <h2 id="exchange-title" class="card-title">
             <span aria-hidden="true">💱</span>
