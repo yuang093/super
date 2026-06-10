@@ -56,6 +56,11 @@
 - ✅ 涵蓋：server.close、SQLite checkpoint、30秒保險絲、temp 清理、timeline 記錄
 - ✅ 測試通過率：15/15（100%）
 
+### 已完成（Phase 3 — T-E-03 購物車刷新持久化 — 2026-06-10）
+- ✅ 新增 tests/unit/cartPersistence.test.js（17 個測試）
+- ✅ 涵蓋：序列化/反序列化、Mock localStorage、數量更新、容量限制
+- ✅ 測試通過率：17/17（100%）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
