@@ -41,6 +41,11 @@
 - ✅ 涵蓋：on/once/off 訂閱、emit 同步、例外處理、removeAllListeners、resetBus、事件常數
 - ✅ 測試通過率：18/18（100%）
 
+### 已完成（Phase 3 — T-I-04 匯率 API Fallback 測試 — 2026-06-10）
+- ✅ 新增 tests/integration/rate.test.js（10 個測試）
+- ✅ 涵蓋：GET /api/rates、GET /api/rate、預設值、SQLite Fallback、精度計算
+- ✅ 測試通過率：10/10（100%）
+
 ### 已完成（Phase 2 — 2026-06-10）
 - ✅ UI/UX 優化（千分位逗號、自动分析、退稅常駐通知）
 - ✅ EXIF 旋轉問題修復（移除多餘手動旋轉，瀏覽器自動處理）
