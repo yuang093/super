@@ -74,7 +74,7 @@ body {
     24px 24px;
   background-attachment: fixed;
   min-height: 100vh;
-  padding: calc(20px + var(--safe-top)) 16px calc(110px + var(--safe-bottom)) 16px;
+  padding: calc(20px + var(--safe-top)) 16px calc(130px + var(--safe-bottom)) 16px;
 }
 
 h1,
