@@ -446,6 +446,21 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;')
 }
 
+/**
+ * 格式化商品名稱（翻譯放第二行）
+ * 格式：「原名 (翻譯)」→ 原名 / 翻譯（分兩行顯示）
+ */
+function formatItemName(name) {
+  if (!name) return ''
+  const escaped = escapeHtml(name)
+  // 匹配「原名 (翻譯)」模式
+  const match = escaped.match(/^(.+?)\s*\((.+?)\)$/)
+  if (match) {
+    return `<span class="name-original">${match[1]}</span><span class="name-translation">${match[2]}</span>`
+  }
+  return `<span class="name-original">${escaped}</span>`
+}
+
 // ============================================================================
 // 購物車 UI 渲染
 // ============================================================================
@@ -474,7 +489,7 @@ function renderCart() {
  <div class="cart-item" data-id="${item.id}">
       ${item.imageBase64 ? `<img class="cart-item-thumb" src="${item.imageBase64}" alt="${escapeHtml(item.name)}" loading="lazy" />` : '<div class="cart-item-emoji">📦</div>'}
       <div class="cart-item-info">
-        <div class="cart-item-name">${escapeHtml(item.name)}</div>
+        <div class="cart-item-name">${formatItemName(item.name)}</div>
         <div class="cart-item-meta">${formatRelativeTime(item.createdAt)}</div>
       </div>
       <div class="cart-item-right">

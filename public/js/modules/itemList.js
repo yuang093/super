@@ -89,7 +89,7 @@ function renderItems(items) {
     <div class="cart-item" data-id="${item.id}">
       <div class="cart-item-emoji">📦</div>
       <div class="cart-item-info">
-        <div class="cart-item-name">${escapeHtml(item.name)}</div>
+        <div class="cart-item-name">${formatItemName(item.name)}</div>
         <div class="cart-item-meta">${formatTime(item.createdAt)}</div>
       </div>
       <div class="cart-item-right">
@@ -210,4 +210,17 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+/**
+ * 格式化商品名稱（翻譯放第二行）
+ */
+function formatItemName(name) {
+  if (!name) return ''
+  const escaped = escapeHtml(name)
+  const match = escaped.match(/^(.+?)\s*\((.+?)\)$/)
+  if (match) {
+    return `<span class="name-original">${match[1]}</span><span class="name-translation">${match[2]}</span>`
+  }
+  return `<span class="name-original">${escaped}</span>`
 }

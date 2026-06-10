@@ -149,7 +149,7 @@ export function initCaptureUI(container) {
             <h4>✅ 辨識成功！</h4>
             <div class="result-grid">
               <div class="result-label">商品</div>
-              <div class="result-value">${escapeHtml(data.item.name)}</div>
+              <div class="result-value">${formatItemName(data.item.name)}</div>
               <div class="result-label">價格</div>
               <div class="result-value">${escapeHtml(data.item.currency)} ${data.item.price}</div>
               <div class="result-label">信心度</div>
@@ -240,4 +240,17 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+/**
+ * 格式化商品名稱（翻譯放第二行）
+ */
+function formatItemName(name) {
+  if (!name) return ''
+  const escaped = escapeHtml(name)
+  const match = escaped.match(/^(.+?)\s*\((.+?)\)$/)
+  if (match) {
+    return `<span class="name-original">${match[1]}</span><span class="name-translation">${match[2]}</span>`
+  }
+  return `<span class="name-original">${escaped}</span>`
 }
