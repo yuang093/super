@@ -5,6 +5,7 @@
 'use strict'
 
 const express = require('express')
+const path = require('node:path')
 const { getEnv } = require('../config/env')
 const packageJson = require('../../package.json')
 
@@ -32,6 +33,14 @@ router.get('/healthz', (req, res) => {
       // B-08: { exchangeApi: 'ok' }
     },
   })
+})
+
+/**
+ * GET /view
+ * 拜訪統計儀表板頁面
+ */
+router.get('/view', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', '..', 'public', 'view.html'))
 })
 
 /**
