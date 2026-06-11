@@ -13,12 +13,14 @@ const { createCorsMiddleware } = require('./middleware/cors')
 const { createHelmetMiddleware } = require('./middleware/helmet')
 const { createRateLimitMiddleware } = require('./middleware/rateLimit')
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler')
+const { createPageTrackerMiddleware } = require('./middleware/pageTracker')
 const healthRouter = require('./routes/health')
 const captureRouter = require('./routes/capture')
 const itemsRouter = require('./routes/items')
 const rateRouter = require('./routes/rate')
 const webhookRouter = require('./routes/webhook')
 const visitRouter = require('./routes/visit')
+const statsRouter = require('./routes/stats')
 
 /**
  * 建立 Express 應用實例
@@ -71,6 +73,9 @@ function createApp(options = {}) {
   app.use(express.json({ limit: '1mb' }))
   app.use(express.urlencoded({ extended: true, limit: '1mb' }))
 
+  // === 頁面瀏覽追蹤 ===
+  app.use(createPageTrackerMiddleware())
+
   // === 靜態檔案（前端） ===
   // JS/CSS 設 no-store（避免 Cloudflare Edge 快取舊版本導致 403 持續）
   // 其他靜態資源（字型、圖示）仍可長期快取
@@ -98,6 +103,7 @@ function createApp(options = {}) {
   app.use('/api', rateRouter)
   app.use('/api/webhook', webhookRouter)
 app.use('/api', visitRouter)
+app.use('/api', statsRouter)
 
   // === 404 處理（必須在 errorHandler 之前） ===
   app.use(notFoundHandler)

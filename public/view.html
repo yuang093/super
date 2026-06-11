@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>拜訪統計 — Supermarket Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans TC', 'Fredoka', sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #FFD93D;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #0f3460;
+    }
+    .card-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #FFD93D;
+      margin-bottom: 4px;
+    }
+    .card-label {
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+    .online-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .chart-section {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #0f3460;
+    }
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #e2e8f0;
+    }
+    .chart-container { position: relative; height: 280px; }
+    .updated-at {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.8rem;
+      margin-top: 16px;
+    }
+    .loading {
+      text-align: center;
+      color: #64748b;
+      padding: 40px;
+    }
+    .error {
+      text-align: center;
+      color: #ef4444;
+      padding: 40px;
+      background: #16213e;
+      border-radius: 16px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #FFD93D; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← 返回首頁</a>
+    <h1>📊 拜訪統計</h1>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-value" id="total-views">--</div>
+        <div class="card-label">總拜訪次數</div>
+      </div>
+      <div class="card">
+        <div class="card-value" id="today-views">--</div>
+        <div class="card-label">今日拜訪</div>
+      </div>
+      <div class="card">
+        <div class="card-value" id="total-visitors">--</div>
+        <div class="card-label">總訪客數</div>
+      </div>
+      <div class="card">
+        <div class="card-value" id="new-visitors">--</div>
+        <div class="card-label">今日新訪客</div>
+      </div>
+      <div class="card">
+        <div class="card-value" id="online">
+          <span class="online-indicator"></span><span id="online-count">--</span>
+        </div>
+        <div class="card-label">目前在線</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">📈 24 小時流量</div>
+      <div class="chart-container">
+        <canvas id="hourlyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">📅 近 30 天流量</div>
+      <div class="chart-container">
+        <canvas id="dailyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="updated-at" id="updated-at">載入中...</div>
+  </div>
+
+  <script>
+    // ========== 圖表設定 ==========
+    const CHART_COLORS = {
+      primary: '#FFD93D',
+      secondary: '#4facfe',
+      success: '#22c55e',
+      bg: '#16213e',
+      grid: '#0f3460',
+      text: '#94a3b8',
+    }
+
+    Chart.defaults.color = CHART_COLORS.text
+    Chart.defaults.borderColor = CHART_COLORS.grid
+
+    let hourlyChart = null
+    let dailyChart = null
+
+    // ========== 載入資料 ==========
+    async function loadStats() {
+      try {
+        const [summary, hourly, daily, now] = await Promise.all([
+          fetch('/api/stats/summary').then(r => r.json()),
+          fetch('/api/stats/hourly').then(r => r.json()),
+          fetch('/api/stats/daily').then(r => r.json()),
+          fetch('/api/stats/now').then(r => r.json()),
+        ])
+
+        // 更新卡片
+        document.getElementById('total-views').textContent = formatNumber(summary.total_views)
+        document.getElementById('today-views').textContent = formatNumber(summary.today_views)
+        document.getElementById('total-visitors').textContent = formatNumber(summary.total_visitors)
+        document.getElementById('new-visitors').textContent = formatNumber(summary.today_new_visitors)
+        document.getElementById('online-count').textContent = now.online
+
+        // 更新圖表
+        updateHourlyChart(hourly.data)
+        updateDailyChart(daily.data)
+
+        // 更新時間
+        const time = new Date(summary.updated_at).toLocaleString('zh-TW')
+        document.getElementById('updated-at').textContent = `最後更新：${time}`
+      } catch (err) {
+        console.error('載入失敗:', err)
+        document.getElementById('updated-at').textContent = '載入失敗，請重新整理'
+      }
+    }
+
+    function formatNumber(n) {
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'k'
+      return n || 0
+    }
+
+    // ========== 24小時折線圖 ==========
+    function updateHourlyChart(data) {
+      const ctx = document.getElementById('hourlyChart').getContext('2d')
+      const labels = data.map((_, i) => `${i}:00`)
+      const values = data.map(d => d.count)
+
+      if (hourlyChart) hourlyChart.destroy()
+
+      hourlyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: '拜訪次數',
+            data: values,
+            borderColor: CHART_COLORS.primary,
+            backgroundColor: CHART_COLORS.primary + '33',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            x: {
+              grid: { color: CHART_COLORS.grid },
+              ticks: { maxTicksLimit: 12 },
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.grid },
+              ticks: { stepSize: 1 },
+            },
+          },
+        },
+      })
+    }
+
+    // ========== 30天柱狀圖 ==========
+    function updateDailyChart(data) {
+      const ctx = document.getElementById('dailyChart').getContext('2d')
+      const labels = data.map(d => d.day.slice(5))  // MM-DD
+      const values = data.map(d => d.count)
+
+      if (dailyChart) dailyChart.destroy()
+
+      dailyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: '拜訪次數',
+            data: values,
+            backgroundColor: CHART_COLORS.secondary + 'aa',
+            borderColor: CHART_COLORS.secondary,
+            borderWidth: 1,
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { maxTicksLimit: 15 },
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.grid },
+              ticks: { stepSize: 1 },
+            },
+          },
+        },
+      })
+    }
+
+    // ========== 初始化 ==========
+    loadStats()
+    setInterval(loadStats, 30000)  // 每 30 秒自動更新
+  </script>
+</body>
+</html>
