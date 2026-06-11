@@ -462,8 +462,7 @@ function formatItemName(name) {
 function renderCart() {
   const listEl = $('item-list')
   const summaryEl = $('cart-summary')
-  const summaryTotalEl = $('summary-total')
-  const summaryTwdEl = $('summary-twd')
+  const summaryRowsEl = $('summary-rows')
   if (!listEl) return
 
   const items = cart.getItems()
@@ -478,12 +477,11 @@ function renderCart() {
   // 顯示摘要
   if (summaryEl) {
     summaryEl.style.display = 'block'
-    // 各幣別顯示
-    const currencyText = summary.currencySummaries
-      .map((s) => `${s.currency}: ${formatPrice(s.total, s.currency)}`)
-      .join(' · ')
-    if (summaryTotalEl) summaryTotalEl.textContent = currencyText
-    if (summaryTwdEl) summaryTwdEl.textContent = `≈ NT$ ${summary.totalTWD.toFixed(2)}`
+    if (summaryRowsEl) {
+      summaryRowsEl.innerHTML = summary.currencySummaries
+        .map((s) => `<div class="summary-row"><span>${s.currency}</span><span>×${s.qtyTotal || s.count}</span><span>${formatPrice(s.total, s.currency)}</span></div>`)
+        .join('')
+    }
   }
 
   listEl.innerHTML = items
