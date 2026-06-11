@@ -129,13 +129,20 @@ function trackPageView(req) {
 
 /**
  * Express 中介層工廠
- * @param {Array<string>} paths - 要追蹤的路徑（空陣列 = 全部）
+ * @param {Object} [options]
+ * @param {Array<string>} [options.include] - 只追蹤這些路徑（空陣列 = 全部）
+ * @param {Array<string>} [options.exclude] - 排除這些路徑（預設包含 /view）
  * @returns {express.RequestHandler}
  */
-function createPageTrackerMiddleware(paths = []) {
+function createPageTrackerMiddleware(options = {}) {
+  const { include = [], exclude = ['/view'] } = options
   return (req, res, next) => {
-    // 如果有指定路徑，只追蹤這些路徑；否則全部追蹤
-    const shouldTrack = paths.length === 0 || paths.includes(req.path)
+    // 排除清單優先
+    if (exclude.includes(req.path)) {
+      return next()
+    }
+    // 如果有指定 include，只追蹤這些路徑；否則全部追蹤
+    const shouldTrack = include.length === 0 || include.includes(req.path)
     if (shouldTrack) {
       // 非同步執行，不阻擋回應
       setImmediate(() => trackPageView(req))
