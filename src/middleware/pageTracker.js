@@ -8,6 +8,19 @@ const crypto = require('node:crypto')
 const { getEnv } = require('../config/env')
 const { getDatabase } = require('../db/database')
 
+// geoip-lite 是懶惰載入（第一次 getGeoSync 才會初始化）
+let geoip = null
+function getGeoIP() {
+  if (!geoip) {
+    try {
+      geoip = require('geoip-lite')
+    } catch {
+      // 沒有安裝 geoip-lite
+    }
+  }
+  return geoip
+}
+
 const FIVE_MINUTES_MS = 5 * 60 * 1000
 
 /**
@@ -18,6 +31,59 @@ const FIVE_MINUTES_MS = 5 * 60 * 1000
  */
 function computeFingerprint(ip, salt) {
   return crypto.createHash('sha256').update(ip + salt).digest('hex')
+}
+
+/**
+ * 從 User-Agent 判斷設備類型
+ * @param {string} ua - User-Agent 字串
+ * @returns {string} mobile | desktop | tablet | bot | unknown
+ */
+function parseDeviceType(ua) {
+  if (!ua || ua === 'unknown') return 'unknown'
+
+  const lower = ua.toLowerCase()
+
+  // Bot 檢測
+  if (lower.includes('bot') || lower.includes('crawler') || lower.includes('spider') ||
+      lower.includes('google') || lower.includes('bing') || lower.includes('slurp') ||
+      lower.includes('facebook') || lower.includes('twitter')) {
+    return 'bot'
+  }
+
+  // 行動裝置
+  if (/mobile|android|iphone|ipad|ipod|blackberry|windows phone/i.test(lower)) {
+    // 平板（通常有 mobile 但螢幕較大）
+    if (/tablet|ipad|kindle|build\/silk/i.test(lower)) {
+      return 'tablet'
+    }
+    return 'mobile'
+  }
+
+  // 桌面
+  if (/windows|macintosh|mac os|x11|linux/i.test(lower)) {
+    return 'desktop'
+  }
+
+  return 'unknown'
+}
+
+/**
+ * 從 IP 取得國家
+ * @param {string} ip - IP 位址
+ * @returns {string|null} 國家碼（如 'TW', 'US'）或 null
+ */
+function getCountryFromIP(ip) {
+  try {
+    const geo = getGeoIP()
+    if (!geo) return null
+
+    // geoip-lite 需要純 IP，不含 port
+    const cleanIP = ip.replace(/:\d+$/, '').replace(/^\[.*\]:/, '')
+    const result = geo.lookup(cleanIP)
+    return result?.country || null
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -38,12 +104,14 @@ function trackPageView(req) {
     const fingerprintHash = computeFingerprint(ip, env.IP_SALT || 'default-salt')
     const now = Date.now()
     const userAgent = req.headers['user-agent'] || 'unknown'
+    const country = getCountryFromIP(ip) || null
+    const deviceType = parseDeviceType(userAgent)
 
     // 寫入 page_views
     db.prepare(`
-      INSERT INTO page_views (fingerprint_hash, visited_at, user_agent, path)
-      VALUES (?, ?, ?, ?)
-    `).run(fingerprintHash, now, userAgent, req.path)
+      INSERT INTO page_views (fingerprint_hash, visited_at, user_agent, path, country, device_type)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(fingerprintHash, now, userAgent, req.path, country, deviceType)
 
     // 更新 online_users
     db.prepare(`
@@ -76,4 +144,4 @@ function createPageTrackerMiddleware(paths = []) {
   }
 }
 
-module.exports = { createPageTrackerMiddleware, trackPageView, computeFingerprint }
+module.exports = { createPageTrackerMiddleware, trackPageView, computeFingerprint, parseDeviceType, getCountryFromIP }

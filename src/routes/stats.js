@@ -156,4 +156,90 @@ router.get('/stats/daily', (req, res) => {
   }
 })
 
+// ============================================================================
+// GET /api/stats/devices - 設備類型統計
+// ============================================================================
+router.get('/stats/devices', (req, res) => {
+  try {
+    const db = getDatabase()
+    const now = Date.now()
+    const thirtyDaysAgo = now - 30 * ONE_DAY_MS
+
+    // 設備類型分布（30天）
+    const deviceRows = db.prepare(`
+      SELECT device_type, COUNT(*) as count
+      FROM page_views
+      WHERE visited_at >= ?
+      GROUP BY device_type
+      ORDER BY count DESC
+    `).all(thirtyDaysAgo)
+
+    // 設備類型（今日）
+    const todayStart = new Date().setHours(0, 0, 0, 0)
+    const todayDeviceRows = db.prepare(`
+      SELECT device_type, COUNT(*) as count
+      FROM page_views
+      WHERE visited_at >= ?
+      GROUP BY device_type
+      ORDER BY count DESC
+    `).all(todayStart)
+
+    res.json({
+      total: deviceRows,
+      today: todayDeviceRows,
+      updated_at: now,
+    })
+  } catch (err) {
+    res.status(500).json({ error: '讀取失敗' })
+  }
+})
+
+// ============================================================================
+// GET /api/stats/geo - 流量來源國家分布
+// ============================================================================
+router.get('/stats/geo', (req, res) => {
+  try {
+    const db = getDatabase()
+    const now = Date.now()
+    const thirtyDaysAgo = now - 30 * ONE_DAY_MS
+
+    // 國家分布（30天）
+    const geoRows = db.prepare(`
+      SELECT country, COUNT(*) as count
+      FROM page_views
+      WHERE visited_at >= ? AND country IS NOT NULL
+      GROUP BY country
+      ORDER BY count DESC
+      LIMIT 20
+    `).all(thirtyDaysAgo)
+
+    // 國家分布（今日）
+    const todayStart = new Date().setHours(0, 0, 0, 0)
+    const todayGeoRows = db.prepare(`
+      SELECT country, COUNT(*) as count
+      FROM page_views
+      WHERE visited_at >= ? AND country IS NOT NULL
+      GROUP BY country
+      ORDER BY count DESC
+      LIMIT 20
+    `).all(todayStart)
+
+    // 未知國家數
+    const unknownCount = db.prepare(`
+      SELECT COUNT(*) as count
+      FROM page_views
+      WHERE visited_at >= ? AND (country IS NULL OR country = '')
+    `).get(thirtyDaysAgo).count
+
+    res.json({
+      total: geoRows,
+      today: todayGeoRows,
+      unknown: unknownCount,
+      updated_at: now,
+    })
+  } catch (err) {
+    res.status(500).json({ error: '讀取失敗' })
+  }
+})
+
 module.exports = router
