@@ -231,9 +231,11 @@
       const labels = data.map((_, i) => `${i}:00`)
       const values = data.map(d => d.count)
 
-      if (hourlyChart) hourlyChart.destroy()
+      if (window.hourlyChart && typeof window.hourlyChart.destroy === 'function') {
+        window.hourlyChart.destroy()
+      }
 
-      hourlyChart = new Chart(ctx, {
+      window.hourlyChart = new Chart(ctx, {
         type: 'line',
         data: {
           labels,
@@ -275,9 +277,11 @@
       const labels = data.map(d => d.day.slice(5))  // MM-DD
       const values = data.map(d => d.count)
 
-      if (dailyChart) dailyChart.destroy()
+      if (window.dailyChart && typeof window.dailyChart.destroy === 'function') {
+        window.dailyChart.destroy()
+      }
 
-      dailyChart = new Chart(ctx, {
+      window.dailyChart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels,
@@ -327,7 +331,9 @@
       const values = data.map(d => d.count)
       const colors = ['#4facfe', '#FFD93D', '#22c55e', '#a855f7', '#94a3b8']
 
-      if (window.deviceChart) window.deviceChart.destroy()
+      if (window.deviceChart && typeof window.deviceChart.destroy === 'function') {
+        window.deviceChart.destroy()
+      }
 
       window.deviceChart = new Chart(ctx, {
         type: 'doughnut',
@@ -367,7 +373,9 @@
       const labels = data.map(d => countryNames[d.country] || d.country)
       const values = data.map(d => d.count)
 
-      if (window.geoChart) window.geoChart.destroy()
+      if (window.geoChart && typeof window.geoChart.destroy === 'function') {
+        window.geoChart.destroy()
+      }
 
       window.geoChart = new Chart(ctx, {
         type: 'bar',
