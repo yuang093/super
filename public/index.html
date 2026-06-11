@@ -45,12 +45,6 @@
     <!-- Main：主要功能區 -->
     <main class="app-main" role="main">
       <div class="container">
-        <!-- 今日總計（Summary - 置頂） -->
-        <div class="cart-summary" id="cart-summary" style="display: none">
-          <h4>💰總計</h4>
-          <div class="summary-rows" id="summary-rows"></div>
-        </div>
-
         <!-- 拍照辨識區（F-01 + F-04 + F-05） -->
         <section class="card capture-section" aria-labelledby="capture-title">
           <h2 id="capture-title" class="card-title">
@@ -111,6 +105,15 @@
             <div class="capture-result" id="capture-result" style="display: none"></div>
           </div>
         </section>
+
+        <!-- 今日總計（Summary - 置於拍照和購物車之間） -->
+        <div class="cart-summary" id="cart-summary" style="display: none">
+          <div class="summary-content">
+            <span class="summary-label">💰 合計</span>
+            <span class="summary-total" id="summary-total"></span>
+          </div>
+          <div class="summary-twd" id="summary-twd"></div>
+        </div>
 
         <!-- 購物車區（F-06） -->
         <section class="card cart-section" aria-labelledby="cart-title">

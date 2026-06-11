@@ -462,7 +462,8 @@ function formatItemName(name) {
 function renderCart() {
   const listEl = $('item-list')
   const summaryEl = $('cart-summary')
-  const summaryRowsEl = $('summary-rows')
+  const summaryTotalEl = $('summary-total')
+  const summaryTwdEl = $('summary-twd')
   if (!listEl) return
 
   const items = cart.getItems()
@@ -472,6 +473,17 @@ function renderCart() {
     listEl.innerHTML = '<div class="item-list-empty">🛒 購物車是空的，去拍個商品吧！</div>'
     if (summaryEl) summaryEl.style.display = 'none'
     return
+  }
+
+  // 顯示摘要
+  if (summaryEl) {
+    summaryEl.style.display = 'block'
+    // 各幣別顯示
+    const currencyText = summary.currencySummaries
+      .map((s) => `${s.currency}: ${formatPrice(s.total, s.currency)}`)
+      .join(' · ')
+    if (summaryTotalEl) summaryTotalEl.textContent = currencyText
+    if (summaryTwdEl) summaryTwdEl.textContent = `≈ NT$ ${summary.totalTWD.toFixed(2)}`
   }
 
   listEl.innerHTML = items
