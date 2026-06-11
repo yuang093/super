@@ -54,6 +54,7 @@ RUN groupadd -r -g 1001 super \
 COPY --from=builder --chown=super:super /app/node_modules ./node_modules
 COPY --from=builder --chown=super:super /app/src ./src
 COPY --from=builder --chown=super:super /app/public ./public
+COPY --from=builder --chown=super:super /app/scripts ./scripts
 COPY --from=builder --chown=super:super /app/package.json ./package.json
 
 # 切換至非 root 使用者
