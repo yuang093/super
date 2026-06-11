@@ -135,7 +135,7 @@ function trackPageView(req) {
  * @returns {express.RequestHandler}
  */
 function createPageTrackerMiddleware(options = {}) {
-  const { include = [], exclude = ['/view', '/stats/', '/api/'] } = options
+  const { include = [], exclude = ['/view', '/stats/', '/api/', '/healthz', '/js/', '/css/', '/manifest.json'] } = options
   return (req, res, next) => {
     // 排除清單優先（使用 startsWith 比對）
     const isExcluded = exclude.some(prefix => req.path.startsWith(prefix))
