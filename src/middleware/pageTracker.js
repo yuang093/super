@@ -135,7 +135,7 @@ function trackPageView(req) {
  * @returns {express.RequestHandler}
  */
 function createPageTrackerMiddleware(options = {}) {
-  const { include = [], exclude = ['/view', '/api/'] } = options
+  const { include = [], exclude = ['/view', '/stats/'] } = options
   return (req, res, next) => {
     // 排除清單優先
     if (exclude.includes(req.path)) {
