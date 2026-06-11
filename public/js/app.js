@@ -858,9 +858,18 @@ function showCheckoutDialog(summary) {
       <pre class="checkout-summary">${currencyDetails}</pre>
       <div class="checkout-total">💰 新台幣合計：${formatPrice(summary.totalTWD, 'TWD')}</div>
       <div class="checkout-actions">
-        <button class="btn-checkout-action btn-share" type="button">📤 分享清單</button>
-        <button class="btn-checkout-action btn-confirm" type="button">✅ 確認結帳</button>
-        <button class="btn-checkout-action btn-cancel" type="button">繼續購物</button>
+        <button class="btn-checkout-action btn-share" type="button">
+          <span class="btn-icon">📤</span>
+          <span>分享清單</span>
+        </button>
+        <button class="btn-checkout-action btn-confirm" type="button">
+          <span class="btn-icon">✅</span>
+          <span>確認結帳</span>
+        </button>
+        <button class="btn-checkout-action btn-cancel" type="button">
+          <span class="btn-icon">🛒</span>
+          <span>繼續購物</span>
+        </button>
       </div>
     </div>
   `

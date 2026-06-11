@@ -1110,36 +1110,59 @@ a {
 }
 
 .btn-checkout-action {
-  padding: 14px 16px;
-  border: 2px solid var(--black, #000);
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border: var(--border-thick, 3px solid #000);
+  border-radius: 12px;
+  font-family: var(--font-display, sans-serif);
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: all 150ms var(--bounce, ease);
+  width: 100%;
 }
 
 .btn-checkout-action:active {
-  transform: scale(0.98);
+  transform: translateY(2px) translateX(2px);
+  box-shadow: 2px 2px 0 var(--black, #000);
 }
 
 .btn-checkout-action.btn-share {
-  background: var(--green, #22c55e);
-  color: #fff;
+  background: var(--coral, #ff6b6b);
+  color: var(--white, #fff);
+  box-shadow: var(--shadow-md, 4px 4px 0 #000);
+  transform: rotate(-1deg);
+}
+
+.btn-checkout-action.btn-share:hover {
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: 6px 6px 0 var(--black, #000);
 }
 
 .btn-checkout-action.btn-confirm {
   background: var(--yellow, #FFD93D);
   color: var(--black, #000);
+  box-shadow: var(--shadow-md, 4px 4px 0 #000);
+  transform: rotate(-1deg);
+}
+
+.btn-checkout-action.btn-confirm:hover {
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow: 6px 6px 0 var(--black, #000);
 }
 
 .btn-checkout-action.btn-cancel {
-  background: transparent;
+  background: var(--white, #fff);
   color: var(--text-muted, #94a3b8);
-  border-color: var(--text-muted, #94a3b8);
+  border-color: var(--black, #000);
 }
 
 .btn-checkout-action.btn-cancel:hover {
-  border-color: var(--text, #eee);
-  color: var(--text, #eee);
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: 4px 4px 0 var(--black, #000);
+  color: var(--black, #000);
 }
