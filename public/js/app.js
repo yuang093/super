@@ -836,6 +836,16 @@ function showCheckoutDialog(summary) {
   const overlay = document.createElement('div')
   overlay.className = 'checkout-dialog-overlay'
 
+  // 生成商品清單
+  const itemsList = summary.items
+    .map((item) => {
+      const qty = item.quantity || 1
+      const price = formatPrice(item.price * qty, item.currency)
+      const name = item.name.length > 12 ? item.name.slice(0, 12) + '...' : item.name
+      return `${name} ×${qty} .... ${price}`
+    })
+    .join('\n')
+
   // 生成各幣別明細
   const currencyDetails = summary.currencySummaries
     .map((s) => `${s.currency}: ${formatPrice(s.total, s.currency)}`)
@@ -844,6 +854,7 @@ function showCheckoutDialog(summary) {
   overlay.innerHTML = `
     <div class="checkout-dialog">
       <h2>🧾 結帳總金額</h2>
+      <pre class="checkout-items">${itemsList}</pre>
       <pre class="checkout-summary">${currencyDetails}</pre>
       <div class="checkout-total">💰 新台幣合計：${formatPrice(summary.totalTWD, 'TWD')}</div>
       <div class="checkout-actions">

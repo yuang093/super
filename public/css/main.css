@@ -1053,6 +1053,18 @@ a {
   color: var(--yellow, #FFD93D);
 }
 
+.checkout-items {
+  background: var(--dark, #0a0a1a);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin-bottom: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
 .checkout-summary {
   background: var(--dark, #0a0a1a);
   padding: 12px;
