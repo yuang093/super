@@ -190,12 +190,12 @@
     async function loadStats() {
       try {
         const [summary, hourly, daily, now, devices, geo] = await Promise.all([
-          fetch('/api/stats/summary').then(r => r.json()),
-          fetch('/api/stats/hourly').then(r => r.json()),
-          fetch('/api/stats/daily').then(r => r.json()),
-          fetch('/api/stats/now').then(r => r.json()),
-          fetch('/api/stats/devices').then(r => r.json()),
-          fetch('/api/stats/geo').then(r => r.json()),
+          fetch('/api/stats/summary').then(r => { if (!r.ok) throw new Error('summary failed'); return r.json() }),
+          fetch('/api/stats/hourly').then(r => { if (!r.ok) throw new Error('hourly failed'); return r.json() }),
+          fetch('/api/stats/daily').then(r => { if (!r.ok) throw new Error('daily failed'); return r.json() }),
+          fetch('/api/stats/now').then(r => { if (!r.ok) throw new Error('now failed'); return r.json() }),
+          fetch('/api/stats/devices').then(r => { if (!r.ok) throw new Error('devices failed'); return r.json() }),
+          fetch('/api/stats/geo').then(r => { if (!r.ok) throw new Error('geo failed'); return r.json() }),
         ])
 
         // 更新卡片
@@ -216,7 +216,7 @@
         document.getElementById('updated-at').textContent = `最後更新：${time}`
       } catch (err) {
         console.error('載入失敗:', err)
-        document.getElementById('updated-at').textContent = '載入失敗，請重新整理'
+        document.getElementById('updated-at').textContent = '載入失敗：' + err.message + '（請按 Ctrl+Shift+R 強制刷新）'
       }
     }
 
