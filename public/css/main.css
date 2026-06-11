@@ -959,6 +959,9 @@ a {
     gap: 20px;
   }
 
+  .cart-summary {
+    grid-column: 1;
+  }
   .capture-section {
     grid-column: 1;
   }
