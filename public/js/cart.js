@@ -162,6 +162,7 @@ export class Cart {
       name: item.name || '未知名稱',
       price: typeof item.price === 'number' ? item.price : 0,
       currency: item.currency || 'TWD',
+      quantity: item.quantity || 1,
       confidence: typeof item.confidence === 'number' ? item.confidence : 1,
       parseMethod: item.parseMethod || 'manual',
       imageBase64: item.imageBase64 || null,
@@ -213,6 +214,36 @@ export class Cart {
   }
 
   /**
+   * 更新單筆商品數量
+   * @param {string} id - 商品 ID
+   * @param {number} quantity - 新數量（最小為 1）
+   * @returns {boolean} - 是否更新成功
+   */
+  updateItemQuantity(id, quantity) {
+    const item = this._items.find((i) => i.id === id)
+    if (!item) {
+      console.warn('[Cart] 找不到要更新數量的商品', id)
+      return false
+    }
+    const newQty = Math.max(1, Math.floor(quantity))
+    item.quantity = newQty
+    this._save()
+    emitCartEvent(CART_EVENTS.ITEM_UPDATED, item)
+    console.log('[Cart] 商品數量已更新', { id, quantity: newQty })
+    return true
+  }
+
+  /**
+   * 取得單筆商品數量
+   * @param {string} id - 商品 ID
+   * @returns {number}
+   */
+  getItemQuantity(id) {
+    const item = this._items.find((i) => i.id === id)
+    return item ? (item.quantity || 1) : 1
+  }
+
+  /**
    * 清空所有商品
    * @returns {number} -刪除的數量
    */
@@ -261,28 +292,30 @@ export class Cart {
   }
 
   /**
-   * 計算單一幣別的總價
+   * 計算單一幣別的總價（含數量）
    * @param {string} currency - 幣別代碼
    * @returns {number}
    */
   sumByCurrency(currency) {
     return this._items
       .filter((item) => item.currency === currency)
-      .reduce((sum, item) => sum + item.price, 0)
+      .reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
   }
 
   /**
    * 計算新台幣（TWD）等值總價
-   * 將其他幣別以匯率換算後加總
+   * 將其他幣別以匯率換算後加總（含數量）
    * @returns {number}
    */
   sumTWD() {
     const result = this._items.reduce((total, item) => {
       const rate = this._rates[item.currency] || 1
-      const converted = item.price * rate
+      const qty = item.quantity || 1
+      const converted = item.price * qty * rate
       console.log('[Cart] sumTWD 計算', {
         item: item.name,
         price: item.price,
+        quantity: qty,
         currency: item.currency,
         rate,
         converted,
@@ -299,14 +332,16 @@ export class Cart {
    * @returns {Object} - 含各幣別總額與 TWD 總額
    */
   getSummary() {
-    //依幣別分組加總
+    //依幣別分組加總（含數量）
     const byCurrency = {}
     this._items.forEach((item) => {
       if (!byCurrency[item.currency]) {
-        byCurrency[item.currency] = { total: 0, count: 0 }
+        byCurrency[item.currency] = { total: 0, count: 0, qtyTotal: 0 }
       }
-      byCurrency[item.currency].total += item.price
+      const qty = item.quantity || 1
+      byCurrency[item.currency].total += item.price * qty
       byCurrency[item.currency].count += 1
+      byCurrency[item.currency].qtyTotal += qty
     })
 
     // 轉為陣列格式（注意：totalTWD 已在 sumTWD() 統一計算，這裡只呈現原幣別總額）

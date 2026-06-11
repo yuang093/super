@@ -483,7 +483,10 @@ function renderCart() {
         <div class="cart-item-name">${formatItemName(item.name)}</div>
         <div class="cart-item-meta">${formatRelativeTime(item.createdAt)}</div>
       </div>
-      <div class="cart-item-right">
+      <div class="cart-item-controls">
+        <button class="btn-qty-minus" data-id="${item.id}" type="button" aria-label="減少數量">−</button>
+        <span class="cart-item-qty">${item.quantity || 1}</span>
+        <button class="btn-qty-plus" data-id="${item.id}" type="button" aria-label="增加數量">+</button>
         <div class="cart-item-price">${formatPrice(item.price, item.currency)}</div>
         <button class="btn-item-delete" data-id="${item.id}" type="button" aria-label="刪除">×</button>
       </div>
@@ -498,6 +501,30 @@ function renderCart() {
       const id = btn.dataset.id
       if (confirm('確定要刪除此商品嗎？')) {
         cart.removeItem(id)
+        renderCart()
+      }
+    })
+  })
+
+  // 綁定數量增減事件
+  listEl.querySelectorAll('.btn-qty-plus').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id
+      const item = cart.getItems().find((i) => i.id === id)
+      if (item) {
+        cart.updateItemQuantity(id, (item.quantity || 1) + 1)
+        renderCart()
+      }
+    })
+  })
+
+  listEl.querySelectorAll('.btn-qty-minus').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id
+      const item = cart.getItems().find((i) => i.id === id)
+      if (item) {
+        const newQty = Math.max(1, (item.quantity || 1) - 1)
+        cart.updateItemQuantity(id, newQty)
         renderCart()
       }
     })
@@ -785,15 +812,127 @@ async function initApp() {
         showToast('購物車是空的，無法結帳')
         return
       }
-      alert(
-        `🧾 結帳總金額\n` +
-          summary.currencySummaries
-            .map((s) => `${s.currency}: ${formatPrice(s.total, s.currency)}`)
-            .join('\n') +
-          `\n💰 新台幣合計：${formatPrice(summary.totalTWD, 'TWD')}`
-      )
+      // 顯示結帳確認對話盒
+      showCheckoutDialog(summary)
     })
   }
+
+/**
+ * 顯示結帳對話框（含分享選項）
+ * @param {Object} summary - 購物車摘要
+ */
+function showCheckoutDialog(summary) {
+  // 建立對話框 HTML
+  const overlay = document.createElement('div')
+  overlay.className = 'checkout-dialog-overlay'
+
+  // 生成各幣別明細
+  const currencyDetails = summary.currencySummaries
+    .map((s) => `${s.currency}: ${formatPrice(s.total, s.currency)}`)
+    .join('\n')
+
+  overlay.innerHTML = `
+    <div class="checkout-dialog">
+      <h2>🧾 結帳總金額</h2>
+      <pre class="checkout-summary">${currencyDetails}</pre>
+      <div class="checkout-total">💰 新台幣合計：${formatPrice(summary.totalTWD, 'TWD')}</div>
+      <div class="checkout-actions">
+        <button class="btn-checkout-action btn-share" type="button">📤 分享清單</button>
+        <button class="btn-checkout-action btn-confirm" type="button">✅ 確認結帳</button>
+        <button class="btn-checkout-action btn-cancel" type="button">繼續購物</button>
+      </div>
+    </div>
+  `
+
+  document.body.appendChild(overlay)
+
+  // 關閉對話框
+  const closeDialog = () => overlay.remove()
+
+  // 分享按鈕
+  overlay.querySelector('.btn-share').addEventListener('click', () => {
+    shareCartList(summary)
+  })
+
+  // 確認結帳（清空購物車）
+  overlay.querySelector('.btn-confirm').addEventListener('click', () => {
+    if (confirm('確認結帳？購物車將會清空。')) {
+      cart.clearAll()
+      renderCart()
+      showToast('結帳完成！')
+      closeDialog()
+    }
+  })
+
+  // 繼續購物
+  overlay.querySelector('.btn-cancel').addEventListener('click', closeDialog)
+
+  // 點擊背景關閉
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeDialog()
+  })
+}
+
+/**
+ * 分享購物清單（使用 Web Share API 或複製）
+ * @param {Object} summary - 購物車摘要
+ */
+async function shareCartList(summary) {
+  // 生成分享文字
+  const now = new Date()
+  const dateStr = now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+
+  const itemsText = summary.items
+    .map((item) => {
+      const qty = item.quantity || 1
+      const price = formatPrice(item.price * qty, item.currency)
+      const name = item.name.length > 10 ? item.name.slice(0, 10) + '...' : item.name
+      return `${name} × ${qty}....${price}`
+    })
+    .join('\n')
+
+  const totalTWD = formatPrice(summary.totalTWD, 'TWD')
+
+  const shareText = `🛒 購物清單
+📅 ${dateStr}
+
+───────────────
+${itemsText}
+───────────────
+💵 合計: ${totalTWD}`
+
+  // 嘗試使用 Web Share API
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: '🛒 購物清單',
+        text: shareText,
+      })
+      showToast('已分享！')
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        // 如果分享失敗，複製到剪貼簿
+        copyToClipboard(shareText)
+      }
+    }
+  } else {
+    // 不支援 Web Share，複製到剪貼簿
+    copyToClipboard(shareText)
+  }
+}
+
+/**
+ * 複製文字到剪貼簿
+ * @param {string} text - 要複製的文字
+ */
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text)
+    showToast('已複製到剪貼簿！')
+  } catch (err) {
+    showToast('複製失敗，請手動選取複製', 'error')
+  }
+}
 
   // 掛載全域物件
   window.app = app
