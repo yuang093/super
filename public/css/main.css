@@ -1039,6 +1039,19 @@ a {
   padding: 20px;
 }
 
+/* 內嵌模式：覆寫滿版樣式 */
+#checkout-inline-container .checkout-dialog-overlay {
+  position: static;
+  background: transparent;
+  padding: 16px 0;
+  margin: 0;
+  min-height: auto;
+}
+
+#checkout-inline-container .checkout-dialog {
+  max-width: 100%;
+}
+
 .checkout-dialog {
   background: var(--card-bg, #16213e);
   border: 3px solid var(--black, #000);

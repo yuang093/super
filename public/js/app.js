@@ -865,7 +865,12 @@ function showCheckoutDialog(summary) {
     </div>
   `
 
-  document.body.appendChild(overlay)
+  const container = document.getElementById('checkout-inline-container')
+  if (container) {
+    container.appendChild(overlay)
+  } else {
+    document.body.appendChild(overlay)
+  }
 
   // 關閉對話框
   const closeDialog = () => overlay.remove()
@@ -907,8 +912,8 @@ async function shareCartList(summary) {
     .map((item) => {
       const qty = item.quantity || 1
       const price = formatPrice(item.price * qty, item.currency)
-      const name = item.name.length > 10 ? item.name.slice(0, 10) + '...' : item.name
-      return `${name} × ${qty}....${price}`
+      const name = item.name // 使用完整名稱，不截斷
+      return `${name} ×${qty}....${price}`
     })
     .join('\n')
 
