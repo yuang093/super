@@ -106,7 +106,7 @@ router.get('/stats/hourly', (req, res) => {
         COUNT(*) as count
       FROM page_views
       WHERE visited_at >= ?
-      GROUP BY strftime('%Y-%m-%d %H:00', datetime(visited_at / 1000, 'unixepoch', 'localtime'))
+      GROUP BY strftime('%Y-%m-%d %H:00', datetime(visited_at / 1000, 'unixepoch', '+08:00'))
       ORDER BY visited_at ASC
     `).all(oneDayAgo)
 
@@ -117,8 +117,9 @@ router.get('/stats/hourly', (req, res) => {
     }
 
     for (const row of rows) {
-      const date = new Date(row.visited_at)
-      const hour = date.getHours()
+      // 使用台灣時區 (UTC+8) 計算小時
+      const taiwanOffset = 8 * 60 * 60 * 1000
+      const hour = new Date(row.visited_at + taiwanOffset).getHours()
       const existing = hourlyData.find((h) => h.hour === hour)
       if (existing) {
         existing.count = row.count
@@ -142,7 +143,7 @@ router.get('/stats/daily', (req, res) => {
 
     const rows = db.prepare(`
       SELECT
-        date(visited_at / 1000, 'unixepoch', 'localtime') as day,
+        date(visited_at / 1000, 'unixepoch', '+08:00') as day,
         COUNT(*) as count
       FROM page_views
       WHERE visited_at >= ?
