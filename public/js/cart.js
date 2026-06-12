@@ -403,7 +403,15 @@ export function formatPrice(price, currency = 'TWD') {
     TWD: 'NT$',
   }
   const symbol = symbols[currency] || currency + ' '
-  return `${symbol}${toThousands(price)}`
+  const num = Number(price)
+  if (currency === 'TWD') {
+    // TWD 無小數位
+    const parts = Math.round(num).toString().split('')
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    return `${symbol}${parts.join('')}`
+  }
+  // 其他幣別維持小數點後兩位
+  return `${symbol}${toThousands(num)}`
 }
 
 /**

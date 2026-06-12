@@ -494,11 +494,15 @@ function renderCart() {
         <div class="cart-item-meta">${formatRelativeTime(item.createdAt)}</div>
       </div>
       <div class="cart-item-controls">
-        <button class="btn-qty-minus" data-id="${item.id}" type="button" aria-label="減少數量">−</button>
-        <span class="cart-item-qty">${item.quantity || 1}</span>
-        <button class="btn-qty-plus" data-id="${item.id}" type="button" aria-label="增加數量">+</button>
-        <div class="cart-item-price">${formatPrice(item.price, item.currency)}</div>
-        <button class="btn-item-delete" data-id="${item.id}" type="button" aria-label="刪除">×</button>
+        <div class="cart-item-qty-row">
+          <button class="btn-qty-minus" data-id="${item.id}" type="button" aria-label="減少數量">−</button>
+          <span class="cart-item-qty">${item.quantity || 1}</span>
+          <button class="btn-qty-plus" data-id="${item.id}" type="button" aria-label="增加數量">+</button>
+        </div>
+        <div class="cart-item-price-row">
+          <div class="cart-item-price">${formatPrice(item.price, item.currency)}</div>
+          <button class="btn-item-delete" data-id="${item.id}" type="button" aria-label="刪除">×</button>
+        </div>
       </div>
     </div>
   `

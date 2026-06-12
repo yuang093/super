@@ -152,7 +152,7 @@ img {
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 900;
   letter-spacing: 2px;
   display: flex;
@@ -303,7 +303,7 @@ img {
 
 /* 相機按鈕（主要）*/
 .btn-capture-primary {
-  background: #0ABAB5;
+  background: #81D8D0;
   color: var(--white);
 }
 
@@ -1024,7 +1024,7 @@ img {
   }
 
   .app-title {
-    font-size: 36px;
+    font-size: 26px;
   }
 
   .card {
@@ -1071,7 +1071,7 @@ img {
   }
 
   .app-title {
-    font-size: 42px;
+    font-size: 30px;
   }
 
   .card {
