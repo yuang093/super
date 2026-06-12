@@ -1116,17 +1116,23 @@ a {
     box-shadow: 2px 2px 0 var(--black);
   }
 
-  /* 桌面版：結帳按鈕改為相對定位,寬度對齊主內容區
+  /* 桌面版：結帳按鈕改為與 Tab Dock 浮動在同一水平線上
      對應 Tailwind: w-full max-w-md md:max-w-5xl mx-auto */
   .sticky-cta {
-    position: static;
-    width: 100%;
-    max-width: 1200px;
-    margin: 24px auto 0;
-    padding: 0 24px;
+    position: fixed;
+    bottom: calc(24px + 76px + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: 768px;
+    min-width: 480px;
+    padding: 0 16px;
+    z-index: 40;
   }
   .sticky-cta .btn-primary {
-    max-width: 100%;
+    width: 100%;
+    font-size: 20px;
+    border-radius: 20px;
   }
 }
 
