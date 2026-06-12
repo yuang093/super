@@ -17,8 +17,8 @@
       rel="stylesheet"
     />
     <!-- 樣式 -->
-    <link rel="stylesheet" href="/css/style.css?v=20260612d" />
-    <link rel="stylesheet" href="/css/main.css?v=20260612d" />
+    <link rel="stylesheet" href="/css/style.css?v=20260612e" />
+    <link rel="stylesheet" href="/css/main.css?v=20260612e" />
     <!-- PWA App Icon -->
     <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
     <link rel="apple-touch-icon" href="/android-chrome-192x192.png" />
@@ -32,14 +32,16 @@
         SUPERMARKET TRACKER
       </h1>
       <p class="app-subtitle">拍照 · 記帳 · 換算，3 秒搞定！</p>
-      <div class="app-status" id="app-status" role="status" aria-live="polite">
-        <span class="status-indicator" id="status-dot" aria-hidden="true"></span>
-        <span class="status-text" id="status-text">連線中…</span>
-      </div>
-      <div class="visit-counter" id="visit-counter" aria-label="瀏覽人次">
-        <span class="visit-icon" aria-hidden="true">👁️</span>
-        <span class="visit-label">瀏覽</span>
-        <span class="visit-count" id="visit-count">--</span>
+      <div class="status-row">
+        <div class="app-status" id="app-status" role="status" aria-live="polite">
+          <span class="status-indicator" id="status-dot" aria-hidden="true"></span>
+          <span class="status-text" id="status-text">連線中…</span>
+        </div>
+        <div class="visit-counter" id="visit-counter" aria-label="瀏覽人次">
+          <span class="visit-icon" aria-hidden="true">👁️</span>
+          <span class="visit-label">瀏覽</span>
+          <span class="visit-count" id="visit-count">--</span>
+        </div>
       </div>
     </header>
 

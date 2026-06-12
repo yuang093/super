@@ -162,29 +162,38 @@ a {
   border: var(--border-thick);
   box-shadow: var(--shadow-lg);
   border-radius: 16px;
-  padding: 24px 20px;
-  margin: 0 auto 20px;
+  padding: 12px 12px 12px;
+  margin: 0 auto 12px;
   max-width: 1200px;
   transform: rotate(-1deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .app-title {
-  font-size: 32px;
+  font-size: 17.6px;
   font-weight: 700;
   line-height: 1;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.app-title span:first-child {
+  font-size: 24px;
+  line-height: 1;
 }
 
 .app-subtitle {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: rgba(26, 26, 26, 0.75);
-  margin: 0 0 16px;
+  margin: 0 0 8px;
 }
 
 /* 狀態指示器（B 風格 badge）*/
@@ -192,16 +201,43 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 2px 8px;
   background: var(--mint);
   border: var(--border-thin);
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-top: 0;
+}
+
+/* 瀏覽計數器 */
+.visit-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--lavender);
+  color: var(--white);
+  border: var(--border-thin);
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: middle;
+  margin-top: 0;
+  margin-left: 0;
+}
+
+/* 狀態列同行容器（flex-wrap 讓手機版同行、桌面版自動換行）*/
+.app-header .status-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
 
 .app-status.offline {
@@ -949,11 +985,35 @@ a {
     padding: 24px 24px 40px;
   }
 
-  .app-title {
-    font-size: 28px;
+  /* 桌面版 Header 覆蓋 */
+  .app-header {
+    padding: 24px 20px;
+    margin: 0 auto 24px;
   }
+
+  .app-title {
+    font-size: 36px;
+    gap: 12px;
+    margin: 0 0 8px;
+  }
+
+  .app-title span:first-child {
+    font-size: 40px;
+  }
+
   .app-subtitle {
-    font-size: 14px;
+    font-size: 16px;
+    margin: 0 0 16px;
+  }
+
+  .app-status {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .visit-counter {
+    padding: 6px 14px;
+    font-size: 13px;
   }
 
   .card {
