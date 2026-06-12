@@ -994,15 +994,33 @@ a {
     grid-row: 2;
   }
 
-  /* 桌面版：隱藏手機 tab bar 與 sticky CTA */
-  .tab-bar {
-    display: none;
+  /* 桌面版：放開外層容器寬度限制（覆蓋 style.css 的 max-width: 600px）
+     對應 Tailwind: md:max-w-5xl */
+  .app-main {
+    max-width: 1200px;
+    margin: 0 auto;
   }
+  .app-main .container {
+    max-width: 100%;
+  }
+
+  /* 桌面版：隱藏手機 tab bar（用 !important 避免被 style.css 覆蓋）
+     對應 Tailwind: md:hidden */
+  .tab-bar {
+    display: none !important;
+  }
+
+  /* 桌面版：結帳按鈕改為相對定位,寬度對齊主內容區
+     對應 Tailwind: w-full max-w-md md:max-w-5xl mx-auto */
   .sticky-cta {
     position: static;
-    max-width: none;
+    width: 100%;
+    max-width: 1200px;
     margin: 24px auto 0;
-    padding: 0;
+    padding: 0 24px;
+  }
+  .sticky-cta .btn-primary {
+    max-width: 100%;
   }
 }
 
@@ -1018,7 +1036,6 @@ a {
   .app-main .container {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
-    max-width: 1200px;
   }
 }
 
