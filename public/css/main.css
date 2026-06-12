@@ -660,7 +660,7 @@ a {
   gap: 8px;
   min-height: 56px;
   padding: 14px 24px;
-  background: var(--coral);
+  background: #81d8d0;
   color: var(--white);
   border: var(--border-thick);
   box-shadow: var(--shadow-md);
@@ -672,10 +672,12 @@ a {
   transition: all 150ms var(--bounce);
 }
 .btn-capture-primary:hover {
+  background: #6bc9c0;
   transform: translateY(-3px) rotate(-1deg);
   box-shadow: 8px 8px 0 var(--black);
 }
 .btn-capture-primary:active {
+  background: #5ab8af;
   transform: translateY(2px) translateX(2px) rotate(-1deg);
   box-shadow: 2px 2px 0 var(--black);
 }
@@ -940,36 +942,38 @@ a {
 }
 
 /* ==========================================================================
-   響應式：平板與桌面
+   響應式：平板與桌面（雙欄佈局）
    ========================================================================== */
 @media (min-width: 768px) {
   body {
-    padding: 40px 24px calc(120px + var(--safe-bottom)) 24px;
+    padding: 24px 24px 40px;
   }
 
   .app-title {
-    font-size: 48px;
+    font-size: 28px;
   }
   .app-subtitle {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .card {
-    padding: 28px;
+    padding: 24px;
   }
   .card-title {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .placeholder-icon {
-    font-size: 96px;
+    font-size: 80px;
   }
 
-  /* 桌面版：多欄佈局 */
+  /* 桌面版：雙欄佈局
+     左欄：總計 + 拍照辨識
+     右欄：購物車 + 即時匯率 */
   .app-main .container {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: 20px;
   }
 
@@ -982,41 +986,39 @@ a {
     grid-row: 2;
   }
   .cart-section {
-    grid-column: 1;
-    grid-row: 3;
+    grid-column: 2;
+    grid-row: 1;
   }
   .exchange-section {
     grid-column: 2;
-    grid-row: 1 / 4;
+    grid-row: 2;
   }
 
+  /* 桌面版：隱藏手機 tab bar 與 sticky CTA */
   .tab-bar {
-    max-width: 1200px;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    border-radius: 0;
+    display: none;
+  }
+  .sticky-cta {
+    position: static;
+    max-width: none;
+    margin: 24px auto 0;
+    padding: 0;
   }
 }
 
 @media (min-width: 1024px) {
+  body {
+    padding: 32px 32px 48px;
+  }
+
   .app-title {
-    font-size: 56px;
+    font-size: 32px;
   }
 
   .app-main .container {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .capture-section {
-    grid-column: 1;
-  }
-  .cart-section {
-    grid-column: 2;
-  }
-  .exchange-section {
-    grid-column: 3;
-    grid-row: auto;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 1200px;
   }
 }
 
