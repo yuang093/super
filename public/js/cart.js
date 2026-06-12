@@ -405,10 +405,9 @@ export function formatPrice(price, currency = 'TWD') {
   const symbol = symbols[currency] || currency + ' '
   const num = Number(price)
   if (currency === 'TWD') {
-    // TWD 無小數位
-    const parts = Math.round(num).toString().split('')
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    return `${symbol}${parts.join('')}`
+    // TWD 無小數位，加入千分位逗號
+    const rounded = Math.round(num).toString()
+    return `${symbol}${rounded.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
   }
   // 其他幣別維持小數點後兩位
   return `${symbol}${toThousands(num)}`
