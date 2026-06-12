@@ -874,12 +874,7 @@ function showCheckoutDialog(summary) {
     </div>
   `
 
-  const container = document.getElementById('checkout-inline-container')
-  if (container) {
-    container.appendChild(overlay)
-  } else {
-    document.body.appendChild(overlay)
-  }
+  document.body.appendChild(overlay)
 
   // 關閉對話框
   const closeDialog = () => overlay.remove()
